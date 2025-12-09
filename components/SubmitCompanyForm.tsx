@@ -90,12 +90,12 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold gradient-text">Submit a Company</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Submit a Company</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -104,21 +104,21 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
         </div>
 
         {submitStatus === 'success' && (
-          <div className="mb-6 p-4 bg-green-900/50 border border-green-700 rounded-lg">
-            <p className="text-green-300">Company submitted successfully! Thank you for your contribution.</p>
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-800">Company submitted successfully! Thank you for your contribution.</p>
           </div>
         )}
 
         {submitStatus === 'error' && (
-          <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg">
-            <p className="text-red-300">Error submitting company. Please try again.</p>
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800">Error submitting company. Please try again.</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Your Email */}
           <div>
-            <label htmlFor="yourEmail" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="yourEmail" className="block text-sm font-medium text-gray-700 mb-2">
               Your Email *
             </label>
             <input
@@ -128,14 +128,14 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               value={formData.yourEmail}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               placeholder="your@email.com"
             />
           </div>
 
           {/* Company Name */}
           <div>
-            <label htmlFor="companyName" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">
               Company Name *
             </label>
             <input
@@ -145,14 +145,14 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               value={formData.companyName}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               placeholder="Company Name"
             />
           </div>
 
           {/* Website */}
           <div>
-            <label htmlFor="website" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
               Website *
             </label>
             <input
@@ -162,14 +162,14 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               value={formData.website}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               placeholder="https://company.com"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
               Description *
             </label>
             <textarea
@@ -179,14 +179,14 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               onChange={handleInputChange}
               required
               rows={4}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none transition-colors resize-vertical"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors resize-vertical"
               placeholder="Brief description of the company and what they do..."
             />
           </div>
 
           {/* Sector */}
           <div>
-            <label htmlFor="sector" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-2">
               Sector *
             </label>
             <select
@@ -195,7 +195,7 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               value={formData.sector}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
             >
               <option value="">Select a sector</option>
               {sectors.map((sector) => (
@@ -208,7 +208,7 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
 
           {/* Subsector */}
           <div>
-            <label htmlFor="subsector" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="subsector" className="block text-sm font-medium text-gray-700 mb-2">
               Subsector *
             </label>
             <select
@@ -218,7 +218,7 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               onChange={handleInputChange}
               required
               disabled={!formData.sector}
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white focus:border-blue-400 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <option value="">Select a subsector</option>
               {availableSubsectors.map((subsector) => (
@@ -232,7 +232,7 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
 
           {/* Point of Contact */}
           <div>
-            <label htmlFor="pointOfContact" className="block text-sm font-medium text-gray-300 mb-2">
+            <label htmlFor="pointOfContact" className="block text-sm font-medium text-gray-700 mb-2">
               Point of Contact *
             </label>
             <input
@@ -242,7 +242,7 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
               value={formData.pointOfContact}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:border-blue-400 focus:outline-none transition-colors"
+              className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none transition-colors"
               placeholder="Name and role (e.g., John Doe, CEO)"
             />
           </div>
@@ -252,14 +252,14 @@ export default function SubmitCompanyForm({ sectors, onClose }: SubmitCompanyFor
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 border border-gray-700 text-gray-300 rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Company'}
             </button>
