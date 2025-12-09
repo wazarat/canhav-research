@@ -47,9 +47,12 @@ export default function Home() {
                 >
                   Explore Research
                 </a>
-                <button className="px-8 py-4 border-2 border-gray-700 hover:border-blue-400 text-gray-300 hover:text-blue-400 rounded-lg text-lg font-medium transition-all duration-300 hover:bg-blue-400/10 w-full sm:w-auto">
+                <a 
+                  href="/market-map"
+                  className="px-8 py-4 border-2 border-gray-700 hover:border-blue-400 text-gray-300 hover:text-blue-400 rounded-lg text-lg font-medium transition-all duration-300 hover:bg-blue-400/10 w-full sm:w-auto text-center inline-block"
+                >
                   View Market Map
-                </button>
+                </a>
               </div>
             </div>
           </div>
