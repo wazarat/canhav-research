@@ -39,9 +39,14 @@ export default function Home() {
               
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 w-full sm:w-auto">
+                <a 
+                  href="https://www.research.canhav.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 w-full sm:w-auto text-center"
+                >
                   Explore Research
-                </button>
+                </a>
                 <button className="px-8 py-4 border-2 border-gray-700 hover:border-blue-400 text-gray-300 hover:text-blue-400 rounded-lg text-lg font-medium transition-all duration-300 hover:bg-blue-400/10 w-full sm:w-auto">
                   View Market Map
                 </button>

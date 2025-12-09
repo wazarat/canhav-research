@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const navItems = [
     { name: 'Market Map', href: '/market-map' },
-    { name: 'Research', href: '/research' },
+    { name: 'Research', href: 'https://www.research.canhav.com', external: true },
     { name: 'Enterprise Users', href: '/enterprise-users' },
     { name: 'About Us', href: '/about-us' },
   ];
@@ -35,14 +35,27 @@ export default function Layout({ children }: LayoutProps) {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center space-x-8">
               {navItems.map((item) => (
-                <Link 
-                  key={item.name} 
-                  href={item.href}
-                  className="text-gray-300 hover:text-blue-400 transition-colors duration-200 relative group"
-                >
-                  {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-200 group-hover:w-full"></span>
-                </Link>
+                item.external ? (
+                  <a 
+                    key={item.name} 
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-300 hover:text-blue-400 transition-colors duration-200 relative group"
+                  >
+                    {item.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-200 group-hover:w-full"></span>
+                  </a>
+                ) : (
+                  <Link 
+                    key={item.name} 
+                    href={item.href}
+                    className="text-gray-300 hover:text-blue-400 transition-colors duration-200 relative group"
+                  >
+                    {item.name}
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-200 group-hover:w-full"></span>
+                  </Link>
+                )
               ))}
               
               {/* Contact Us Button */}
@@ -70,14 +83,27 @@ export default function Layout({ children }: LayoutProps) {
           {isMenuOpen && (
             <nav className="lg:hidden mt-4 pb-4 border-t border-gray-800/50 pt-4">
               {navItems.map((item) => (
-                <Link 
-                  key={item.name} 
-                  href={item.href}
-                  className="block py-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                item.external ? (
+                  <a 
+                    key={item.name} 
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block py-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link 
+                    key={item.name} 
+                    href={item.href}
+                    className="block py-2 text-gray-300 hover:text-blue-400 transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                )
               ))}
               <Link href="/contact">
                 <button 
