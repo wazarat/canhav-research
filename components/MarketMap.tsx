@@ -1,127 +1,161 @@
 'use client'
 
 import { useState } from 'react'
-import { GroupedMarketMap, MarketMapItem } from '../lib/ethereumMap'
+import { companiesData, getAllSectors, getCompaniesBySector, Company } from '../lib/companiesData'
 import SubmitCompanyForm from './SubmitCompanyForm'
 
 interface MarketMapProps {
-  groupedData: GroupedMarketMap
-  sectors: string[]
+  // We'll use the companies data directly instead of grouped data
 }
 
-export default function MarketMap({ groupedData, sectors }: MarketMapProps) {
+export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
-  const [hoveredSubsector, setHoveredSubsector] = useState<string | null>(null)
-
+  const [selectedSector, setSelectedSector] = useState<string | null>(null)
+  
+  const sectors = getAllSectors()
+  
   const sectorColors = [
-    { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200' },
-    { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200' },
-    { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200' },
-    { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200' },
-    { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200' },
-    { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200' },
-    { bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-200' },
-    { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200' }
+    { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500' },
+    { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', dot: 'bg-purple-500' },
+    { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', dot: 'bg-green-500' },
+    { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200', dot: 'bg-orange-500' },
+    { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', dot: 'bg-red-500' },
+    { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200', dot: 'bg-indigo-500' },
+    { bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-200', dot: 'bg-pink-500' },
+    { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200', dot: 'bg-teal-500' }
   ]
+
+  const getSectorColor = (sector: string) => {
+    const index = sectors.indexOf(sector)
+    return sectorColors[index % sectorColors.length]
+  }
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+      <div className="container mx-auto px-6 py-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Ethereum Market Map
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
             Explore the comprehensive ecosystem of Ethereum infrastructure, protocols, and applications
           </p>
           <button
             onClick={() => setShowSubmitForm(true)}
-            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl"
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300"
           >
             Submit a Company
           </button>
         </div>
 
-        {/* Market Map Grid */}
-        <div className="grid gap-8">
-          {sectors.map((sector, sectorIndex) => {
-            const colorScheme = sectorColors[sectorIndex % sectorColors.length]
+        {/* Sector Filter Tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <button
+            onClick={() => setSelectedSector(null)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+              selectedSector === null
+                ? 'bg-gray-900 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            All
+          </button>
+          {sectors.map((sector) => {
+            const colorScheme = getSectorColor(sector)
             return (
-            <div key={sector} className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200">
-              <div className="flex items-center mb-6">
-                <span className={`inline-block px-4 py-2 rounded-full text-sm font-semibold ${colorScheme.bg} ${colorScheme.text} ${colorScheme.border} border mr-4`}>
-                  {sector}
-                </span>
-              </div>
-              
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {groupedData[sector]?.map((item: MarketMapItem, index: number) => (
-                  <div
-                    key={`${sector}-${index}`}
-                    className="relative group"
-                    onMouseEnter={() => setHoveredSubsector(`${sector}-${index}`)}
-                    onMouseLeave={() => setHoveredSubsector(null)}
-                  >
-                    <div className="bg-white hover:bg-gray-50 rounded-xl p-4 transition-all duration-300 border border-gray-200 hover:border-gray-300 hover:shadow-md h-full flex flex-col">
-                      {/* Logo placeholder */}
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-                        <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                      </div>
-                      
-                      {/* Subsector name */}
-                      <h3 className="text-base font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                        {item.subsector}
-                      </h3>
-                      
-                      {/* Examples */}
-                      <p className="text-sm text-gray-600 mb-3 flex-grow leading-relaxed">
-                        {item.examples}
-                      </p>
-                      
-                      {/* Tooltip for definition */}
-                      {hoveredSubsector === `${sector}-${index}` && (
-                        <div className="absolute bottom-full left-0 right-0 mb-2 z-10">
-                          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 shadow-xl max-w-sm">
-                            <p className="text-sm text-gray-100">
-                              {item.definition}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+              <button
+                key={sector}
+                onClick={() => setSelectedSector(selectedSector === sector ? null : sector)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                  selectedSector === sector
+                    ? `${colorScheme.bg} ${colorScheme.text}`
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {sector}
+              </button>
             )
           })}
+        </div>
+
+        {/* Companies Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
+          {companiesData
+            .filter(company => selectedSector === null || company.sector === selectedSector)
+            .map((company, index) => {
+              const colorScheme = getSectorColor(company.sector)
+              return (
+                <div
+                  key={`${company.name}-${index}`}
+                  className="group relative"
+                >
+                  <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-gray-300 h-full flex flex-col items-center text-center">
+                    {/* Company Logo Placeholder */}
+                    <div className="w-12 h-12 bg-gray-100 rounded-lg mb-3 flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 bg-gray-300 rounded"></div>
+                    </div>
+                    
+                    {/* Company Name */}
+                    <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                      {company.name}
+                    </h3>
+                    
+                    {/* Sector Indicator */}
+                    <div className="flex items-center justify-center mt-auto">
+                      <div className={`w-2 h-2 rounded-full ${colorScheme.dot} mr-2`}></div>
+                      <span className="text-xs text-gray-500 truncate">
+                        {company.subsector}
+                      </span>
+                    </div>
+                    
+                    {/* Website Link */}
+                    {company.website && (
+                      <a
+                        href={company.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute inset-0 z-10"
+                        aria-label={`Visit ${company.name} website`}
+                      />
+                    )}
+                  </div>
+                  
+                  {/* Hover Tooltip */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
+                    <div className="font-semibold">{company.name}</div>
+                    <div className="text-gray-300">{company.sector}</div>
+                    <div className="text-gray-400">{company.subsector}</div>
+                  </div>
+                </div>
+              )
+            })}
         </div>
 
         {/* Stats Section */}
         <div className="mt-16 text-center">
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-              <div className="text-4xl font-bold text-blue-600 mb-2">
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="text-3xl font-bold text-blue-600 mb-2">
                 {sectors.length}
               </div>
-              <div className="text-gray-600">
+              <div className="text-gray-600 text-sm">
                 Major Sectors
               </div>
             </div>
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-              <div className="text-4xl font-bold text-blue-600 mb-2">
-                {Object.values(groupedData).flat().length}
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="text-3xl font-bold text-blue-600 mb-2">
+                {new Set(companiesData.map(c => c.subsector)).size}
               </div>
-              <div className="text-gray-600">
+              <div className="text-gray-600 text-sm">
                 Subsectors
               </div>
             </div>
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-              <div className="text-4xl font-bold text-blue-600 mb-2">
-                1000+
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+              <div className="text-3xl font-bold text-blue-600 mb-2">
+                {companiesData.length}+
               </div>
-              <div className="text-gray-600">
+              <div className="text-gray-600 text-sm">
                 Companies
               </div>
             </div>

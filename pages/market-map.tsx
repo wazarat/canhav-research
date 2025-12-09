@@ -1,16 +1,9 @@
-import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
 import MarketMap from '../components/MarketMap'
-import { generateStaticMarketMapData, GroupedMarketMap } from '../lib/ethereumMap'
 
-interface MarketMapPageProps {
-  groupedData: GroupedMarketMap
-  sectors: string[]
-}
-
-export default function MarketMapPage({ groupedData, sectors }: MarketMapPageProps) {
+export default function MarketMapPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navItems = [
@@ -124,7 +117,7 @@ export default function MarketMapPage({ groupedData, sectors }: MarketMapPagePro
       </header>
 
       <main>
-        <MarketMap groupedData={groupedData} sectors={sectors} />
+        <MarketMap />
       </main>
 
       {/* Footer */}
@@ -138,16 +131,4 @@ export default function MarketMapPage({ groupedData, sectors }: MarketMapPagePro
       </footer>
     </div>
   )
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const { grouped, sectors } = generateStaticMarketMapData()
-  
-  return {
-    props: {
-      groupedData: grouped,
-      sectors: sectors,
-    },
-    revalidate: 3600, // Revalidate every hour
-  }
 }
