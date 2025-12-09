@@ -40,7 +40,7 @@ export default function Home() {
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a 
-                  href="https://www.research.canhav.com"
+                  href="https://research.canhav.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg text-lg font-medium transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-blue-500/25 w-full sm:w-auto text-center"

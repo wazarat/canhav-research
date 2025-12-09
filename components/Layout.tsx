@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const navItems = [
     { name: 'Market Map', href: '/market-map' },
-    { name: 'Research', href: 'https://www.research.canhav.com', external: true },
+    { name: 'Research', href: 'https://research.canhav.com', external: true },
     { name: 'Enterprise Users', href: '/enterprise-users' },
     { name: 'About Us', href: '/about-us' },
   ];
