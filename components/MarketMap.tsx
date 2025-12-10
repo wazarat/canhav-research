@@ -35,29 +35,36 @@ export default function MarketMap({}: MarketMapProps) {
       {/* Header */}
       <div className="container mx-auto px-6 py-8">
         <div className="mb-8">
-          <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Ethereum Market Map
-            </h1>
-            <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-              Explore the comprehensive ecosystem of Ethereum infrastructure, protocols, and applications
-            </p>
+          {/* Title and Buttons Row */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+            <div className="text-center lg:text-left mb-4 lg:mb-0">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
+                The Ethereum Infrastructure Atlas
+              </h1>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-end items-center">
+              <a
+                href="https://research.canhav.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300"
+              >
+                Get Full Access
+              </a>
+              <button
+                onClick={() => setShowSubmitForm(true)}
+                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300"
+              >
+                Submit a Company
+              </button>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3 justify-end items-center">
-            <a
-              href="https://research.canhav.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300"
-            >
-              Get Full Access
-            </a>
-            <button
-              onClick={() => setShowSubmitForm(true)}
-              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300"
-            >
-              Submit a Company
-            </button>
+          
+          {/* Subtitle */}
+          <div className="text-center">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              A curated, research-driven map of Ethereum's infrastructure, protocols, and applications.
+            </p>
           </div>
         </div>
 

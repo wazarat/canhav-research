@@ -17,8 +17,8 @@ export default function MarketMapPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>Ethereum Market Map - CanHav Research</title>
-        <meta name="description" content="Comprehensive map of the Ethereum ecosystem with sectors and subsectors" />
+        <title>The Ethereum Infrastructure Atlas - CanHav Research</title>
+        <meta name="description" content="A curated, research-driven map of Ethereum's infrastructure, protocols, and applications" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
