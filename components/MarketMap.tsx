@@ -110,13 +110,8 @@ export default function MarketMap({}: MarketMapProps) {
                   className="group relative"
                 >
                   <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-gray-300 h-full flex flex-col items-center text-center">
-                    {/* Company Logo Placeholder */}
-                    <div className="w-12 h-12 bg-gray-100 rounded-lg mb-3 flex items-center justify-center flex-shrink-0">
-                      <div className="w-6 h-6 bg-gray-300 rounded"></div>
-                    </div>
-                    
                     {/* Company Name */}
-                    <h3 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-sm font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {company.name}
                     </h3>
                     
