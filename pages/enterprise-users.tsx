@@ -1,12 +1,9 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
-import EnterpriseForm from '../components/EnterpriseForm'
 
 export default function EnterpriseUsersPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [showForm, setShowForm] = useState(false)
-  const [formType, setFormType] = useState<'builder' | 'business' | null>(null)
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -16,15 +13,6 @@ export default function EnterpriseUsersPage() {
     { name: 'About Us', href: '/about-us' },
   ]
 
-  const handleFormOpen = (type: 'builder' | 'business') => {
-    setFormType(type)
-    setShowForm(true)
-  }
-
-  const handleFormClose = () => {
-    setShowForm(false)
-    setFormType(null)
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -153,9 +141,11 @@ export default function EnterpriseUsersPage() {
         {/* Option Cards */}
         <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* Card 1: Builders */}
-          <div 
-            onClick={() => handleFormOpen('builder')}
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+          <a 
+            href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden block"
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
@@ -205,12 +195,14 @@ export default function EnterpriseUsersPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </a>
 
           {/* Card 2: Business */}
-          <div 
-            onClick={() => handleFormOpen('business')}
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+          <a 
+            href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden block"
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
@@ -259,7 +251,7 @@ export default function EnterpriseUsersPage() {
                 </span>
               </div>
             </div>
-          </div>
+          </a>
         </div>
       </main>
 
@@ -273,13 +265,6 @@ export default function EnterpriseUsersPage() {
         </div>
       </footer>
 
-      {/* Enterprise Form Modal */}
-      {showForm && formType && (
-        <EnterpriseForm
-          type={formType}
-          onClose={handleFormClose}
-        />
-      )}
     </div>
   )
 }

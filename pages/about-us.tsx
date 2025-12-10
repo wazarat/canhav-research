@@ -1,21 +1,7 @@
 import Head from 'next/head'
 import Layout from '../components/Layout'
-import { useState } from 'react'
-import EnterpriseForm from '../components/EnterpriseForm'
 
 export default function AboutUsPage() {
-  const [showForm, setShowForm] = useState(false)
-  const [formType, setFormType] = useState<'builder' | 'business' | null>(null)
-
-  const handleFormOpen = (type: 'builder' | 'business') => {
-    setFormType(type)
-    setShowForm(true)
-  }
-
-  const handleFormClose = () => {
-    setShowForm(false)
-    setFormType(null)
-  }
 
   return (
     <Layout>
@@ -49,18 +35,22 @@ export default function AboutUsPage() {
                 >
                   Access CanHav Research →
                 </a>
-                <button 
-                  onClick={() => handleFormOpen('builder')}
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                <a 
+                  href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center block"
                 >
                   Contact Us: Crypto Native Teams →
-                </button>
-                <button 
-                  onClick={() => handleFormOpen('business')}
-                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                </a>
+                <a 
+                  href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center block"
                 >
                   Contact Us: Small Businesses & Associations →
-                </button>
+                </a>
               </div>
             </div>
           </div>
@@ -365,12 +355,14 @@ export default function AboutUsPage() {
                   <p className="text-blue-700 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <button 
-                    onClick={() => handleFormOpen('builder')}
+                  <a 
+                    href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
                   >
                     Contact Us
-                  </button>
+                  </a>
                 </div>
 
                 {/* Businesses Card */}
@@ -382,26 +374,20 @@ export default function AboutUsPage() {
                   <p className="text-purple-700 mb-6 flex-grow text-center">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <button 
-                    onClick={() => handleFormOpen('business')}
+                  <a 
+                    href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
                   >
                     Contact Us
-                  </button>
+                  </a>
                 </div>
               </div>
             </section>
           </div>
         </div>
       </main>
-
-      {/* Enterprise Form Modal */}
-      {showForm && formType && (
-        <EnterpriseForm
-          type={formType}
-          onClose={handleFormClose}
-        />
-      )}
     </Layout>
   )
 }
