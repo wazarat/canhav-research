@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import emailjs from '@emailjs/browser'
 
 interface EnterpriseFormProps {
   type: 'builder' | 'business'
@@ -91,26 +92,38 @@ export default function EnterpriseForm({ type, onClose }: EnterpriseFormProps) {
     setSubmitStatus('idle')
 
     try {
-      const response = await fetch('/api/submit-enterprise', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          type,
-          submittedAt: new Date().toISOString()
-        }),
-      })
+      // Format track-specific data for email
+      const trackSpecificText = Array.isArray(formData.trackSpecific) 
+        ? formData.trackSpecific.join(', ')
+        : formData.trackSpecific
 
-      if (response.ok) {
-        setSubmitStatus('success')
-        setTimeout(() => {
-          onClose()
-        }, 2000)
-      } else {
-        setSubmitStatus('error')
+      // Prepare email template parameters
+      const templateParams = {
+        to_email: 'waz@canhav.com',
+        from_name: formData.name,
+        from_email: formData.email,
+        organization: formData.organization || 'Not provided',
+        track_type: type === 'builder' ? 'Research Track (Crypto Native Teams)' : 'Business Efficiency Track (Small Businesses)',
+        primary_interest: formData.primaryInterest,
+        track_specific: trackSpecificText,
+        scope: formData.scope,
+        timeline: formData.timeline,
+        context: formData.context || 'Not provided',
+        submitted_at: new Date().toLocaleString(),
       }
+
+      // Send email using EmailJS
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID',
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY'
+      )
+
+      setSubmitStatus('success')
+      setTimeout(() => {
+        onClose()
+      }, 2000)
     } catch (error) {
       console.error('Error submitting form:', error)
       setSubmitStatus('error')

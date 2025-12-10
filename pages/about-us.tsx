@@ -1,7 +1,22 @@
 import Head from 'next/head'
 import Layout from '../components/Layout'
+import { useState } from 'react'
+import EnterpriseForm from '../components/EnterpriseForm'
 
 export default function AboutUsPage() {
+  const [showForm, setShowForm] = useState(false)
+  const [formType, setFormType] = useState<'builder' | 'business' | null>(null)
+
+  const handleFormOpen = (type: 'builder' | 'business') => {
+    setFormType(type)
+    setShowForm(true)
+  }
+
+  const handleFormClose = () => {
+    setShowForm(false)
+    setFormType(null)
+  }
+
   return (
     <Layout>
       <Head>
@@ -34,10 +49,16 @@ export default function AboutUsPage() {
                 >
                   Access CanHav Research →
                 </a>
-                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                <button 
+                  onClick={() => handleFormOpen('builder')}
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
                   Contact Us: Crypto Native Teams →
                 </button>
-                <button className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                <button 
+                  onClick={() => handleFormOpen('business')}
+                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
                   Contact Us: Small Businesses & Associations →
                 </button>
               </div>
@@ -344,7 +365,10 @@ export default function AboutUsPage() {
                   <p className="text-blue-700 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                  <button 
+                    onClick={() => handleFormOpen('builder')}
+                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                  >
                     Contact Us
                   </button>
                 </div>
@@ -358,7 +382,10 @@ export default function AboutUsPage() {
                   <p className="text-purple-700 mb-6 flex-grow text-center">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                  <button 
+                    onClick={() => handleFormOpen('business')}
+                    className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                  >
                     Contact Us
                   </button>
                 </div>
@@ -367,6 +394,14 @@ export default function AboutUsPage() {
           </div>
         </div>
       </main>
+
+      {/* Enterprise Form Modal */}
+      {showForm && formType && (
+        <EnterpriseForm
+          type={formType}
+          onClose={handleFormClose}
+        />
+      )}
     </Layout>
   )
 }

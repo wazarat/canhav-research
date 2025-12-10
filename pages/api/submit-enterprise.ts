@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import fs from 'fs'
 import path from 'path'
+import nodemailer from 'nodemailer'
 
 interface EnterpriseSubmission {
   name: string
@@ -55,8 +56,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Write back to file
     fs.writeFileSync(submissionsFile, JSON.stringify(existingSubmissions, null, 2))
 
-    // TODO: Send email notification
-    // await sendEmailNotification(submission)
+    // Send email notification
+    try {
+      await sendEmailNotification(submission)
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError)
+      // Continue processing even if email fails
+    }
 
     console.log('Enterprise submission received:', {
       name: submission.name,
@@ -73,9 +79,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// Placeholder for email notification function
+// Email notification function using Gmail SMTP
 async function sendEmailNotification(submission: EnterpriseSubmission) {
-  // TODO: Implement email sending logic
-  // This could use services like SendGrid, AWS SES, etc.
-  console.log('Email notification would be sent for:', submission.email)
+  // Create transporter using Gmail
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.GMAIL_USER, // Your Gmail address
+      pass: process.env.GMAIL_APP_PASSWORD, // Gmail App Password
+    },
+  })
+
+  // Format track-specific data
+  const trackSpecificText = Array.isArray(submission.trackSpecific) 
+    ? submission.trackSpecific.join(', ')
+    : submission.trackSpecific
+
+  // Email content
+  const emailContent = `
+New ${submission.type === 'builder' ? 'Research Track' : 'Business Efficiency Track'} Submission
+
+Contact Information:
+- Name: ${submission.name}
+- Email: ${submission.email}
+- Organization: ${submission.organization || 'Not provided'}
+
+Submission Details:
+- Primary Interest: ${submission.primaryInterest}
+- ${submission.type === 'builder' ? 'Familiarity Level' : 'Challenges'}: ${trackSpecificText}
+- Scope: ${submission.scope}
+- Timeline: ${submission.timeline}
+- Context: ${submission.context || 'Not provided'}
+
+Submitted: ${new Date(submission.submittedAt).toLocaleString()}
+Track Type: ${submission.type === 'builder' ? 'Research Track (Crypto Native Teams)' : 'Business Efficiency Track (Small Businesses)'}
+  `.trim()
+
+  // Send email
+  await transporter.sendMail({
+    from: process.env.GMAIL_USER,
+    to: 'waz@canhav.com',
+    subject: `New ${submission.type === 'builder' ? 'Research' : 'Business'} Track Inquiry - ${submission.name}`,
+    text: emailContent,
+    html: emailContent.replace(/\n/g, '<br>'),
+  })
+
+  console.log('Email notification sent successfully to waz@canhav.com')
 }
