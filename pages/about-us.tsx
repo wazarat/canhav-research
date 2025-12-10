@@ -188,7 +188,7 @@ export default function AboutUsPage() {
             {/* Section 2: Research to Real-World Impact */}
             <section className="mb-24">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
-                <div>
+                <div className="lg:order-1 order-1">
                   <h2 className="text-4xl font-bold text-gray-900 mb-8">
                     From Research to Real-World Impact
                   </h2>
@@ -211,7 +211,7 @@ export default function AboutUsPage() {
                 </div>
                 
                 {/* Research Impact Image */}
-                <div className="lg:order-last">
+                <div className="lg:order-last order-2">
                   <div className="relative rounded-2xl overflow-hidden shadow-lg h-80">
                     <img 
                       src="/images/sections/research-impact.jpg" 
@@ -249,7 +249,7 @@ export default function AboutUsPage() {
             <section className="mb-24">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 {/* Recognition Image */}
-                <div>
+                <div className="lg:order-1 order-2">
                   <div className="relative rounded-2xl overflow-hidden shadow-lg h-80">
                     <img 
                       src="/images/sections/recognition.jpg" 
@@ -281,7 +281,7 @@ export default function AboutUsPage() {
                   </div>
                 </div>
                 
-                <div>
+                <div className="lg:order-2 order-1">
                   <h2 className="text-4xl font-bold text-gray-900 mb-8">
                     Recognition Within the Global Crypto Ecosystem
                   </h2>
