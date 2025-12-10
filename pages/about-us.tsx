@@ -402,18 +402,18 @@ export default function AboutUsPage() {
               
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Research Access Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <h3 className="text-xl font-bold text-blue-600 mb-4">
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
                     Access CanHav Research
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 flex-grow">
                     Market maps, ecosystem analysis, and research insights
                   </p>
                   <a 
                     href="https://research.canhav.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center"
+                    className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
                   >
                     👉 Explore Research
                     <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -423,15 +423,15 @@ export default function AboutUsPage() {
                 </div>
 
                 {/* Builders Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <h3 className="text-xl font-bold text-purple-600 mb-4">
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold text-blue-600 mb-4">
                     Ethereum & Blockchain Builders
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 flex-grow">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <button className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center">
-                    👉 Contact Us — Builders
+                  <button className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                    👉 Contact Us: Builders
                     <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
@@ -439,15 +439,15 @@ export default function AboutUsPage() {
                 </div>
 
                 {/* Businesses Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105">
-                  <h3 className="text-xl font-bold text-green-600 mb-4">
+                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold text-purple-600 mb-4">
                     Small Businesses & Associations
                   </h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-600 mb-6 flex-grow">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <button className="inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center">
-                    👉 Contact Us — Businesses
+                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                    👉 Contact Us: Businesses
                     <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
