@@ -402,7 +402,7 @@ export default function AboutUsPage() {
               
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Research Access Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
                   <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
                     Access CanHav Research
                   </h3>
@@ -413,34 +413,34 @@ export default function AboutUsPage() {
                     href="https://research.canhav.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                    className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
                   >
                     Explore Research →
                   </a>
                 </div>
 
                 {/* Builders Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
-                  <h3 className="text-xl font-bold text-purple-600 mb-4 text-center">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
                     Ethereum & Blockchain Builders
                   </h3>
-                  <p className="text-gray-600 mb-6 flex-grow text-center">
+                  <p className="text-blue-700 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                  <button className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
                     Contact Us
                   </button>
                 </div>
 
                 {/* Businesses Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
-                  <h3 className="text-xl font-bold text-green-600 mb-4 text-center">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">
                     Small Businesses & Associations
                   </h3>
-                  <p className="text-gray-600 mb-6 flex-grow text-center">
+                  <p className="text-purple-700 mb-6 flex-grow text-center">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
                     Contact Us
                   </button>
                 </div>
