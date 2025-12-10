@@ -13,7 +13,7 @@ export default function Contact() {
 
   const openContactForm = () => {
     setModalConfig({
-      formId: 'YOUR_GENERAL_CONTACT_FORM_ID', // Replace with actual form ID
+      formId: '253432798519065',
       title: 'Contact CanHav Research'
     });
     setShowModal(true);
