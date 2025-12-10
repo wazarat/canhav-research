@@ -46,7 +46,9 @@ export default function EnterpriseUsersPage() {
       <Head>
         <title>Enterprise Users - CanHav Research</title>
         <meta name="description" content="Choose the path that fits your business - research-driven insights for builders or business efficiency solutions" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
       </Head>
 
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">

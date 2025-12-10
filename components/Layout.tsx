@@ -21,7 +21,12 @@ export default function Layout({ children }: LayoutProps) {
       <Head>
         <title>CanHav Research - Making Ethereum Easier</title>
         <meta name="description" content="Making understanding and building with ethereum easier for founders, operators, and researchers" />
-        <link rel="icon" href="/favicon.ico" />
+        
+        {/* Favicon */}
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#2563eb" />
         
         {/* JotForm Scripts */}
         <script type="text/javascript" src="https://cdn.jotfor.ms/static/prototype.forms.js?3.3.45397"></script>
