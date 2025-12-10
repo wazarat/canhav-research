@@ -37,7 +37,8 @@ export default function AboutUsPage() {
                 </a>
                 <button 
                   className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full jotform-popup-research"
-                  data-jotform-id="YOUR_RESEARCH_FORM_ID"
+                  data-jotform-id="253432825628057"
+                  onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
                 >
                   Contact Us: Crypto Native Teams →
                 </button>
@@ -353,7 +354,8 @@ export default function AboutUsPage() {
                   </p>
                   <button 
                     className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px] jotform-popup-research"
-                    data-jotform-id="YOUR_RESEARCH_FORM_ID"
+                    data-jotform-id="253432825628057"
+                    onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
                   >
                     Contact Us
                   </button>

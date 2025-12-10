@@ -143,7 +143,8 @@ export default function EnterpriseUsersPage() {
           {/* Card 1: Builders */}
           <div 
             className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden jotform-popup-research"
-            data-jotform-id="YOUR_RESEARCH_FORM_ID"
+            data-jotform-id="253432825628057"
+            onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>

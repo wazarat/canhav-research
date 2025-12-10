@@ -31,9 +31,9 @@ export default function Layout({ children }: LayoutProps) {
         <script type="text/javascript">
           {`
             window.JotFormFeedback = new JotFormFeedback({
-              formId: 'YOUR_FORM_ID',
+              formId: '253432825628057',
               base: 'https://form.jotform.com/',
-              windowTitle: 'Contact CanHav',
+              windowTitle: 'Contact CanHav - Research Track',
               backgroundColor: '#1f2937',
               fontColor: '#ffffff',
               type: 'false',
