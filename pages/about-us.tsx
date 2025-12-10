@@ -57,45 +57,65 @@ export default function AboutUsPage() {
               </p>
             </div>
             
-            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 opacity-70 hover:opacity-100 transition-opacity duration-300">
+            <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-80 hover:opacity-100 transition-opacity duration-300">
               {/* DDQIC */}
               <div className="flex flex-col items-center group">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-50 transition-colors">
-                  <span className="text-xs font-medium text-gray-600">DDQIC</span>
+                <div className="w-32 h-20 bg-white rounded-xl flex items-center justify-center group-hover:shadow-md transition-all duration-300 p-3">
+                  <img 
+                    src="/images/logos/ddqic-logo.png" 
+                    alt="Dunin-Deshpande Queen's Innovation Centre"
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-                <span className="text-xs text-gray-500 mt-2">Innovation Centre</span>
+                <span className="text-xs text-gray-500 mt-3 font-medium">Innovation Centre</span>
               </div>
               
               {/* City of Kingston */}
               <div className="flex flex-col items-center group">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-50 transition-colors">
-                  <span className="text-xs font-medium text-gray-600">Kingston</span>
+                <div className="w-32 h-20 bg-white rounded-xl flex items-center justify-center group-hover:shadow-md transition-all duration-300 p-3">
+                  <img 
+                    src="/images/logos/kingston-logo.png" 
+                    alt="City of Kingston"
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-                <span className="text-xs text-gray-500 mt-2">City Partnership</span>
+                <span className="text-xs text-gray-500 mt-3 font-medium">City Partnership</span>
               </div>
               
               {/* MIC */}
               <div className="flex flex-col items-center group">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-50 transition-colors">
-                  <span className="text-xs font-medium text-gray-600">MIC</span>
+                <div className="w-32 h-20 bg-white rounded-xl flex items-center justify-center group-hover:shadow-md transition-all duration-300 p-3">
+                  <img 
+                    src="/images/logos/mic-logo.png" 
+                    alt="Mayor's Innovation Challenge"
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-                <span className="text-xs text-gray-500 mt-2">Innovation Challenge</span>
+                <span className="text-xs text-gray-500 mt-3 font-medium">Innovation Challenge</span>
               </div>
               
               {/* CoinDesk */}
               <div className="flex flex-col items-center group">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-50 transition-colors">
-                  <span className="text-xs font-medium text-gray-600">CoinDesk</span>
+                <div className="w-32 h-20 bg-white rounded-xl flex items-center justify-center group-hover:shadow-md transition-all duration-300 p-3">
+                  <img 
+                    src="/images/logos/coindesk-logo.png" 
+                    alt="CoinDesk"
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-                <span className="text-xs text-gray-500 mt-2">Media Coverage</span>
+                <span className="text-xs text-gray-500 mt-3 font-medium">Media Coverage</span>
               </div>
               
               {/* PVARA */}
               <div className="flex flex-col items-center group">
-                <div className="w-24 h-24 bg-gray-100 rounded-xl flex items-center justify-center group-hover:bg-gray-50 transition-colors">
-                  <span className="text-xs font-medium text-gray-600">PVARA</span>
+                <div className="w-32 h-20 bg-white rounded-xl flex items-center justify-center group-hover:shadow-md transition-all duration-300 p-3">
+                  <img 
+                    src="/images/logos/pvara-logo.png" 
+                    alt="Pakistan Virtual Asset Regulatory Authority"
+                    className="max-w-full max-h-full object-contain"
+                  />
                 </div>
-                <span className="text-xs text-gray-500 mt-2">Regulatory Authority</span>
+                <span className="text-xs text-gray-500 mt-3 font-medium">Regulatory Authority</span>
               </div>
             </div>
           </div>
