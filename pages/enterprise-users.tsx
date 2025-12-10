@@ -151,94 +151,114 @@ export default function EnterpriseUsersPage() {
         </div>
 
         {/* Option Cards */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* Card 1: Builders */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                For Builders, Analysts, and Crypto-Native Teams
-              </h2>
-              <h3 className="text-xl font-semibold text-blue-600 mb-4">
-                Build Smarter in Ethereum's Ecosystem
-              </h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Research-driven insights, market maps, and sector deep-dives—designed as the crypto builder's 
-                shortcut to understanding infrastructure, DeFi, Layer 2s, derivatives, and enterprise tooling 
-                without spending years navigating fragmentation.
-              </p>
-            </div>
+          <div 
+            onClick={() => handleFormOpen('builder')}
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+          >
+            {/* Gradient overlay on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+            
+            <div className="relative z-10">
+              <div className="mb-5">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  For Builders, Analysts, and Crypto-Native Teams
+                </h2>
+                <h3 className="text-lg font-semibold text-blue-600 mb-3 group-hover:text-blue-700 transition-colors">
+                  Build Smarter in Ethereum's Ecosystem
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-sm mb-4">
+                  Research-driven insights, market maps, and sector deep-dives—designed as the crypto builder's 
+                  shortcut to understanding infrastructure, DeFi, Layer 2s, derivatives, and enterprise tooling 
+                  without spending years navigating fragmentation.
+                </p>
+              </div>
 
-            <div className="mb-8 flex-grow">
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Curated Ethereum market maps</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Research-grade analysis for founders and operators</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Tools for rapid ecosystem understanding</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">A foundation for product strategy, market entry, and competitive analysis</span>
-                </li>
-              </ul>
-            </div>
+              <div className="mb-6 flex-grow">
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Curated Ethereum market maps</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Research-grade analysis for founders and operators</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Tools for rapid ecosystem understanding</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">A foundation for product strategy, market entry, and competitive analysis</span>
+                  </li>
+                </ul>
+              </div>
 
-            <button
-              onClick={() => handleFormOpen('builder')}
-              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg mt-auto"
-            >
-              Explore Research Track →
-            </button>
+              <div className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300 group-hover:shadow-lg mt-auto text-center relative overflow-hidden">
+                <span className="relative z-10 flex items-center justify-center">
+                  Explore Research Portal
+                  <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
           </div>
 
           {/* Card 2: Business */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                For Business Owners, Associations & Non-Technical Founders
-              </h2>
-              <h3 className="text-xl font-semibold text-purple-600 mb-4">
-                Run Your Business Like a Bigger Company Without the Big Company Budget
-              </h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                A blockchain-enabled coordination model for small businesses operating in silos—helping you 
-                tackle supplier fragmentation, MOQ challenges, and manual reconciliation through shared digital infrastructure.
-              </p>
-            </div>
+          <div 
+            onClick={() => handleFormOpen('business')}
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+          >
+            {/* Gradient overlay on hover */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+            
+            <div className="relative z-10">
+              <div className="mb-5">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  For Small Business Owners and Associations
+                </h2>
+                <h3 className="text-lg font-semibold text-purple-600 mb-3 group-hover:text-purple-700 transition-colors">
+                  Run Your Business Like a Bigger Company Without the Big Company Budget
+                </h3>
+                <p className="text-gray-600 leading-relaxed text-sm mb-4">
+                  A blockchain-enabled coordination model for small businesses operating in silos—helping you 
+                  tackle supplier fragmentation, MOQ challenges, and manual reconciliation through shared digital infrastructure.
+                </p>
+              </div>
 
-            <div className="mb-8 flex-grow">
-              <ul className="space-y-3">
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Solve MOQ and supplier-access challenges</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Reduce reconciliation overhead</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Enable multi-company coordination without merging systems</span>
-                </li>
-                <li className="flex items-start">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-base text-gray-700">Understand how blockchain can improve your business without becoming "a crypto company"</span>
-                </li>
-              </ul>
-            </div>
+              <div className="mb-6 flex-grow">
+                <ul className="space-y-2">
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Solve MOQ and supplier-access challenges</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Reduce reconciliation overhead</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Enable multi-company coordination without merging systems</span>
+                  </li>
+                  <li className="flex items-start">
+                    <div className="w-1.5 h-1.5 bg-purple-500 rounded-full mt-2 mr-2 flex-shrink-0"></div>
+                    <span className="text-sm text-gray-700">Understand how blockchain can improve your business without becoming "a crypto company"</span>
+                  </li>
+                </ul>
+              </div>
 
-            <button
-              onClick={() => handleFormOpen('business')}
-              className="w-full px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg mt-auto"
-            >
-              Explore Business Efficiency Track →
-            </button>
+              <div className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-300 group-hover:shadow-lg mt-auto text-center relative overflow-hidden">
+                <span className="relative z-10 flex items-center justify-center">
+                  Explore Business Solutions
+                  <svg className="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </main>
