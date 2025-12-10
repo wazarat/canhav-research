@@ -1,9 +1,28 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useState } from 'react'
+import JotFormModal from '../components/JotFormModal'
 
 export default function EnterpriseUsersPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [modalConfig, setModalConfig] = useState<{
+    formId: string
+    title: string
+  } | null>(null)
+
+  const openResearchForm = () => {
+    setModalConfig({
+      formId: '253432825628057',
+      title: 'Research Track - Crypto Native Teams'
+    })
+    setShowModal(true)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setModalConfig(null)
+  }
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -143,13 +162,7 @@ export default function EnterpriseUsersPage() {
           {/* Card 1: Builders */}
           <div 
             className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
-            onClick={() => {
-              window.open(
-                'https://form.jotform.com/253432825628057',
-                'jotform-popup',
-                'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
-              );
-            }}
+            onClick={openResearchForm}
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
@@ -267,6 +280,15 @@ export default function EnterpriseUsersPage() {
         </div>
       </footer>
 
+      {/* JotForm Modal */}
+      {modalConfig && (
+        <JotFormModal
+          isOpen={showModal}
+          onClose={closeModal}
+          formId={modalConfig.formId}
+          title={modalConfig.title}
+        />
+      )}
     </div>
   )
 }

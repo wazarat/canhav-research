@@ -1,7 +1,27 @@
 import Head from 'next/head'
 import Layout from '../components/Layout'
+import { useState } from 'react'
+import JotFormModal from '../components/JotFormModal'
 
 export default function AboutUsPage() {
+  const [showModal, setShowModal] = useState(false)
+  const [modalConfig, setModalConfig] = useState<{
+    formId: string
+    title: string
+  } | null>(null)
+
+  const openResearchForm = () => {
+    setModalConfig({
+      formId: '253432825628057',
+      title: 'Research Track - Crypto Native Teams'
+    })
+    setShowModal(true)
+  }
+
+  const closeModal = () => {
+    setShowModal(false)
+    setModalConfig(null)
+  }
 
   return (
     <Layout>
@@ -37,13 +57,7 @@ export default function AboutUsPage() {
                 </a>
                 <button 
                   className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full"
-                  onClick={() => {
-                    window.open(
-                      'https://form.jotform.com/253432825628057',
-                      'jotform-popup',
-                      'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
-                    );
-                  }}
+                  onClick={openResearchForm}
                 >
                   Contact Us: Crypto Native Teams →
                 </button>
@@ -359,13 +373,7 @@ export default function AboutUsPage() {
                   </p>
                   <button 
                     className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
-                    onClick={() => {
-                      window.open(
-                        'https://form.jotform.com/253432825628057',
-                        'jotform-popup',
-                        'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
-                      );
-                    }}
+                    onClick={openResearchForm}
                   >
                     Contact Us
                   </button>
@@ -392,6 +400,16 @@ export default function AboutUsPage() {
           </div>
         </div>
       </main>
+
+      {/* JotForm Modal */}
+      {modalConfig && (
+        <JotFormModal
+          isOpen={showModal}
+          onClose={closeModal}
+          formId={modalConfig.formId}
+          title={modalConfig.title}
+        />
+      )}
     </Layout>
   )
 }
