@@ -1,40 +1,27 @@
 import Layout from '../components/Layout';
 import { useState } from 'react';
-import axios from 'axios';
+import { useRouter } from 'next/router';
+import JotFormModal from '../components/JotFormModal';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    company: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState<{
+    formId: string;
+    title: string;
+  } | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
+  const openContactForm = () => {
+    setModalConfig({
+      formId: 'YOUR_GENERAL_CONTACT_FORM_ID', // Replace with actual form ID
+      title: 'Contact CanHav Research'
     });
+    setShowModal(true);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    try {
-      // Send to Python backend
-      await axios.post('http://localhost:8000/api/contact', formData);
-      setSubmitStatus('success');
-      setFormData({ name: '', email: '', company: '', message: '' });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
+  const closeModal = () => {
+    setShowModal(false);
+    setModalConfig(null);
   };
 
   return (
@@ -42,6 +29,19 @@ export default function Contact() {
       <div className="py-20">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
+            {/* Back Button */}
+            <div className="mb-8">
+              <button
+                onClick={() => router.back()}
+                className="inline-flex items-center px-4 py-2 text-gray-300 hover:text-white transition-colors duration-200"
+              >
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
+            </div>
+
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-6">
                 Contact Us
@@ -56,90 +56,24 @@ export default function Contact() {
               <div className="glass rounded-xl p-8">
                 <h2 className="text-2xl font-semibold text-white mb-6">Send us a message</h2>
                 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                      Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      placeholder="Your full name"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                      Email *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      placeholder="your.email@company.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-300 mb-2">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      id="company"
-                      name="company"
-                      value={formData.company}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                      placeholder="Your company name"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      required
-                      rows={5}
-                      value={formData.message}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 resize-vertical"
-                      placeholder="Tell us about your project or inquiry..."
-                    />
-                  </div>
-
+                <div className="space-y-6">
+                  <p className="text-gray-300">
+                    Ready to get started? Click the button below to open our contact form and tell us about your project or inquiry.
+                  </p>
+                  
                   <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-600 disabled:to-gray-700 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed"
+                    onClick={openContactForm}
+                    className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
                   >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                    Open Contact Form
                   </button>
-
-                  {submitStatus === 'success' && (
-                    <div className="p-4 bg-green-900/50 border border-green-500 rounded-lg text-green-300">
-                      Thank you! Your message has been sent successfully.
-                    </div>
-                  )}
-
-                  {submitStatus === 'error' && (
-                    <div className="p-4 bg-red-900/50 border border-red-500 rounded-lg text-red-300">
-                      Sorry, there was an error sending your message. Please try again.
-                    </div>
-                  )}
-                </form>
+                  
+                  <div className="text-center">
+                    <p className="text-sm text-gray-400">
+                      Form opens in a popup - you won't leave this page
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Contact Information */}
@@ -153,7 +87,7 @@ export default function Contact() {
                       </div>
                       <div>
                         <p className="text-gray-300">Email</p>
-                        <p className="text-white">contact@canhavresearch.com</p>
+                        <p className="text-white">waz@canhav.com</p>
                       </div>
                     </div>
                     
@@ -192,6 +126,16 @@ export default function Contact() {
           </div>
         </div>
       </div>
+
+      {/* JotForm Modal */}
+      {modalConfig && (
+        <JotFormModal
+          isOpen={showModal}
+          onClose={closeModal}
+          formId={modalConfig.formId}
+          title={modalConfig.title}
+        />
+      )}
     </Layout>
   );
 }
