@@ -172,19 +172,19 @@ export default function EnterpriseUsersPage() {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Curated Ethereum market maps</span>
+                  <span className="text-base text-gray-700">Curated Ethereum market maps</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Research-grade analysis for founders and operators</span>
+                  <span className="text-base text-gray-700">Research-grade analysis for founders and operators</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Tools for rapid ecosystem understanding</span>
+                  <span className="text-base text-gray-700">Tools for rapid ecosystem understanding</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">A foundation for product strategy, market entry, and competitive analysis</span>
+                  <span className="text-base text-gray-700">A foundation for product strategy, market entry, and competitive analysis</span>
                 </li>
               </ul>
             </div>
@@ -216,19 +216,19 @@ export default function EnterpriseUsersPage() {
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Solve MOQ and supplier-access challenges</span>
+                  <span className="text-base text-gray-700">Solve MOQ and supplier-access challenges</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Reduce reconciliation overhead</span>
+                  <span className="text-base text-gray-700">Reduce reconciliation overhead</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Enable multi-company coordination without merging systems</span>
+                  <span className="text-base text-gray-700">Enable multi-company coordination without merging systems</span>
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  <span className="text-gray-700">Understand how blockchain can improve your business without becoming "a crypto company"</span>
+                  <span className="text-base text-gray-700">Understand how blockchain can improve your business without becoming "a crypto company"</span>
                 </li>
               </ul>
             </div>
