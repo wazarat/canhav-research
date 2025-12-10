@@ -157,8 +157,8 @@ export default function EnterpriseUsersPage() {
             onClick={() => handleFormOpen('builder')}
             className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
           >
-            {/* Gradient overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
             
             <div className="relative z-10">
               <div className="mb-5">
@@ -212,8 +212,8 @@ export default function EnterpriseUsersPage() {
             onClick={() => handleFormOpen('business')}
             className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
           >
-            {/* Gradient overlay on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-xl"></div>
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
             
             <div className="relative z-10">
               <div className="mb-5">
@@ -221,7 +221,7 @@ export default function EnterpriseUsersPage() {
                   For Small Business Owners and Associations
                 </h2>
                 <h3 className="text-lg font-semibold text-purple-600 mb-3 group-hover:text-purple-700 transition-colors">
-                  Run Your Business Like a Bigger Company Without the Big Company Budget
+                  Enterprise Strength, Without Enterprise Costs
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-sm mb-4">
                   A blockchain-enabled coordination model for small businesses operating in silos—helping you 
