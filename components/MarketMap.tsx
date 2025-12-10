@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { companiesData, getAllSectors, getCompaniesBySector, Company } from '../lib/companiesData'
-import SubmitCompanyForm from './SubmitCompanyForm'
+import JotFormModal from './JotFormModal'
 
 interface MarketMapProps {
   // We'll use the companies data directly instead of grouped data
@@ -184,9 +184,11 @@ export default function MarketMap({}: MarketMapProps) {
 
       {/* Submit Company Modal */}
       {showSubmitForm && (
-        <SubmitCompanyForm
-          sectors={sectors}
+        <JotFormModal
+          isOpen={showSubmitForm}
           onClose={() => setShowSubmitForm(false)}
+          formId="253433298491060"
+          title="Submit a Company"
         />
       )}
     </div>
