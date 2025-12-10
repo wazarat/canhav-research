@@ -41,12 +41,19 @@ export default function MarketMap({}: MarketMapProps) {
           <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
             Explore the comprehensive ecosystem of Ethereum infrastructure, protocols, and applications
           </p>
-          <button
-            onClick={() => setShowSubmitForm(true)}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300"
-          >
-            Submit a Company
-          </button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button
+              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-300"
+            >
+              Get Full Access
+            </button>
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300"
+            >
+              Submit a Company
+            </button>
+          </div>
         </div>
 
         {/* Sector Filter Tabs */}
