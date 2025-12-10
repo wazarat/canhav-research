@@ -61,8 +61,8 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
           
           {/* Subtitle */}
-          <div className="text-center">
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+          <div className="text-center lg:text-left">
+            <p className="text-lg text-gray-600 max-w-3xl lg:max-w-none lg:mx-0 mx-auto">
               A curated, research-driven map of Ethereum's infrastructure, protocols, and applications.
             </p>
           </div>
