@@ -30,15 +30,15 @@ export default function AboutUsPage() {
                   href="https://research.canhav.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Access CanHav Research →
                 </a>
-                <button className="px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  Contact Us — Builders →
+                <button className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  Contact Us: Builders →
                 </button>
-                <button className="px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  Contact Us — Businesses →
+                <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  Contact Us: Businesses →
                 </button>
               </div>
             </div>
@@ -402,55 +402,46 @@ export default function AboutUsPage() {
               
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Research Access Card */}
-                <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
-                  <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                  <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
                     Access CanHav Research
                   </h3>
-                  <p className="text-gray-600 mb-6 flex-grow">
+                  <p className="text-blue-700 mb-6 flex-grow text-center">
                     Market maps, ecosystem analysis, and research insights
                   </p>
                   <a 
                     href="https://research.canhav.com" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
                   >
-                    👉 Explore Research
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
+                    Explore Research →
                   </a>
                 </div>
 
                 {/* Builders Card */}
                 <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
-                  <h3 className="text-xl font-bold text-blue-600 mb-4">
+                  <h3 className="text-xl font-bold text-purple-600 mb-4 text-center">
                     Ethereum & Blockchain Builders
                   </h3>
-                  <p className="text-gray-600 mb-6 flex-grow">
+                  <p className="text-gray-600 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
-                    👉 Contact Us: Builders
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                    Contact Us
                   </button>
                 </div>
 
                 {/* Businesses Card */}
                 <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
-                  <h3 className="text-xl font-bold text-purple-600 mb-4">
+                  <h3 className="text-xl font-bold text-green-600 mb-4 text-center">
                     Small Businesses & Associations
                   </h3>
-                  <p className="text-gray-600 mb-6 flex-grow">
+                  <p className="text-gray-600 mb-6 flex-grow text-center">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <button className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
-                    👉 Contact Us: Businesses
-                    <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                  <button className="inline-flex items-center px-6 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]">
+                    Contact Us
                   </button>
                 </div>
               </div>
