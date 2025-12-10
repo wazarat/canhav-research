@@ -141,11 +141,9 @@ export default function EnterpriseUsersPage() {
         {/* Option Cards */}
         <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* Card 1: Builders */}
-          <a 
-            href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden block"
+          <div 
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden jotform-popup-research"
+            data-jotform-id="YOUR_RESEARCH_FORM_ID"
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
@@ -195,14 +193,12 @@ export default function EnterpriseUsersPage() {
                 </span>
               </div>
             </div>
-          </a>
+          </div>
 
           {/* Card 2: Business */}
-          <a 
-            href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden block"
+          <div 
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden jotform-popup-business"
+            data-jotform-id="YOUR_BUSINESS_FORM_ID"
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
@@ -251,7 +247,7 @@ export default function EnterpriseUsersPage() {
                 </span>
               </div>
             </div>
-          </a>
+          </div>
         </div>
       </main>
 

@@ -35,22 +35,18 @@ export default function AboutUsPage() {
                 >
                   Access CanHav Research →
                 </a>
-                <a 
-                  href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center block"
+                <button 
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full jotform-popup-research"
+                  data-jotform-id="YOUR_RESEARCH_FORM_ID"
                 >
                   Contact Us: Crypto Native Teams →
-                </a>
-                <a 
-                  href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center block"
+                </button>
+                <button 
+                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full jotform-popup-business"
+                  data-jotform-id="YOUR_BUSINESS_FORM_ID"
                 >
                   Contact Us: Small Businesses & Associations →
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -355,14 +351,12 @@ export default function AboutUsPage() {
                   <p className="text-blue-700 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
                   </p>
-                  <a 
-                    href="https://tally.so/r/YOUR_RESEARCH_FORM_ID"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                  <button 
+                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px] jotform-popup-research"
+                    data-jotform-id="YOUR_RESEARCH_FORM_ID"
                   >
                     Contact Us
-                  </a>
+                  </button>
                 </div>
 
                 {/* Businesses Card */}
@@ -374,14 +368,12 @@ export default function AboutUsPage() {
                   <p className="text-purple-700 mb-6 flex-grow text-center">
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
-                  <a 
-                    href="https://tally.so/r/YOUR_BUSINESS_FORM_ID"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                  <button 
+                    className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px] jotform-popup-business"
+                    data-jotform-id="YOUR_BUSINESS_FORM_ID"
                   >
                     Contact Us
-                  </a>
+                  </button>
                 </div>
               </div>
             </section>
