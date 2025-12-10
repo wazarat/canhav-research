@@ -153,7 +153,7 @@ export default function EnterpriseUsersPage() {
         {/* Option Cards */}
         <div className="grid md:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {/* Card 1: Builders */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group">
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 For Builders, Analysts, and Crypto-Native Teams
@@ -168,7 +168,7 @@ export default function EnterpriseUsersPage() {
               </p>
             </div>
 
-            <div className="mb-8">
+            <div className="mb-8 flex-grow">
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -191,20 +191,20 @@ export default function EnterpriseUsersPage() {
 
             <button
               onClick={() => handleFormOpen('builder')}
-              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg"
+              className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg mt-auto"
             >
               Explore Research Track →
             </button>
           </div>
 
           {/* Card 2: Business */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group">
+          <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 For Business Owners, Associations & Non-Technical Founders
               </h2>
               <h3 className="text-xl font-semibold text-purple-600 mb-4">
-                Run Your Business Like a Bigger Company—Without the Big Company Budget
+                Run Your Business Like a Bigger Company Without the Big Company Budget
               </h3>
               <p className="text-gray-600 leading-relaxed mb-6">
                 A blockchain-enabled coordination model for small businesses operating in silos—helping you 
@@ -212,7 +212,7 @@ export default function EnterpriseUsersPage() {
               </p>
             </div>
 
-            <div className="mb-8">
+            <div className="mb-8 flex-grow">
               <ul className="space-y-3">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -235,7 +235,7 @@ export default function EnterpriseUsersPage() {
 
             <button
               onClick={() => handleFormOpen('business')}
-              className="w-full px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg"
+              className="w-full px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 group-hover:shadow-lg mt-auto"
             >
               Explore Business Efficiency Track →
             </button>
