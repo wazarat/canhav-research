@@ -36,9 +36,14 @@ export default function AboutUsPage() {
                   Access CanHav Research →
                 </a>
                 <button 
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full jotform-popup-research"
-                  data-jotform-id="253432825628057"
-                  onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
+                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full"
+                  onClick={() => {
+                    window.open(
+                      'https://form.jotform.com/253432825628057',
+                      'jotform-popup',
+                      'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
+                    );
+                  }}
                 >
                   Contact Us: Crypto Native Teams →
                 </button>
@@ -353,9 +358,14 @@ export default function AboutUsPage() {
                     Product teams, founders, and operators building in Web3
                   </p>
                   <button 
-                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px] jotform-popup-research"
-                    data-jotform-id="253432825628057"
-                    onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
+                    className="inline-flex items-center px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                    onClick={() => {
+                      window.open(
+                        'https://form.jotform.com/253432825628057',
+                        'jotform-popup',
+                        'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
+                      );
+                    }}
                   >
                     Contact Us
                   </button>

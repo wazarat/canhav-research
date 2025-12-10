@@ -23,26 +23,9 @@ export default function Layout({ children }: LayoutProps) {
         <meta name="description" content="Making understanding and building with ethereum easier for founders, operators, and researchers" />
         <link rel="icon" href="/favicon.ico" />
         
-        {/* JotForm Popup Script */}
-        <script 
-          type="text/javascript" 
-          src="https://form.jotform.com/static/feedback2.js"
-        ></script>
-        <script type="text/javascript">
-          {`
-            window.JotFormFeedback = new JotFormFeedback({
-              formId: '253432825628057',
-              base: 'https://form.jotform.com/',
-              windowTitle: 'Contact CanHav - Research Track',
-              backgroundColor: '#1f2937',
-              fontColor: '#ffffff',
-              type: 'false',
-              height: 700,
-              width: 500,
-              openOnLoad: false
-            });
-          `}
-        </script>
+        {/* JotForm Scripts */}
+        <script type="text/javascript" src="https://cdn.jotfor.ms/static/prototype.forms.js?3.3.45397"></script>
+        <script type="text/javascript" src="https://cdn.jotfor.ms/static/jotform.forms.js?3.3.45397"></script>
       </Head>
 
       <header className="relative border-b border-gray-800/50 glass">

@@ -142,9 +142,14 @@ export default function EnterpriseUsersPage() {
         <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
           {/* Card 1: Builders */}
           <div 
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden jotform-popup-research"
-            data-jotform-id="253432825628057"
-            onClick={() => (window as any).JotFormFeedback && (window as any).JotFormFeedback.openFeedback({formId: '253432825628057'})}
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+            onClick={() => {
+              window.open(
+                'https://form.jotform.com/253432825628057',
+                'jotform-popup',
+                'width=700,height=800,scrollbars=yes,resizable=yes,menubar=no,toolbar=no,location=no,status=no'
+              );
+            }}
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
