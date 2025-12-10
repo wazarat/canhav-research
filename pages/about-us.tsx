@@ -18,6 +18,14 @@ export default function AboutUsPage() {
     setShowModal(true)
   }
 
+  const openBusinessForm = () => {
+    setModalConfig({
+      formId: '253432485605054',
+      title: 'Business Track - Small Businesses & Associations'
+    })
+    setShowModal(true)
+  }
+
   const closeModal = () => {
     setShowModal(false)
     setModalConfig(null)
@@ -62,8 +70,8 @@ export default function AboutUsPage() {
                   Contact Us: Crypto Native Teams →
                 </button>
                 <button 
-                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full jotform-popup-business"
-                  data-jotform-id="YOUR_BUSINESS_FORM_ID"
+                  className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-center w-full"
+                  onClick={openBusinessForm}
                 >
                   Contact Us: Small Businesses & Associations →
                 </button>
@@ -389,8 +397,8 @@ export default function AboutUsPage() {
                     Coordination, efficiency, and shared infrastructure exploration
                   </p>
                   <button 
-                    className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px] jotform-popup-business"
-                    data-jotform-id="YOUR_BUSINESS_FORM_ID"
+                    className="inline-flex items-center px-6 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-all duration-300 w-full justify-center min-h-[52px]"
+                    onClick={openBusinessForm}
                   >
                     Contact Us
                   </button>

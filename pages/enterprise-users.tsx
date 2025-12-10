@@ -19,6 +19,14 @@ export default function EnterpriseUsersPage() {
     setShowModal(true)
   }
 
+  const openBusinessForm = () => {
+    setModalConfig({
+      formId: '253432485605054',
+      title: 'Business Track - Small Businesses & Associations'
+    })
+    setShowModal(true)
+  }
+
   const closeModal = () => {
     setShowModal(false)
     setModalConfig(null)
@@ -216,8 +224,8 @@ export default function EnterpriseUsersPage() {
 
           {/* Card 2: Business */}
           <div 
-            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden jotform-popup-business"
-            data-jotform-id="YOUR_BUSINESS_FORM_ID"
+            className="bg-white rounded-xl p-6 shadow-md border border-gray-200 hover:shadow-2xl hover:scale-105 transition-all duration-500 group flex flex-col cursor-pointer relative overflow-hidden"
+            onClick={openBusinessForm}
           >
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-purple-100 opacity-30 group-hover:opacity-60 transition-opacity duration-500 rounded-xl"></div>
