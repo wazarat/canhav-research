@@ -402,7 +402,8 @@ export default function AboutUsPage() {
               
               <div className="grid md:grid-cols-3 gap-8">
                 {/* Research Access Card */}
-                <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                <div className="bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col"
+                     style={{background: 'linear-gradient(to bottom right, #dbeafe, #e9d5ff)'}}>
                   <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
                     Access CanHav Research
                   </h3>
@@ -420,7 +421,8 @@ export default function AboutUsPage() {
                 </div>
 
                 {/* Builders Card */}
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col"
+                     style={{background: 'linear-gradient(to bottom right, #eff6ff, #dbeafe)'}}>
                   <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
                     Ethereum & Blockchain Builders
                   </h3>
@@ -433,7 +435,8 @@ export default function AboutUsPage() {
                 </div>
 
                 {/* Businesses Card */}
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col">
+                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 shadow-lg border border-purple-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col"
+                     style={{background: 'linear-gradient(to bottom right, #faf5ff, #e9d5ff)'}}>
                   <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">
                     Small Businesses & Associations
                   </h3>
