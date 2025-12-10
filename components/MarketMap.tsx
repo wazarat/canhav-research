@@ -34,22 +34,27 @@ export default function MarketMap({}: MarketMapProps) {
     <div className="min-h-screen bg-white">
       {/* Header */}
       <div className="container mx-auto px-6 py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            Ethereum Market Map
-          </h1>
-          <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-            Explore the comprehensive ecosystem of Ethereum infrastructure, protocols, and applications
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-all duration-300"
+        <div className="mb-8">
+          <div className="text-center">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Ethereum Market Map
+            </h1>
+            <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
+              Explore the comprehensive ecosystem of Ethereum infrastructure, protocols, and applications
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-end items-center">
+            <a
+              href="https://research.canhav.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300"
             >
               Get Full Access
-            </button>
+            </a>
             <button
               onClick={() => setShowSubmitForm(true)}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-all duration-300"
+              className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300"
             >
               Submit a Company
             </button>
