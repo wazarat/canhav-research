@@ -155,7 +155,7 @@ export default function EnterpriseUsersPage() {
           {/* Card 1: Builders */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 For Builders, Analysts, and Crypto-Native Teams
               </h2>
               <h3 className="text-xl font-semibold text-blue-600 mb-4">
@@ -200,7 +200,7 @@ export default function EnterpriseUsersPage() {
           {/* Card 2: Business */}
           <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-all duration-300 group flex flex-col">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 For Business Owners, Associations & Non-Technical Founders
               </h2>
               <h3 className="text-xl font-semibold text-purple-600 mb-4">
