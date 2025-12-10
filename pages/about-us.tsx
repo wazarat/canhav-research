@@ -30,15 +30,15 @@ export default function AboutUsPage() {
                   href="https://research.canhav.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-semibold transition-all duration-300 text-center shadow-lg hover:shadow-xl transform hover:scale-105"
                 >
                   Access CanHav Research →
                 </a>
-                <button className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  Contact Us: Builders →
+                <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  Contact Us: Crypto Native Teams →
                 </button>
-                <button className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
-                  Contact Us: Businesses →
+                <button className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                  Contact Us: Small Businesses & Associations →
                 </button>
               </div>
             </div>
@@ -424,7 +424,7 @@ export default function AboutUsPage() {
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 shadow-lg border border-blue-200 hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex flex-col"
                      style={{background: 'linear-gradient(to bottom right, #eff6ff, #dbeafe)'}}>
                   <h3 className="text-xl font-bold text-blue-700 mb-4 text-center">
-                    Ethereum & Blockchain Builders
+                    Crypto Native Teams
                   </h3>
                   <p className="text-blue-700 mb-6 flex-grow text-center">
                     Product teams, founders, and operators building in Web3
