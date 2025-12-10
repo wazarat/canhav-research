@@ -1,28 +1,8 @@
 import Layout from '../components/Layout';
-import { useState } from 'react';
 import { useRouter } from 'next/router';
-import JotFormModal from '../components/JotFormModal';
 
 export default function Contact() {
   const router = useRouter();
-  const [showModal, setShowModal] = useState(false);
-  const [modalConfig, setModalConfig] = useState<{
-    formId: string;
-    title: string;
-  } | null>(null);
-
-  const openContactForm = () => {
-    setModalConfig({
-      formId: '253432798519065',
-      title: 'Contact CanHav Research'
-    });
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setModalConfig(null);
-  };
 
   return (
     <Layout>
@@ -56,23 +36,25 @@ export default function Contact() {
               <div className="glass rounded-xl p-8">
                 <h2 className="text-2xl font-semibold text-white mb-6">Send us a message</h2>
                 
-                <div className="space-y-6">
-                  <p className="text-gray-300">
-                    Ready to get started? Click the button below to open our contact form and tell us about your project or inquiry.
+                <div className="bg-white rounded-lg overflow-hidden">
+                  <iframe
+                    id="jotform-contact"
+                    src="https://form.jotform.com/253432798519065"
+                    frameBorder="0"
+                    style={{
+                      width: '100%',
+                      height: '600px',
+                      border: 'none'
+                    }}
+                    scrolling="yes"
+                    title="Contact CanHav Research"
+                  />
+                </div>
+                
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-gray-400">
+                    Secure form powered by JotForm
                   </p>
-                  
-                  <button
-                    onClick={openContactForm}
-                    className="w-full px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-medium transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-                  >
-                    Open Contact Form
-                  </button>
-                  
-                  <div className="text-center">
-                    <p className="text-sm text-gray-400">
-                      Form opens in a popup - you won't leave this page
-                    </p>
-                  </div>
                 </div>
               </div>
 
@@ -126,16 +108,6 @@ export default function Contact() {
           </div>
         </div>
       </div>
-
-      {/* JotForm Modal */}
-      {modalConfig && (
-        <JotFormModal
-          isOpen={showModal}
-          onClose={closeModal}
-          formId={modalConfig.formId}
-          title={modalConfig.title}
-        />
-      )}
     </Layout>
   );
 }
