@@ -1,18 +1,83 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { companiesData, getAllSectors, getCompaniesBySector, Company } from '../lib/companiesData'
 import JotFormModal from './JotFormModal'
+import CompanyDetailModal from './CompanyDetailModal'
 
 interface MarketMapProps {
   // We'll use the companies data directly instead of grouped data
 }
 
+type ViewMode = 'grid' | 'grouped'
+type SortOption = 'name' | 'year' | 'sector'
+
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
   const [selectedSector, setSelectedSector] = useState<string | null>(null)
+  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  const [sortBy, setSortBy] = useState<SortOption>('name')
+  const [selectedTags, setSelectedTags] = useState<string[]>([])
   
   const sectors = getAllSectors()
+  
+  // Extract all unique tags from companies
+  const allTags = useMemo(() => {
+    const tags = new Set<string>()
+    companiesData.forEach(company => {
+      company.tags?.forEach(tag => tags.add(tag))
+    })
+    return Array.from(tags).sort()
+  }, [])
+  
+  // Filter and sort companies
+  const filteredCompanies = useMemo(() => {
+    let filtered = companiesData.filter(company => {
+      const matchesSector = selectedSector === null || company.sector === selectedSector
+      const matchesSearch = searchQuery === '' || 
+        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        company.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        company.subsector.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesTags = selectedTags.length === 0 || 
+        selectedTags.some(tag => company.tags?.includes(tag))
+      
+      return matchesSector && matchesSearch && matchesTags
+    })
+    
+    // Sort companies
+    filtered.sort((a, b) => {
+      if (sortBy === 'name') {
+        return a.name.localeCompare(b.name)
+      } else if (sortBy === 'year') {
+        return (b.yearFounded || 0) - (a.yearFounded || 0)
+      } else if (sortBy === 'sector') {
+        return a.sector.localeCompare(b.sector) || a.subsector.localeCompare(b.subsector)
+      }
+      return 0
+    })
+    
+    return filtered
+  }, [selectedSector, searchQuery, selectedTags, sortBy])
+  
+  // Group companies by sector for grouped view
+  const groupedCompanies = useMemo(() => {
+    const groups: { [key: string]: Company[] } = {}
+    filteredCompanies.forEach(company => {
+      if (!groups[company.sector]) {
+        groups[company.sector] = []
+      }
+      groups[company.sector].push(company)
+    })
+    return groups
+  }, [filteredCompanies])
+  
+  const toggleTag = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    )
+  }
   
   const sectorColors = [
     { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500' },
@@ -47,13 +112,13 @@ export default function MarketMap({}: MarketMapProps) {
                 href="https://research.canhav.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300"
+                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Get Full Access
               </a>
               <button
                 onClick={() => setShowSubmitForm(true)}
-                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300"
+                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Submit a Company
               </button>
@@ -67,84 +132,254 @@ export default function MarketMap({}: MarketMapProps) {
             </p>
           </div>
         </div>
-
-        {/* Sector Filter Tabs */}
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          <button
-            onClick={() => setSelectedSector(null)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-              selectedSector === null
-                ? 'bg-gray-900 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            All
-          </button>
-          {sectors.map((sector) => {
-            const colorScheme = getSectorColor(sector)
-            return (
+        
+        {/* Search and Controls */}
+        <div className="mb-6 space-y-4">
+          {/* Search Bar */}
+          <div className="relative max-w-2xl mx-auto">
+            <input
+              type="text"
+              placeholder="Search companies, descriptions, or subsectors..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-5 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+            />
+            <svg className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            {searchQuery && (
               <button
-                key={sector}
-                onClick={() => setSelectedSector(selectedSector === sector ? null : sector)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                  selectedSector === sector
-                    ? `${colorScheme.bg} ${colorScheme.text}`
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600"
               >
-                {sector}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
-            )
-          })}
+            )}
+          </div>
+          
+          {/* View Mode and Sort Controls */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700">View:</span>
+              <div className="flex bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                    viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Grid
+                </button>
+                <button
+                  onClick={() => setViewMode('grouped')}
+                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
+                    viewMode === 'grouped' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  Grouped
+                </button>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-sm font-medium text-gray-700">Sort by:</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as SortOption)}
+                className="px-4 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="name">Name</option>
+                <option value="year">Year Founded</option>
+                <option value="sector">Sector</option>
+              </select>
+            </div>
+            
+            <div className="text-sm text-gray-600">
+              <span className="font-semibold text-gray-900">{filteredCompanies.length}</span> companies
+            </div>
+          </div>
         </div>
 
-        {/* Companies Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-4">
-          {companiesData
-            .filter(company => selectedSector === null || company.sector === selectedSector)
-            .map((company, index) => {
+        {/* Sector Filter Tabs */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter by Sector:</h3>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedSector(null)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                selectedSector === null
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              All Sectors
+            </button>
+            {sectors.map((sector) => {
+              const colorScheme = getSectorColor(sector)
+              const count = companiesData.filter(c => c.sector === sector).length
+              return (
+                <button
+                  key={sector}
+                  onClick={() => setSelectedSector(selectedSector === sector ? null : sector)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    selectedSector === sector
+                      ? `${colorScheme.bg} ${colorScheme.text} shadow-md`
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {sector} <span className="ml-1 text-xs opacity-75">({count})</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+        
+        {/* Tag Filter */}
+        {allTags.length > 0 && (
+          <div className="mb-8">
+            <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter by Tags:</h3>
+            <div className="flex flex-wrap gap-2">
+              {allTags.slice(0, 15).map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
+                    selectedTags.includes(tag)
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+              {selectedTags.length > 0 && (
+                <button
+                  onClick={() => setSelectedTags([])}
+                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-200"
+                >
+                  Clear Tags
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Companies Display */}
+        {viewMode === 'grid' ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            {filteredCompanies.map((company, index) => {
               const colorScheme = getSectorColor(company.sector)
               return (
                 <div
                   key={`${company.name}-${index}`}
-                  className="group relative"
+                  className="group relative cursor-pointer"
+                  onClick={() => setSelectedCompany(company)}
                 >
-                  <div className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-all duration-300 hover:border-gray-300 h-full flex flex-col items-center text-center">
+                  <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-xl transition-all duration-300 hover:border-blue-300 hover:-translate-y-1 h-full flex flex-col">
                     {/* Company Name */}
-                    <h3 className="text-sm font-semibold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {company.name}
                     </h3>
                     
-                    {/* Sector Indicator */}
-                    <div className="flex items-center justify-center mt-auto">
-                      <div className={`w-2 h-2 rounded-full ${colorScheme.dot} mr-2`}></div>
-                      <span className="text-xs text-gray-500 truncate">
-                        {company.subsector}
-                      </span>
-                    </div>
-                    
-                    {/* Website Link */}
-                    {company.website && (
-                      <a
-                        href={company.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute inset-0 z-10"
-                        aria-label={`Visit ${company.name} website`}
-                      />
+                    {/* Description */}
+                    {company.description && (
+                      <p className="text-xs text-gray-600 mb-3 line-clamp-2 flex-grow">
+                        {company.description}
+                      </p>
                     )}
-                  </div>
-                  
-                  {/* Hover Tooltip */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
-                    <div className="font-semibold">{company.name}</div>
-                    <div className="text-gray-300">{company.sector}</div>
-                    <div className="text-gray-400">{company.subsector}</div>
+                    
+                    {/* Metadata */}
+                    <div className="space-y-2 mt-auto">
+                      {company.yearFounded && (
+                        <div className="text-xs text-gray-500">
+                          Founded: {company.yearFounded}
+                        </div>
+                      )}
+                      
+                      {/* Sector Indicator */}
+                      <div className="flex items-center">
+                        <div className={`w-2 h-2 rounded-full ${colorScheme.dot} mr-2 flex-shrink-0`}></div>
+                        <span className="text-xs text-gray-600 truncate">
+                          {company.subsector}
+                        </span>
+                      </div>
+                      
+                      {/* Tags Preview */}
+                      {company.tags && company.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {company.tags.slice(0, 2).map((tag, i) => (
+                            <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                              {tag}
+                            </span>
+                          ))}
+                          {company.tags.length > 2 && (
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
+                              +{company.tags.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )
             })}
-        </div>
+          </div>
+        ) : (
+          <div className="space-y-8">
+            {Object.entries(groupedCompanies).map(([sector, companies]) => {
+              const colorScheme = getSectorColor(sector)
+              return (
+                <div key={sector} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                  <div className="flex items-center mb-4">
+                    <div className={`w-1 h-8 ${colorScheme.bg} rounded-full mr-3`}></div>
+                    <h2 className="text-xl font-bold text-gray-900">{sector}</h2>
+                    <span className="ml-3 text-sm text-gray-500">({companies.length})</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+                    {companies.map((company, index) => (
+                      <div
+                        key={`${company.name}-${index}`}
+                        onClick={() => setSelectedCompany(company)}
+                        className="cursor-pointer bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-3 transition-all duration-200 hover:shadow-md"
+                      >
+                        <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
+                          {company.name}
+                        </h3>
+                        <p className="text-xs text-gray-600 line-clamp-1">
+                          {company.subsector}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+        
+        {/* Empty State */}
+        {filteredCompanies.length === 0 && (
+          <div className="text-center py-16">
+            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">No companies found</h3>
+            <p className="mt-2 text-sm text-gray-500">Try adjusting your search or filters</p>
+            <button
+              onClick={() => {
+                setSearchQuery('')
+                setSelectedSector(null)
+                setSelectedTags([])
+              }}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
 
         {/* Stats Section */}
         <div className="mt-16 text-center">
@@ -186,6 +421,13 @@ export default function MarketMap({}: MarketMapProps) {
           title="Submit a Company"
         />
       )}
+      
+      {/* Company Detail Modal */}
+      <CompanyDetailModal
+        company={selectedCompany}
+        isOpen={selectedCompany !== null}
+        onClose={() => setSelectedCompany(null)}
+      />
     </div>
   )
 }

@@ -6,22 +6,27 @@ export interface Company {
   website?: string
   description?: string
   logo?: string
+  tags?: string[]
+  yearFounded?: number
+  fundingStage?: 'Seed' | 'Series A' | 'Series B' | 'Series C+' | 'Public' | 'Protocol'
+  teamSize?: string
+  headquarters?: string
 }
 
 export const companiesData: Company[] = [
   // Core Protocol Architecture - Consensus Layer
-  { name: "Beacon Chain", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://ethereum.org" },
-  { name: "Prysm", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://prysmaticlabs.com" },
-  { name: "Lighthouse", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://lighthouse.sigmaprime.io" },
-  { name: "Teku", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://consensys.net/knowledge-base/ethereum-2/teku" },
-  { name: "Nimbus", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://nimbus.team" },
+  { name: "Beacon Chain", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://ethereum.org", description: "Ethereum's proof-of-stake consensus mechanism", tags: ["PoS", "Consensus", "Core"], fundingStage: "Protocol", yearFounded: 2020 },
+  { name: "Prysm", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://prysmaticlabs.com", description: "Go implementation of Ethereum consensus client", tags: ["Client", "Go", "Validator"], fundingStage: "Protocol", yearFounded: 2019 },
+  { name: "Lighthouse", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://lighthouse.sigmaprime.io", description: "Rust-based Ethereum consensus client", tags: ["Client", "Rust", "Performance"], fundingStage: "Protocol", yearFounded: 2019 },
+  { name: "Teku", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://consensys.net/knowledge-base/ethereum-2/teku", description: "Enterprise-grade Java consensus client", tags: ["Client", "Java", "Enterprise"], fundingStage: "Protocol", yearFounded: 2019 },
+  { name: "Nimbus", sector: "Core Protocol Architecture", subsector: "Consensus Layer", website: "https://nimbus.team", description: "Lightweight consensus client for resource-constrained devices", tags: ["Client", "Lightweight", "Mobile"], fundingStage: "Protocol", yearFounded: 2018 },
 
   // Core Protocol Architecture - Execution Layer
-  { name: "Geth", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://geth.ethereum.org" },
-  { name: "Nethermind", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://nethermind.io" },
-  { name: "Erigon", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://github.com/ledgerwatch/erigon" },
-  { name: "Besu", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://besu.hyperledger.org" },
-  { name: "Reth", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://github.com/paradigmxyz/reth" },
+  { name: "Geth", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://geth.ethereum.org", description: "Official Go implementation of Ethereum execution client", tags: ["Client", "Go", "EVM"], fundingStage: "Protocol", yearFounded: 2014 },
+  { name: "Nethermind", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://nethermind.io", description: ".NET-based high-performance execution client", tags: ["Client", ".NET", "Performance"], fundingStage: "Series A", yearFounded: 2017 },
+  { name: "Erigon", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://github.com/ledgerwatch/erigon", description: "Efficiency-focused Ethereum implementation", tags: ["Client", "Go", "Efficiency"], fundingStage: "Protocol", yearFounded: 2019 },
+  { name: "Besu", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://besu.hyperledger.org", description: "Enterprise Java execution client by Hyperledger", tags: ["Client", "Java", "Enterprise"], fundingStage: "Protocol", yearFounded: 2018 },
+  { name: "Reth", sector: "Core Protocol Architecture", subsector: "Execution Layer", website: "https://github.com/paradigmxyz/reth", description: "Paradigm's Rust execution client", tags: ["Client", "Rust", "Modular"], fundingStage: "Protocol", yearFounded: 2022 },
 
   // Core Protocol Architecture - Validators & Staking Providers
   { name: "Lido", sector: "Core Protocol Architecture", subsector: "Validators & Staking Providers", website: "https://lido.fi" },
