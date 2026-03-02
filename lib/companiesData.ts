@@ -8,342 +8,342 @@ export interface Company {
 export const companiesData: Company[] = [
   {
     "name": "Aave",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Compound",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "MakerDAO",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Spark Protocol (SparkLend)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Morpho (Morpho Blue)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Euler",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Silo Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Goldfinch",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Maple Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "TrueFi",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Centrifuge (Tinlake / RWA pools)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Clearpool",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "BendDAO",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Arcade",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Liquity (V1)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Iron Bank (IB)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Reflexer (RAI)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Lending Markets"
   },
   {
     "name": "Uniswap",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "SushiSwap",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Balancer",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Curve Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Maverick Protocol",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "dYdX (v3 on Ethereum)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "0x Protocol",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Cow Protocol",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Kyber Network",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Bancor",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Shell Protocol",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "DEX & Liquidity Pools"
   },
   {
     "name": "Yearn Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Beefy Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Harvest Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Pendle",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Element Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Notional Finance (fixed-rate / fCash markets)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Ribbon Finance (Theta Vaults; legacy DOVs)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "BarnBridge (SMART Yield)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Idle Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Sommelier",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Enzyme",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Ether.fi Cash",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Swell (Yield Vault Products)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Yield & Structured Markets"
   },
   {
     "name": "Lido",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Rocket Pool",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Coinbase",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Frax Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "StakeWise",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Swell",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Ether.fi",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "Ankr",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Liquid Staking Tokens"
   },
   {
     "name": "EigenLayer",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "Symbiotic",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "EigenDA",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "AltLayer",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "Ether.fi (restaking layer)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "Puffer Finance",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "Renzo",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "Kelp DAO",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Restaking Systems"
   },
   {
     "name": "dYdX (v3 on Ethereum)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "GMX",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Perpetual Protocol",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Synthetix (Perps)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Opyn",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Lyra",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Hegic",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Synthetix (Synths)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "UMA",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Notional Finance (derivatives view)",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
     "name": "Voltz",
-    "sector": "DeFi Systems & Architecture",
+    "sector": "DeFi Systems Architecture",
     "subsector": "Synthetic & Derivatives"
   },
   {
@@ -1462,9 +1462,9 @@ export const companiesData: Company[] = [
     "subsector": "Enterprise Blockchain Adoption"
   },
   {
-    "name": "\"BlockApps (STRATO",
-    "sector": "Ethereum-anchored)\"",
-    "subsector": "Governance & Enterprise Framework"
+    "name": "BlockApps (STRATO, Ethereum-anchored)",
+    "sector": "Governance & Enterprise Framework",
+    "subsector": "Enterprise Blockchain Adoption"
   },
   {
     "name": "R3 (Ethereum interop only)",
@@ -2287,9 +2287,9 @@ export const companiesData: Company[] = [
     "subsector": "L3 & Appchain Frameworks"
   },
   {
-    "name": "\"OP Stack (already used",
-    "sector": "but also belongs here contextually)\"",
-    "subsector": "Rollup & Scaling Frameworks"
+    "name": "OP Stack (already used, but also belongs here contextually)",
+    "sector": "Rollup & Scaling Frameworks",
+    "subsector": "L3 & Appchain Frameworks"
   },
   {
     "name": "ZK Stack",
@@ -2315,36 +2315,6 @@ export const companiesData: Company[] = [
     "name": "Conduit",
     "sector": "Rollup & Scaling Frameworks",
     "subsector": "L3 & Appchain Frameworks"
-  },
-  {
-    "name": "(Validium + ZK Rollup modes; application-specific)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
-  },
-  {
-    "name": "(Rollup vs Validium selectable at deployment)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
-  },
-  {
-    "name": "(Supports zkEVM rollups + validium-style chains)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
-  },
-  {
-    "name": "(Implements Volition-style DA choice in practice)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
-  },
-  {
-    "name": "(Production NFT validium using StarkEx)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
-  },
-  {
-    "name": "(Ethereum / StarkEx era) (High-performance validium design; DA committee model)\"",
-    "sector": "Rollup & Scaling Frameworks",
-    "subsector": "\"Validiums"
   },
   {
     "name": "Tether",
@@ -2602,9 +2572,9 @@ export const companiesData: Company[] = [
     "subsector": "Institutional Payment Rails"
   },
   {
-    "name": "\"PayPal (Enterprise Crypto Settlement",
-    "sector": "PYUSD)\"",
-    "subsector": "Monetary & Access Rails"
+    "name": "PayPal (Enterprise Crypto Settlement, PYUSD)",
+    "sector": "Monetary & Access Rails",
+    "subsector": "Institutional Payment Rails"
   },
   {
     "name": "Airwallex (Stablecoin Settlement Pilots)",
@@ -2617,9 +2587,9 @@ export const companiesData: Company[] = [
     "subsector": "Institutional Payment Rails"
   },
   {
-    "name": "\"Bank for International Settlements (Project Agorá",
-    "sector": "Project Mariana)\"",
-    "subsector": "Monetary & Access Rails"
+    "name": "Bank for International Settlements (Project Agorá, Project Mariana)",
+    "sector": "Monetary & Access Rails",
+    "subsector": "Institutional Payment Rails"
   },
   {
     "name": "Bitso",

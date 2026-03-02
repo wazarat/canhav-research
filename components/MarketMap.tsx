@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, Fragment } from 'react'
+import { useState, useMemo } from 'react'
 import { companiesData, Company } from '../lib/companiesData'
 import JotFormModal from './JotFormModal'
 
@@ -71,21 +71,18 @@ export default function MarketMap({}: MarketMapProps) {
     )
   }
   
-  const sectorColors = [
-    { bg: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-200', dot: 'bg-blue-500' },
-    { bg: 'bg-purple-100', text: 'text-purple-800', border: 'border-purple-200', dot: 'bg-purple-500' },
-    { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-200', dot: 'bg-green-500' },
-    { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200', dot: 'bg-orange-500' },
-    { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-200', dot: 'bg-red-500' },
-    { bg: 'bg-indigo-100', text: 'text-indigo-800', border: 'border-indigo-200', dot: 'bg-indigo-500' },
-    { bg: 'bg-pink-100', text: 'text-pink-800', border: 'border-pink-200', dot: 'bg-pink-500' },
-    { bg: 'bg-teal-100', text: 'text-teal-800', border: 'border-teal-200', dot: 'bg-teal-500' }
-  ]
-
-  const getSectorColor = (sector: string) => {
-    const index = sectors.indexOf(sector)
-    return sectorColors[index % sectorColors.length]
+  const SECTOR_COLOR_MAP: Record<string, { bg: string; text: string; border: string; dot: string }> = {
+    'Core Protocol Architecture':       { bg: 'bg-blue-100',   text: 'text-blue-800',   border: 'border-blue-200',   dot: 'bg-blue-500' },
+    'Rollup & Scaling Frameworks':      { bg: 'bg-violet-100', text: 'text-violet-800', border: 'border-violet-200', dot: 'bg-violet-500' },
+    'Monetary & Access Rails':          { bg: 'bg-emerald-100',text: 'text-emerald-800',border: 'border-emerald-200',dot: 'bg-emerald-500' },
+    'DeFi Systems Architecture':        { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200', dot: 'bg-orange-500' },
+    'Data & Consensus Infrastructure':  { bg: 'bg-cyan-100',   text: 'text-cyan-800',   border: 'border-cyan-200',   dot: 'bg-cyan-500' },
+    'Advanced Compute & Integration':   { bg: 'bg-pink-100',   text: 'text-pink-800',   border: 'border-pink-200',   dot: 'bg-pink-500' },
+    'Governance & Enterprise Framework':{ bg: 'bg-amber-100',  text: 'text-amber-800',  border: 'border-amber-200',  dot: 'bg-amber-500' },
   }
+  const FALLBACK_COLOR = { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200', dot: 'bg-gray-400' }
+
+  const getSectorColor = (sector: string) => SECTOR_COLOR_MAP[sector] ?? FALLBACK_COLOR
 
   return (
     <div className="min-h-screen bg-white">
@@ -257,57 +254,55 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
         )}
 
+        {/* CTA Banner — always shown above the company grid */}
+        {viewMode === 'grid' && (
+          <div className="mb-4">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 md:px-10 md:py-10 shadow-xl">
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+              <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="max-w-2xl">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-2">Full Intelligence Platform</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-snug">
+                    Detailed profiles, funding data, sector analysis &amp; system design context
+                  </h3>
+                  <p className="text-blue-100 text-sm md:text-base">
+                    Built for practitioners and researchers navigating Ethereum infrastructure.
+                  </p>
+                </div>
+                <a
+                  href="https://research.canhav.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base"
+                >
+                  Get Full Access
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Companies Display */}
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
             {filteredCompanies.map((company, index) => {
               const colorScheme = getSectorColor(company.sector)
               return (
-                <Fragment key={`${company.name}-${index}`}>
-                  {/* CTA Banner injected after first 12 companies (≈2 rows) */}
-                  {index === 12 && (
-                    <div
-                      className="col-span-full my-2"
-                    >
-                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 md:px-10 md:py-10 shadow-xl">
-                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-                        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                          <div className="max-w-2xl">
-                            <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-2">Full Intelligence Platform</p>
-                            <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-snug">
-                              Detailed profiles, funding data, sector analysis &amp; system design context
-                            </h3>
-                            <p className="text-blue-100 text-sm md:text-base">
-                              Built for practitioners and researchers navigating Ethereum infrastructure.
-                            </p>
-                          </div>
-                          <a
-                            href="https://research.canhav.com"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-shrink-0 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base"
-                          >
-                            Get Full Access
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div
-                    className="group cursor-pointer"
-                    onClick={() => setShowAccessPrompt(true)}
-                  >
-                    <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
-                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
-                      <span className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors truncate leading-tight">
-                        {company.name}
-                      </span>
-                    </div>
+                <div
+                  key={`${company.name}-${index}`}
+                  className="group cursor-pointer"
+                  onClick={() => setShowAccessPrompt(true)}
+                >
+                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
+                    <span className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors truncate leading-tight">
+                      {company.name}
+                    </span>
                   </div>
-                </Fragment>
+                </div>
               )
             })}
           </div>
