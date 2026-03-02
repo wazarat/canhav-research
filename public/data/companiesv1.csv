@@ -1,0 +1,552 @@
+Entity,Sector ,Subsector
+Aave,DeFi Systems & Architecture,Lending Markets
+Compound,DeFi Systems & Architecture,Lending Markets
+MakerDAO,DeFi Systems & Architecture,Lending Markets
+Spark Protocol (SparkLend),DeFi Systems & Architecture,Lending Markets
+Morpho (Morpho Blue),DeFi Systems & Architecture,Lending Markets
+Euler,DeFi Systems & Architecture,Lending Markets
+Silo Finance,DeFi Systems & Architecture,Lending Markets
+Goldfinch,DeFi Systems & Architecture,Lending Markets
+Maple Finance,DeFi Systems & Architecture,Lending Markets
+TrueFi,DeFi Systems & Architecture,Lending Markets
+Centrifuge (Tinlake / RWA pools),DeFi Systems & Architecture,Lending Markets
+Clearpool,DeFi Systems & Architecture,Lending Markets
+BendDAO,DeFi Systems & Architecture,Lending Markets
+Arcade,DeFi Systems & Architecture,Lending Markets
+Liquity (V1),DeFi Systems & Architecture,Lending Markets
+Iron Bank (IB),DeFi Systems & Architecture,Lending Markets
+Reflexer (RAI),DeFi Systems & Architecture,Lending Markets
+Uniswap,DeFi Systems & Architecture,DEX & Liquidity Pools
+SushiSwap,DeFi Systems & Architecture,DEX & Liquidity Pools
+Balancer,DeFi Systems & Architecture,DEX & Liquidity Pools
+Curve Finance,DeFi Systems & Architecture,DEX & Liquidity Pools
+Maverick Protocol,DeFi Systems & Architecture,DEX & Liquidity Pools
+dYdX (v3 on Ethereum),DeFi Systems & Architecture,DEX & Liquidity Pools
+0x Protocol,DeFi Systems & Architecture,DEX & Liquidity Pools
+Cow Protocol,DeFi Systems & Architecture,DEX & Liquidity Pools
+Kyber Network,DeFi Systems & Architecture,DEX & Liquidity Pools
+Bancor,DeFi Systems & Architecture,DEX & Liquidity Pools
+Shell Protocol,DeFi Systems & Architecture,DEX & Liquidity Pools
+Yearn Finance,DeFi Systems & Architecture,Yield & Structured Markets
+Beefy Finance,DeFi Systems & Architecture,Yield & Structured Markets
+Harvest Finance,DeFi Systems & Architecture,Yield & Structured Markets
+Pendle,DeFi Systems & Architecture,Yield & Structured Markets
+Element Finance,DeFi Systems & Architecture,Yield & Structured Markets
+Notional Finance (fixed-rate / fCash markets),DeFi Systems & Architecture,Yield & Structured Markets
+Ribbon Finance (Theta Vaults; legacy DOVs),DeFi Systems & Architecture,Yield & Structured Markets
+BarnBridge (SMART Yield),DeFi Systems & Architecture,Yield & Structured Markets
+Idle Finance,DeFi Systems & Architecture,Yield & Structured Markets
+Sommelier,DeFi Systems & Architecture,Yield & Structured Markets
+Enzyme,DeFi Systems & Architecture,Yield & Structured Markets
+Ether.fi Cash,DeFi Systems & Architecture,Yield & Structured Markets
+Swell (Yield Vault Products),DeFi Systems & Architecture,Yield & Structured Markets
+Lido,DeFi Systems & Architecture,Liquid Staking Tokens
+Rocket Pool,DeFi Systems & Architecture,Liquid Staking Tokens
+Coinbase,DeFi Systems & Architecture,Liquid Staking Tokens
+Frax Finance,DeFi Systems & Architecture,Liquid Staking Tokens
+StakeWise,DeFi Systems & Architecture,Liquid Staking Tokens
+Swell,DeFi Systems & Architecture,Liquid Staking Tokens
+Ether.fi,DeFi Systems & Architecture,Liquid Staking Tokens
+Ankr,DeFi Systems & Architecture,Liquid Staking Tokens
+EigenLayer,DeFi Systems & Architecture,Restaking Systems
+Symbiotic,DeFi Systems & Architecture,Restaking Systems
+EigenDA,DeFi Systems & Architecture,Restaking Systems
+AltLayer,DeFi Systems & Architecture,Restaking Systems
+Ether.fi (restaking layer),DeFi Systems & Architecture,Restaking Systems
+Puffer Finance,DeFi Systems & Architecture,Restaking Systems
+Renzo,DeFi Systems & Architecture,Restaking Systems
+Kelp DAO,DeFi Systems & Architecture,Restaking Systems
+dYdX (v3 on Ethereum),DeFi Systems & Architecture,Synthetic & Derivatives
+GMX,DeFi Systems & Architecture,Synthetic & Derivatives
+Perpetual Protocol,DeFi Systems & Architecture,Synthetic & Derivatives
+Synthetix (Perps),DeFi Systems & Architecture,Synthetic & Derivatives
+Opyn,DeFi Systems & Architecture,Synthetic & Derivatives
+Lyra,DeFi Systems & Architecture,Synthetic & Derivatives
+Hegic,DeFi Systems & Architecture,Synthetic & Derivatives
+Synthetix (Synths),DeFi Systems & Architecture,Synthetic & Derivatives
+UMA,DeFi Systems & Architecture,Synthetic & Derivatives
+Notional Finance (derivatives view),DeFi Systems & Architecture,Synthetic & Derivatives
+Voltz,DeFi Systems & Architecture,Synthetic & Derivatives
+Infura,Data & Consensus Infrastructure,RPC & Node Providers
+Alchemy,Data & Consensus Infrastructure,RPC & Node Providers
+QuickNode,Data & Consensus Infrastructure,RPC & Node Providers
+Ankr,Data & Consensus Infrastructure,RPC & Node Providers
+Chainstack,Data & Consensus Infrastructure,RPC & Node Providers
+GetBlock,Data & Consensus Infrastructure,RPC & Node Providers
+Blockdaemon,Data & Consensus Infrastructure,RPC & Node Providers
+Tenderly,Data & Consensus Infrastructure,RPC & Node Providers
+Moralis,Data & Consensus Infrastructure,RPC & Node Providers
+Thirdweb,Data & Consensus Infrastructure,RPC & Node Providers
+Hardhat,Data & Consensus Infrastructure,RPC & Node Providers
+Foundry,Data & Consensus Infrastructure,RPC & Node Providers
+Pocket Network,Data & Consensus Infrastructure,RPC & Node Providers
+dRPC,Data & Consensus Infrastructure,RPC & Node Providers
+Chainbase,Data & Consensus Infrastructure,RPC & Node Providers
+Lava Network,Data & Consensus Infrastructure,RPC & Node Providers
+Coinbase Cloud,Data & Consensus Infrastructure,RPC & Node Providers
+Google Cloud Web3,Data & Consensus Infrastructure,RPC & Node Providers
+AWS Managed Blockchain,Data & Consensus Infrastructure,RPC & Node Providers
+Microsoft Azure Blockchain,Data & Consensus Infrastructure,RPC & Node Providers
+Figment,Data & Consensus Infrastructure,RPC & Node Providers
+Chainlink,Data & Consensus Infrastructure,RPC & Node Providers
+Pyth Network,Data & Consensus Infrastructure,RPC & Node Providers
+RedStone,Data & Consensus Infrastructure,RPC & Node Providers
+API3,Data & Consensus Infrastructure,RPC & Node Providers
+Tellor,Data & Consensus Infrastructure,RPC & Node Providers
+UMA,Data & Consensus Infrastructure,RPC & Node Providers
+Witnet,Data & Consensus Infrastructure,RPC & Node Providers
+Reality.eth,Data & Consensus Infrastructure,RPC & Node Providers
+Chainlink CCIP,Data & Consensus Infrastructure,RPC & Node Providers
+LayerZero,Data & Consensus Infrastructure,RPC & Node Providers
+Axelar,Data & Consensus Infrastructure,RPC & Node Providers
+Wormhole,Data & Consensus Infrastructure,RPC & Node Providers
+Chainlink Functions,Data & Consensus Infrastructure,RPC & Node Providers
+Gelato,Data & Consensus Infrastructure,RPC & Node Providers
+Civic,Data & Consensus Infrastructure,RPC & Node Providers
+Provable (formerly Oraclize),Data & Consensus Infrastructure,RPC & Node Providers
+UMA KPI Options,Data & Consensus Infrastructure,RPC & Node Providers
+Supra,Data & Consensus Infrastructure,RPC & Node Providers
+Marlin,Data & Consensus Infrastructure,RPC & Node Providers
+Celestia,Data & Consensus Infrastructure,Data Availability Systems
+Ethereum Blobs (EIP-4844),Data & Consensus Infrastructure,Data Availability Systems
+Ethereum Calldata,Data & Consensus Infrastructure,Data Availability Systems
+StarkEx,Data & Consensus Infrastructure,Data Availability Systems
+EigenDA,Data & Consensus Infrastructure,Data Availability Systems
+Avail,Data & Consensus Infrastructure,Data Availability Systems
+NEAR DA,Data & Consensus Infrastructure,Data Availability Systems
+Polygon CDK Validium,Data & Consensus Infrastructure,Data Availability Systems
+zkSync Validium,Data & Consensus Infrastructure,Data Availability Systems
+Immutable X,Data & Consensus Infrastructure,Data Availability Systems
+Celestia DAS,Data & Consensus Infrastructure,Data Availability Systems
+Avail DAS,Data & Consensus Infrastructure,Data Availability Systems
+LazyLedger,Data & Consensus Infrastructure,Data Availability Systems
+zkSync Era,Data & Consensus Infrastructure,Data Availability Systems
+Polygon zkEVM Volition,Data & Consensus Infrastructure,Data Availability Systems
+Arbitrum AnyTrust,Data & Consensus Infrastructure,Data Availability Systems
+The Graph,Data & Consensus Infrastructure,Indexing & Query Engines
+Goldsky,Data & Consensus Infrastructure,Indexing & Query Engines
+Subsquid,Data & Consensus Infrastructure,Indexing & Query Engines
+Alchemy (Data APIs),Data & Consensus Infrastructure,Indexing & Query Engines
+Moralis,Data & Consensus Infrastructure,Indexing & Query Engines
+QuickNode (Data APIs),Data & Consensus Infrastructure,Indexing & Query Engines
+Chainbase,Data & Consensus Infrastructure,Indexing & Query Engines
+Dune,Data & Consensus Infrastructure,Indexing & Query Engines
+Flipside,Data & Consensus Infrastructure,Indexing & Query Engines
+Allium,Data & Consensus Infrastructure,Indexing & Query Engines
+Covalent,Data & Consensus Infrastructure,Indexing & Query Engines
+Blocknative (conditional),Data & Consensus Infrastructure,Indexing & Query Engines
+TrueBlocks,Data & Consensus Infrastructure,Indexing & Query Engines
+Ethereum ETL,Data & Consensus Infrastructure,Indexing & Query Engines
+Satsuma,Data & Consensus Infrastructure,Indexing & Query Engines
+Bitquery,Data & Consensus Infrastructure,Indexing & Query Engines
+Glassnode,Data & Consensus Infrastructure,Analytics & Intelligence
+CryptoQuant,Data & Consensus Infrastructure,Analytics & Intelligence
+Santiment,Data & Consensus Infrastructure,Analytics & Intelligence
+Token Terminal,Data & Consensus Infrastructure,Analytics & Intelligence
+Gauntlet,Data & Consensus Infrastructure,Analytics & Intelligence
+Chaos Labs,Data & Consensus Infrastructure,Analytics & Intelligence
+Credora,Data & Consensus Infrastructure,Analytics & Intelligence
+Block Analitica,Data & Consensus Infrastructure,Analytics & Intelligence
+Nansen,Data & Consensus Infrastructure,Analytics & Intelligence
+Arkham,Data & Consensus Infrastructure,Analytics & Intelligence
+Lookonchain,Data & Consensus Infrastructure,Analytics & Intelligence
+Bubblemaps,Data & Consensus Infrastructure,Analytics & Intelligence
+Messari,Data & Consensus Infrastructure,Analytics & Intelligence
+DeepDAO,Data & Consensus Infrastructure,Analytics & Intelligence
+Tally,Data & Consensus Infrastructure,Analytics & Intelligence
+OpenGov,Data & Consensus Infrastructure,Analytics & Intelligence
+Chainalysis,Data & Consensus Infrastructure,Analytics & Intelligence
+TRM Labs,Data & Consensus Infrastructure,Analytics & Intelligence
+Elliptic,Data & Consensus Infrastructure,Analytics & Intelligence
+CipherTrace,Data & Consensus Infrastructure,Analytics & Intelligence
+Autonolas,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Fetch.ai,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Valory,Advanced Compute & Integration,AI Agents & Autonomous Systems
+OLAS,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Bittensor (agent-focused subnets),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Gelato Automate,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Keep3r Network,Advanced Compute & Integration,AI Agents & Autonomous Systems
+OpenZeppelin Defender (autonomous execution usage),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Chainlink Automation (agent-context usage only),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Protocol-Native Treasury Agents (DAO-embedded),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Autonomous Governance Execution Agents,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Autonomous Market-Making Agents (on-chain native),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Autonomous Liquidation & Risk Agents,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Giza,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Hyperbolic,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Modulus Labs,Advanced Compute & Integration,AI Agents & Autonomous Systems
+RISC Zero,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Axiom,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Agent Coordination Protocols (general class),Advanced Compute & Integration,AI Agents & Autonomous Systems
+Multi-Agent Market Simulation Frameworks,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Agent-Based MEV & Execution Systems,Advanced Compute & Integration,AI Agents & Autonomous Systems
+Tokeny,Advanced Compute & Integration,Real World Assets (RWAs)
+Securitize,Advanced Compute & Integration,Real World Assets (RWAs)
+Vertalo,Advanced Compute & Integration,Real World Assets (RWAs)
+DigiFT,Advanced Compute & Integration,Real World Assets (RWAs)
+Superstate,Advanced Compute & Integration,Real World Assets (RWAs)
+Ondo Finance,Advanced Compute & Integration,Real World Assets (RWAs)
+Backed Finance,Advanced Compute & Integration,Real World Assets (RWAs)
+Matrixdock,Advanced Compute & Integration,Real World Assets (RWAs)
+Fireblocks (RWA issuance & servicing context),Advanced Compute & Integration,Real World Assets (RWAs)
+Chainalysis KYT (RWA transfer enforcement context),Advanced Compute & Integration,Real World Assets (RWAs)
+Notabene,Advanced Compute & Integration,Real World Assets (RWAs)
+Sumsub (RWA onboarding context),Advanced Compute & Integration,Real World Assets (RWAs)
+Centrifuge,Advanced Compute & Integration,Real World Assets (RWAs)
+Monerium,Advanced Compute & Integration,Real World Assets (RWAs)
+Maple Finance (issuer-integrated RWAs only),Advanced Compute & Integration,Real World Assets (RWAs)
+Clearpool (issuer-side only),Advanced Compute & Integration,Real World Assets (RWAs)
+Franklin Templeton Benji,Advanced Compute & Integration,Real World Assets (RWAs)
+BlackRock BUIDL,Advanced Compute & Integration,Real World Assets (RWAs)
+RealT,Advanced Compute & Integration,Real World Assets (RWAs)
+Propy,Advanced Compute & Integration,Real World Assets (RWAs)
+Toucan Protocol,Advanced Compute & Integration,Real World Assets (RWAs)
+KlimaDAO,Advanced Compute & Integration,Real World Assets (RWAs)
+Polymesh Association (Ethereum-connected deployments only),Advanced Compute & Integration,Real World Assets (RWAs)
+Ethereum Attestation Service,Advanced Compute & Integration,Identity & Social Graphs
+Krebit,Advanced Compute & Integration,Identity & Social Graphs
+Gitcoin Passport,Advanced Compute & Integration,Identity & Social Graphs
+Sismo,Advanced Compute & Integration,Identity & Social Graphs
+Spectral,Advanced Compute & Integration,Identity & Social Graphs
+Ethereum Name Service,Advanced Compute & Integration,Identity & Social Graphs
+Spruce ID,Advanced Compute & Integration,Identity & Social Graphs
+Veramo,Advanced Compute & Integration,Identity & Social Graphs
+Polygon ID,Advanced Compute & Integration,Identity & Social Graphs
+Worldcoin,Advanced Compute & Integration,Identity & Social Graphs
+Lens Protocol,Advanced Compute & Integration,Identity & Social Graphs
+Farcaster,Advanced Compute & Integration,Identity & Social Graphs
+CyberConnect,Advanced Compute & Integration,Identity & Social Graphs
+Guild,Advanced Compute & Integration,Identity & Social Graphs
+Collab.Land,Advanced Compute & Integration,Identity & Social Graphs
+Hats Protocol,Advanced Compute & Integration,Identity & Social Graphs
+Role Protocol,Advanced Compute & Integration,Identity & Social Graphs
+Civic,Advanced Compute & Integration,Identity & Social Graphs
+Fractal,Advanced Compute & Integration,Identity & Social Graphs
+Quadrata,Advanced Compute & Integration,Identity & Social Graphs
+Akash Network,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Render Network,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+io.net,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Golem,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Filecoin (Ethereum-anchored usage only),Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Arweave (Ethereum settlement / usage only),Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Storj,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Helium,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Pollen Mobile,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+XNET,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Hivemapper,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+WeatherXM,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+DIMO,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+FOAM,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Powerledger,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Energy Web,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+EV3,Advanced Compute & Integration,DePIN (Physical Infrastruture)
+LayerZero Labs (physical verification context only),Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Chainlink (physical oracle deployments only),Advanced Compute & Integration,DePIN (Physical Infrastruture)
+Axelar,Advanced Compute & Integration,Cross-Chain Compute
+LayerZero (execution-enabled usage only),Advanced Compute & Integration,Cross-Chain Compute
+Hyperlane (execution modules only),Advanced Compute & Integration,Cross-Chain Compute
+Wormhole (compute-enabled usage only),Advanced Compute & Integration,Cross-Chain Compute
+Succinct Labs,Advanced Compute & Integration,Cross-Chain Compute
+RISC Zero,Advanced Compute & Integration,Cross-Chain Compute
+Axiom,Advanced Compute & Integration,Cross-Chain Compute
+Herodotus,Advanced Compute & Integration,Cross-Chain Compute
+Polymer Labs,Advanced Compute & Integration,Cross-Chain Compute
+Union,Advanced Compute & Integration,Cross-Chain Compute
+Espresso Systems,Advanced Compute & Integration,Cross-Chain Compute
+Radius,Advanced Compute & Integration,Cross-Chain Compute
+EigenLayer (verification & dispute contexts only),Advanced Compute & Integration,Cross-Chain Compute
+Arbitrum (cross-chain dispute role),Advanced Compute & Integration,Cross-Chain Compute
+Optimism (interop & dispute anchoring contexts),Advanced Compute & Integration,Cross-Chain Compute
+Snapshot,Governance & Enterprise Framework,DAO Governance Systems
+Tally,Governance & Enterprise Framework,DAO Governance Systems
+Boardroom,Governance & Enterprise Framework,DAO Governance Systems
+Commonwealth,Governance & Enterprise Framework,DAO Governance Systems
+Agora,Governance & Enterprise Framework,DAO Governance Systems
+OpenZeppelin Governor,Governance & Enterprise Framework,DAO Governance Systems
+Compound Governor,Governance & Enterprise Framework,DAO Governance Systems
+Governor Bravo,Governance & Enterprise Framework,DAO Governance Systems
+Governor Alpha,Governance & Enterprise Framework,DAO Governance Systems
+Timelock Controller (OpenZeppelin),Governance & Enterprise Framework,DAO Governance Systems
+Safe,Governance & Enterprise Framework,DAO Governance Systems
+Safe Core Protocol,Governance & Enterprise Framework,DAO Governance Systems
+Juicebox,Governance & Enterprise Framework,DAO Governance Systems
+Moloch DAO Framework (v2/v3),Governance & Enterprise Framework,DAO Governance Systems
+Zodiac,Governance & Enterprise Framework,DAO Governance Systems
+Reality.eth,Governance & Enterprise Framework,DAO Governance Systems
+Roles Modifier,Governance & Enterprise Framework,DAO Governance Systems
+Delay Modifier,Governance & Enterprise Framework,DAO Governance Systems
+OpenZeppelin Defender (governance automation contexts only),Governance & Enterprise Framework,DAO Governance Systems
+Hats Protocol,Governance & Enterprise Framework,DAO Governance Systems
+Coordinape (authority signaling only),Governance & Enterprise Framework,DAO Governance Systems
+Guild.xyz (on-chain role gating only),Governance & Enterprise Framework,DAO Governance Systems
+Aragon,Governance & Enterprise Framework,DAO Governance Systems
+DAOstack (Alchemy),Governance & Enterprise Framework,DAO Governance Systems
+Colony,Governance & Enterprise Framework,DAO Governance Systems
+Moloch DAO Framework,Governance & Enterprise Framework,DAO Governance Systems
+ConsenSys (Enterprise / Quorum stack),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Kaleido,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Alchemy (enterprise / infra adoption),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Nightfall (EY),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Polygon Nightfall,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Hyperledger Besu (enterprise context),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+SettleMint,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+"BlockApps (STRATO, Ethereum-anchored)",Governance & Enterprise Framework,Enterprise Blockchain Adoption
+R3 (Ethereum interop only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+ConsenSys Codefi,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Infura,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Chainstack,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+QuickNode,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+ConsenSys Quorum Permissioning,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Baseline Protocol,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Aztec (enterprise contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Spruce (enterprise identity),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+EY OpsChain,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+SAP Blockchain Service (Ethereum integrations),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+IBM Blockchain (Ethereum-anchored initiatives only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Oracle Blockchain Platform (Ethereum interoperability),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Provenance Blockchain (Ethereum settlement bridges only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Fireblocks (enterprise deployment & ops),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Taurus (issuance & custody),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Tokeny,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Securitize,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Onyx Digital Assets (Ethereum-anchored only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Baseline Protocol,Governance & Enterprise Framework,Enterprise Blockchain Adoption
+SAP (Ethereum integrations),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Chainlink (enterprise integration contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Axelar (enterprise contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption
+Banque de France CBDC pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+BIS Innovation Hub,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+EBSI,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Fnality,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+UK FCA Digital Sandbox,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Ubin,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Bank of England wholesale CBDC pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Rosalind,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Jura,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Guardian,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Dunbar,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+European Central Bank — Ethereum pilot programs,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Monetary Authority of Singapore — Ethereum pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Hong Kong Monetary Authority — Ethereum pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Swiss National Bank — Ethereum settlement pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project iAM,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Hong Kong Government Tokenized Green Bonds,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+City of Lugano Plan ₿,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+German Federal Government blockchain bond pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+JPM Coin (Ethereum-anchored only),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Onyx Digital Assets (public-sector / interbank),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Helvetia,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Singapore Global CBDC Challenge (Ethereum tracks),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Abu Dhabi Global Market blockchain sandbox (ADGM RegLab),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Dubai VARA public-sector pilots (Ethereum-based),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Estonia e-Residency blockchain initiatives (Ethereum contexts),Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project mBridge,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Project Icebreaker,Governance & Enterprise Framework,CBDCs & Public Sector Pilots
+Chainalysis,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+TRM Labs,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Elliptic,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+CipherTrace (Mastercard),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Scorechain (Ethereum coverage),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Chainalysis KYT,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+TRM Forensics,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Elliptic Navigator,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Solidus Labs,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Coinfirm,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Lukka,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Notabene,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Merkle Science,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Blockchain Intelligence Group,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Solidus Labs,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Kaiko (market integrity contexts),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Amberdata (regulatory analytics contexts),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Eventus (crypto integrations),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Chainalysis Reactor,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+TRM Entity Resolution,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Nansen (compliance contexts only),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Arkham (forensics contexts only),Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Chainalysis Government Solutions,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+TRM Public Sector,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Elliptic Government Solutions,Governance & Enterprise Framework,Compliance & Regulatory Intelligence
+Fireblocks,Governance & Enterprise Framework,Institutional Custody & Security
+Anchorage Digital,Governance & Enterprise Framework,Institutional Custody & Security
+Coinbase Custody,Governance & Enterprise Framework,Institutional Custody & Security
+BitGo,Governance & Enterprise Framework,Institutional Custody & Security
+Fidelity Digital Assets,Governance & Enterprise Framework,Institutional Custody & Security
+Gemini Custody,Governance & Enterprise Framework,Institutional Custody & Security
+Zodia Custody,Governance & Enterprise Framework,Institutional Custody & Security
+Copper,Governance & Enterprise Framework,Institutional Custody & Security
+Hex Trust,Governance & Enterprise Framework,Institutional Custody & Security
+Safe{Core},Governance & Enterprise Framework,Institutional Custody & Security
+Fordefi,Governance & Enterprise Framework,Institutional Custody & Security
+Qredo,Governance & Enterprise Framework,Institutional Custody & Security
+GK8,Governance & Enterprise Framework,Institutional Custody & Security
+Fireblocks MPC Wallet,Governance & Enterprise Framework,Institutional Custody & Security
+ZenGo Institutional,Governance & Enterprise Framework,Institutional Custody & Security
+Fireblocks Policy Engine,Governance & Enterprise Framework,Institutional Custody & Security
+Safe Modules (institutional use),Governance & Enterprise Framework,Institutional Custody & Security
+Copper ClearLoop (Ethereum contexts),Governance & Enterprise Framework,Institutional Custody & Security
+Anchorage Policy Engine,Governance & Enterprise Framework,Institutional Custody & Security
+Ledger Enterprise,Governance & Enterprise Framework,Institutional Custody & Security
+Blockdaemon Wallet,Governance & Enterprise Framework,Institutional Custody & Security
+AWS Key Management Service (Ethereum signing only),Governance & Enterprise Framework,Institutional Custody & Security
+HSM-backed Ethereum signing providers (category),Governance & Enterprise Framework,Institutional Custody & Security
+Anchorage Digital (recovery & insurance stack),Governance & Enterprise Framework,Institutional Custody & Security
+BitGo Insurance Programs,Governance & Enterprise Framework,Institutional Custody & Security
+Copper (insurance & risk services),Governance & Enterprise Framework,Institutional Custody & Security
+Ethereum Consensus Specifications,Core Protocol Architecture,Consensus Layer
+Prysm,Core Protocol Architecture,Consensus Layer
+Lighthouse,Core Protocol Architecture,Consensus Layer
+Teku,Core Protocol Architecture,Consensus Layer
+Nimbus,Core Protocol Architecture,Consensus Layer
+Lodestar,Core Protocol Architecture,Consensus Layer
+Geth (Go Ethereum),Core Protocol Architecture,Execution Layer
+Nethermind,Core Protocol Architecture,Execution Layer
+Besu,Core Protocol Architecture,Execution Layer
+Erigon,Core Protocol Architecture,Execution Layer
+Yellow Paper (Ethereum Execution Specification),Core Protocol Architecture,Execution Layer
+Execution EIPs (Execution-Layer Ethereum Improvement Proposals),Core Protocol Architecture,Execution Layer
+Figment,Core Protocol Architecture,Validators & Staking Providers
+Chorus One,Core Protocol Architecture,Validators & Staking Providers
+P2P.org,Core Protocol Architecture,Validators & Staking Providers
+Blockdaemon,Core Protocol Architecture,Validators & Staking Providers
+Coinbase (Validator Operations),Core Protocol Architecture,Validators & Staking Providers
+Kraken (Validator Operations),Core Protocol Architecture,Validators & Staking Providers
+Binance (Validator Operations),Core Protocol Architecture,Validators & Staking Providers
+Lido (Node Operator Set),Core Protocol Architecture,Validators & Staking Providers
+Rocket Pool (Node Operators),Core Protocol Architecture,Validators & Staking Providers
+StakeWise (Operator Infrastructure),Core Protocol Architecture,Validators & Staking Providers
+Solo Validators,Core Protocol Architecture,Validators & Staking Providers
+Flashbots (Block Builder),Core Protocol Architecture,MEV & Block Builders
+Titan Builder,Core Protocol Architecture,MEV & Block Builders
+bloXroute (Block Builder),Core Protocol Architecture,MEV & Block Builders
+rsync-builder,Core Protocol Architecture,MEV & Block Builders
+Flashbots Relay,Core Protocol Architecture,MEV & Block Builders
+bloXroute Relay,Core Protocol Architecture,MEV & Block Builders
+Ultra Sound Relay,Core Protocol Architecture,MEV & Block Builders
+Eden Relay,Core Protocol Architecture,MEV & Block Builders
+Flashbots (Searcher Infrastructure),Core Protocol Architecture,MEV & Block Builders
+bloXroute (Searcher-Builder Pipeline),Core Protocol Architecture,MEV & Block Builders
+Eden Network (Searcher Infrastructure),Core Protocol Architecture,MEV & Block Builders
+Builder-Native Searcher Pipelines (Aggregated),Core Protocol Architecture,MEV & Block Builders
+Flashbots (Integrated Stack),Core Protocol Architecture,MEV & Block Builders
+bloXroute (Integrated MEV Stack),Core Protocol Architecture,MEV & Block Builders
+Eden Network (Integrated MEV Stack),Core Protocol Architecture,MEV & Block Builders
+Builder-Relay Integrated Operators (Aggregated),Core Protocol Architecture,MEV & Block Builders
+London,Core Protocol Architecture,Network Upgrades
+The Merge,Core Protocol Architecture,Network Upgrades
+Shanghai / Capella (Shapella),Core Protocol Architecture,Network Upgrades
+Dencun,Core Protocol Architecture,Network Upgrades
+Pectra,Core Protocol Architecture,Network Upgrades
+Fusaka,Core Protocol Architecture,Network Upgrades
+Glamsterdam (Planned),Core Protocol Architecture,Network Upgrades
+Arbitrum,Rollup & Scaling Frameworks,Optimistic Rollups
+Optimism,Rollup & Scaling Frameworks,Optimistic Rollups
+Base,Rollup & Scaling Frameworks,Optimistic Rollups
+Blast,Rollup & Scaling Frameworks,Optimistic Rollups
+Unichain,Rollup & Scaling Frameworks,Optimistic Rollups
+OP Stack (Framework),Rollup & Scaling Frameworks,Optimistic Rollups
+Arbitrum Nitro (Framework),Rollup & Scaling Frameworks,Optimistic Rollups
+zkSync,Rollup & Scaling Frameworks,ZK Rollup
+Starknet,Rollup & Scaling Frameworks,ZK Rollup
+Scroll,Rollup & Scaling Frameworks,ZK Rollup
+Polygon zkEVM,Rollup & Scaling Frameworks,ZK Rollup
+Linea,Rollup & Scaling Frameworks,ZK Rollup
+Taiko,Rollup & Scaling Frameworks,ZK Rollup
+ZK Stack,Rollup & Scaling Frameworks,ZK Rollup
+StarkEx (borderline but architecturally critical),Rollup & Scaling Frameworks,ZK Rollup
+Arbitrum Orbit,Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+"OP Stack (already used, but also belongs here contextually)",Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+ZK Stack,Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+Polygon CDK,Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+Avalanche HyperSDK (Ethereum-anchored variants only),Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+Caldera,Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+Conduit,Rollup & Scaling Frameworks,L3 & Appchain Frameworks
+"StarkEx
+(Validium + ZK Rollup modes; application-specific)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+"ZK Stack
+(Rollup vs Validium selectable at deployment)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+"Polygon CDK
+(Supports zkEVM rollups + validium-style chains)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+"zkSync Era
+(Implements Volition-style DA choice in practice)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+"Immutable X
+(Production NFT validium using StarkEx)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+"dYdX (historical Ethereum-anchored version)
+(Ethereum / StarkEx era) (High-performance validium design; DA committee model)",Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups"
+Tether,Monetary & Access Rails,Centralized Stablecoins
+USD Coin,Monetary & Access Rails,Centralized Stablecoins
+Pax Dollar,Monetary & Access Rails,Centralized Stablecoins
+PayPal USD,Monetary & Access Rails,Centralized Stablecoins
+First Digital USD,Monetary & Access Rails,Centralized Stablecoins
+Stably USD,Monetary & Access Rails,Centralized Stablecoins
+EUR CoinVertible,Monetary & Access Rails,Centralized Stablecoins
+Monerium E-Money Tokens,Monetary & Access Rails,Centralized Stablecoins
+XSGD,Monetary & Access Rails,Centralized Stablecoins
+Dai,Monetary & Access Rails,Decentralized Stablecoins
+Liquity USD,Monetary & Access Rails,Decentralized Stablecoins
+Rai Reflex Index,Monetary & Access Rails,Decentralized Stablecoins
+Frax,Monetary & Access Rails,Decentralized Stablecoins
+agEUR,Monetary & Access Rails,Decentralized Stablecoins
+Synthetix USD,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars
+Ondo Short-Term U.S. Government Bond Fund,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars
+Ondo U.S. Dollar Yield,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars
+Savings Dai,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars
+Ethena Dollar,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars
+MoonPay,Monetary & Access Rails,Global On-Ramps
+Ramp,Monetary & Access Rails,Global On-Ramps
+Transak,Monetary & Access Rails,Global On-Ramps
+Banxa,Monetary & Access Rails,Global On-Ramps
+Simplex,Monetary & Access Rails,Global On-Ramps
+Mercuryo,Monetary & Access Rails,Global On-Ramps
+Onramper,Monetary & Access Rails,Global On-Ramps
+Coinbase (Coinbase Pay / On-Ramp APIs),Monetary & Access Rails,Global On-Ramps
+Binance (Binance On-Ramp),Monetary & Access Rails,Global On-Ramps
+OKX (OKX On-Ramp),Monetary & Access Rails,Global On-Ramps
+MetaMask (MetaMask Buy),Monetary & Access Rails,Global On-Ramps
+Trust Wallet (Integrated Global On-Ramps),Monetary & Access Rails,Global On-Ramps
+PayPal (Crypto On-Ramp),Monetary & Access Rails,Global On-Ramps
+Stripe (Crypto On-Ramp APIs),Monetary & Access Rails,Global On-Ramps
+Sardine,Monetary & Access Rails,Global On-Ramps
+Alchemy Pay,Monetary & Access Rails,Global On-Ramps
+Socket (Fiat → Chain Routing),Monetary & Access Rails,Global On-Ramps
+Circle (Circle Payments / Circle APIs),Monetary & Access Rails,Institutional Payment Rails
+Tether (Institutional Settlement on Ethereum),Monetary & Access Rails,Institutional Payment Rails
+Paxos (Enterprise Settlement / PYUSD Infrastructure),Monetary & Access Rails,Institutional Payment Rails
+Société Générale – Forge (EURCV Settlement),Monetary & Access Rails,Institutional Payment Rails
+JPMorgan Kinexys (formerly JPM Coin),Monetary & Access Rails,Institutional Payment Rails
+UBS (Tokenized Deposits & Ethereum-Based Pilots),Monetary & Access Rails,Institutional Payment Rails
+Standard Chartered (Tokenized Deposits & Ethereum-Based Settlement Initiatives),Monetary & Access Rails,Institutional Payment Rails
+Deutsche Bank (Tokenized Deposits & Ethereum-Based Settlement Initiatives),Monetary & Access Rails,Institutional Payment Rails
+Fireblocks Payments,Monetary & Access Rails,Institutional Payment Rails
+Copper (ClearLoop Settlement Infrastructure),Monetary & Access Rails,Institutional Payment Rails
+Anchorage Digital,Monetary & Access Rails,Institutional Payment Rails
+ConsenSys (Codefi Payments / Enterprise Settlement Tooling),Monetary & Access Rails,Institutional Payment Rails
+R3 (Ethereum Interoperability for Settlement),Monetary & Access Rails,Institutional Payment Rails
+Hyperledger Besu (Enterprise Ethereum Settlement Stacks),Monetary & Access Rails,Institutional Payment Rails
+Stripe (Stablecoin-Based Settlement for Platforms),Monetary & Access Rails,Institutional Payment Rails
+"PayPal (Enterprise Crypto Settlement, PYUSD)",Monetary & Access Rails,Institutional Payment Rails
+Airwallex (Stablecoin Settlement Pilots),Monetary & Access Rails,Institutional Payment Rails
+European Central Bank (Ethereum-Linked Wholesale Settlement Pilots),Monetary & Access Rails,Institutional Payment Rails
+"Bank for International Settlements (Project Agorá, Project Mariana)",Monetary & Access Rails,Institutional Payment Rails
+Bitso,Monetary & Access Rails,Regional Payment Networks
+Belo,Monetary & Access Rails,Regional Payment Networks
+Ripio,Monetary & Access Rails,Regional Payment Networks
+Buenbit,Monetary & Access Rails,Regional Payment Networks
+MonetaGo,Monetary & Access Rails,Regional Payment Networks
+Yellow Card,Monetary & Access Rails,Regional Payment Networks
+Flutterwave,Monetary & Access Rails,Regional Payment Networks
+PayDay,Monetary & Access Rails,Regional Payment Networks
+Chipper,Monetary & Access Rails,Regional Payment Networks
+Kotani Pay,Monetary & Access Rails,Regional Payment Networks
+Hubpay,Monetary & Access Rails,Regional Payment Networks
+eFinance,Monetary & Access Rails,Regional Payment Networks
+Bitybank,Monetary & Access Rails,Regional Payment Networks
+Xendit,Monetary & Access Rails,Regional Payment Networks
+Coins.ph,Monetary & Access Rails,Regional Payment Networks
+Tranglo,Monetary & Access Rails,Regional Payment Networks
+GCash,Monetary & Access Rails,Regional Payment Networks
+Monerium,Monetary & Access Rails,Regional Payment Networks
+Quantoz,Monetary & Access Rails,Regional Payment Networks
+Stasis,Monetary & Access Rails,Regional Payment Networks
+MoneyGram,Monetary & Access Rails,Regional Payment Networks
+Strike,Monetary & Access Rails,Regional Payment Networks
