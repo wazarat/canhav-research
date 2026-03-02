@@ -9,7 +9,7 @@ interface MarketMapProps {
 }
 
 type ViewMode = 'grid' | 'grouped'
-type SortOption = 'name' | 'year' | 'sector'
+type SortOption = 'name' | 'sector'
 
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -26,14 +26,7 @@ export default function MarketMap({}: MarketMapProps) {
     return Array.from(sectorSet).sort()
   }, [])
   
-  // Extract all unique tags from companies
-  const allTags = useMemo(() => {
-    const tags = new Set<string>()
-    companiesData.forEach(company => {
-      company.tags?.forEach(tag => tags.add(tag))
-    })
-    return Array.from(tags).sort()
-  }, [])
+  const allTags: string[] = []
   
   // Filter and sort companies
   const filteredCompanies = useMemo(() => {
@@ -41,10 +34,8 @@ export default function MarketMap({}: MarketMapProps) {
       const matchesSector = selectedSector === null || company.sector === selectedSector
       const matchesSearch = searchQuery === '' || 
         company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         company.subsector.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.some(tag => company.tags?.includes(tag))
+      const matchesTags = selectedTags.length === 0
       
       return matchesSector && matchesSearch && matchesTags
     })
@@ -53,8 +44,6 @@ export default function MarketMap({}: MarketMapProps) {
     filtered.sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name)
-      } else if (sortBy === 'year') {
-        return (b.yearFounded || 0) - (a.yearFounded || 0)
       } else if (sortBy === 'sector') {
         return a.sector.localeCompare(b.sector) || a.subsector.localeCompare(b.subsector)
       }
@@ -194,7 +183,6 @@ export default function MarketMap({}: MarketMapProps) {
                 className="px-4 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
               >
                 <option value="name">Name</option>
-                <option value="year">Year Founded</option>
                 <option value="sector">Sector</option>
               </select>
             </div>
