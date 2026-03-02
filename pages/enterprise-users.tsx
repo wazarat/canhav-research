@@ -284,7 +284,7 @@ export default function EnterpriseUsersPage() {
       <footer className="bg-white border-t border-gray-200 mt-20">
         <div className="container mx-auto px-6 py-8">
           <div className="text-center text-gray-600">
-            <p>&copy; 2024 CanHav Research. All rights reserved.</p>
+            <p>&copy; 2024–2026 CanHav Research. All rights reserved.</p>
             <p className="mt-2 text-sm">Making understanding and building with ethereum easier</p>
           </div>
         </div>

@@ -405,6 +405,56 @@ export default function AboutUsPage() {
                 </div>
               </div>
             </section>
+            {/* Ecosystem Recognition Section */}
+            <section className="mb-12">
+              <div className="border-t border-gray-200 pt-16">
+                <div className="text-center mb-10">
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Ecosystem Recognition</h2>
+                  <p className="text-gray-500 text-sm">Connected to the networks shaping the future of blockchain</p>
+                </div>
+                <div className="flex flex-col sm:flex-row justify-center items-stretch gap-6 md:gap-10">
+                  {/* Featured On — ETHDenver */}
+                  <div className="flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 flex-1 max-w-xs mx-auto sm:mx-0">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">Featured On</p>
+                    <div className="w-36 h-20 flex items-center justify-center">
+                      <img
+                        src="/images/logos/ETHDenver.png"
+                        alt="ETHDenver"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <p className="mt-5 text-sm font-medium text-gray-700 text-center">ETHDenver</p>
+                  </div>
+
+                  {/* Supported By — Arbitrum */}
+                  <div className="flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 flex-1 max-w-xs mx-auto sm:mx-0">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">Supported By</p>
+                    <div className="w-36 h-20 flex items-center justify-center">
+                      <img
+                        src="/images/logos/Arbitrum.png"
+                        alt="Arbitrum"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <p className="mt-5 text-sm font-medium text-gray-700 text-center">Arbitrum</p>
+                  </div>
+
+                  {/* Funding — Hedera */}
+                  <div className="flex flex-col items-center bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-all duration-300 flex-1 max-w-xs mx-auto sm:mx-0">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-5">Funding</p>
+                    <div className="w-36 h-20 flex items-center justify-center">
+                      <img
+                        src="/images/logos/Hedera.png"
+                        alt="Hedera"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
+                    <p className="mt-5 text-sm font-medium text-gray-700 text-center">Hedera</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
           </div>
         </div>
       </main>

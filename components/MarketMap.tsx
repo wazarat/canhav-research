@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { companiesData, getAllSectors, getCompaniesBySector, Company } from '../lib/companiesData'
+import { useState, useMemo, useEffect, Fragment } from 'react'
+import { Company, getAllCompanies } from '../lib/companiesDataSupabase'
 import JotFormModal from './JotFormModal'
 import CompanyDetailModal from './CompanyDetailModal'
 
@@ -20,8 +20,33 @@ export default function MarketMap({}: MarketMapProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortBy, setSortBy] = useState<SortOption>('name')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [companiesData, setCompaniesData] = useState<Company[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   
-  const sectors = getAllSectors()
+  // Fetch companies from Supabase on mount
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        setLoading(true)
+        const data = await getAllCompanies()
+        setCompaniesData(data)
+        setError(null)
+      } catch (err) {
+        console.error('Error loading companies:', err)
+        setError('Failed to load companies. Please try again later.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCompanies()
+  }, [])
+  
+  // Get all unique sectors from loaded data
+  const sectors = useMemo(() => {
+    const sectorSet = new Set(companiesData.map(c => c.sector))
+    return Array.from(sectorSet).sort()
+  }, [companiesData])
   
   // Extract all unique tags from companies
   const allTags = useMemo(() => {
@@ -266,64 +291,82 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
         )}
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-16">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Loading companies...</p>
+          </div>
+        )}
+        
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-16">
+            <svg className="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <h3 className="mt-4 text-lg font-medium text-gray-900">Error Loading Data</h3>
+            <p className="mt-2 text-sm text-gray-500">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+        
         {/* Companies Display */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        {!loading && !error && viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
             {filteredCompanies.map((company, index) => {
               const colorScheme = getSectorColor(company.sector)
               return (
-                <div
-                  key={`${company.name}-${index}`}
-                  className="group relative cursor-pointer"
-                  onClick={() => setSelectedCompany(company)}
-                >
-                  <div className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-xl transition-all duration-300 hover:border-blue-300 hover:-translate-y-1 h-full flex flex-col">
-                    {/* Company Name */}
-                    <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                      {company.name}
-                    </h3>
-                    
-                    {/* Description */}
-                    {company.description && (
-                      <p className="text-xs text-gray-600 mb-3 line-clamp-2 flex-grow">
-                        {company.description}
-                      </p>
-                    )}
-                    
-                    {/* Metadata */}
-                    <div className="space-y-2 mt-auto">
-                      {company.yearFounded && (
-                        <div className="text-xs text-gray-500">
-                          Founded: {company.yearFounded}
+                <Fragment key={`${company.name}-${index}`}>
+                  {/* CTA Banner injected after first 12 companies (≈2 rows) */}
+                  {index === 12 && (
+                    <div
+                      className="col-span-full my-2"
+                    >
+                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 md:px-10 md:py-10 shadow-xl">
+                        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
+                        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                          <div className="max-w-2xl">
+                            <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-2">Full Intelligence Platform</p>
+                            <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-snug">
+                              Detailed profiles, funding data, sector analysis &amp; system design context
+                            </h3>
+                            <p className="text-blue-100 text-sm md:text-base">
+                              Built for practitioners and researchers navigating Ethereum infrastructure.
+                            </p>
+                          </div>
+                          <a
+                            href="https://research.canhav.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base"
+                          >
+                            Get Full Access
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                            </svg>
+                          </a>
                         </div>
-                      )}
-                      
-                      {/* Sector Indicator */}
-                      <div className="flex items-center">
-                        <div className={`w-2 h-2 rounded-full ${colorScheme.dot} mr-2 flex-shrink-0`}></div>
-                        <span className="text-xs text-gray-600 truncate">
-                          {company.subsector}
-                        </span>
                       </div>
-                      
-                      {/* Tags Preview */}
-                      {company.tags && company.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1">
-                          {company.tags.slice(0, 2).map((tag, i) => (
-                            <span key={i} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
-                              {tag}
-                            </span>
-                          ))}
-                          {company.tags.length > 2 && (
-                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded">
-                              +{company.tags.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      )}
+                    </div>
+                  )}
+                  <div
+                    className="group cursor-pointer"
+                    onClick={() => setSelectedCompany(company)}
+                  >
+                    <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
+                      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
+                      <span className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors truncate leading-tight">
+                        {company.name}
+                      </span>
                     </div>
                   </div>
-                </div>
+                </Fragment>
               )
             })}
           </div>
