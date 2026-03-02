@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useMemo, useEffect, Fragment } from 'react'
-import { Company, getAllCompanies } from '../lib/companiesDataSupabase'
+import { useState, useMemo, Fragment } from 'react'
+import { companiesData, Company } from '../lib/companiesData'
 import JotFormModal from './JotFormModal'
-import CompanyDetailModal from './CompanyDetailModal'
 
 interface MarketMapProps {
   // We'll use the companies data directly instead of grouped data
@@ -15,38 +14,17 @@ type SortOption = 'name' | 'year' | 'sector'
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
   const [selectedSector, setSelectedSector] = useState<string | null>(null)
-  const [selectedCompany, setSelectedCompany] = useState<Company | null>(null)
+  const [showAccessPrompt, setShowAccessPrompt] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortBy, setSortBy] = useState<SortOption>('name')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [companiesData, setCompaniesData] = useState<Company[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   
-  // Fetch companies from Supabase on mount
-  useEffect(() => {
-    async function fetchCompanies() {
-      try {
-        setLoading(true)
-        const data = await getAllCompanies()
-        setCompaniesData(data)
-        setError(null)
-      } catch (err) {
-        console.error('Error loading companies:', err)
-        setError('Failed to load companies. Please try again later.')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchCompanies()
-  }, [])
-  
-  // Get all unique sectors from loaded data
+  // Get all unique sectors from static data
   const sectors = useMemo(() => {
     const sectorSet = new Set(companiesData.map(c => c.sector))
     return Array.from(sectorSet).sort()
-  }, [companiesData])
+  }, [])
   
   // Extract all unique tags from companies
   const allTags = useMemo(() => {
@@ -291,33 +269,8 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
         )}
 
-        {/* Loading State */}
-        {loading && (
-          <div className="text-center py-16">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600">Loading companies...</p>
-          </div>
-        )}
-        
-        {/* Error State */}
-        {error && (
-          <div className="text-center py-16">
-            <svg className="mx-auto h-12 w-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Error Loading Data</h3>
-            <p className="mt-2 text-sm text-gray-500">{error}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Retry
-            </button>
-          </div>
-        )}
-        
         {/* Companies Display */}
-        {!loading && !error && viewMode === 'grid' ? (
+        {viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
             {filteredCompanies.map((company, index) => {
               const colorScheme = getSectorColor(company.sector)
@@ -357,7 +310,7 @@ export default function MarketMap({}: MarketMapProps) {
                   )}
                   <div
                     className="group cursor-pointer"
-                    onClick={() => setSelectedCompany(company)}
+                    onClick={() => setShowAccessPrompt(true)}
                   >
                     <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
                       <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
@@ -385,7 +338,7 @@ export default function MarketMap({}: MarketMapProps) {
                     {companies.map((company, index) => (
                       <div
                         key={`${company.name}-${index}`}
-                        onClick={() => setSelectedCompany(company)}
+                        onClick={() => setShowAccessPrompt(true)}
                         className="cursor-pointer bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-3 transition-all duration-200 hover:shadow-md"
                       >
                         <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
@@ -465,12 +418,55 @@ export default function MarketMap({}: MarketMapProps) {
         />
       )}
       
-      {/* Company Detail Modal */}
-      <CompanyDetailModal
-        company={selectedCompany}
-        isOpen={selectedCompany !== null}
-        onClose={() => setSelectedCompany(null)}
-      />
+      {/* Full Access Prompt Modal */}
+      {showAccessPrompt && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-screen items-center justify-center p-4">
+            <div 
+              className="fixed inset-0 bg-black/50 transition-opacity"
+              onClick={() => setShowAccessPrompt(false)}
+            />
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+              <button
+                onClick={() => setShowAccessPrompt(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Get Full Company Data</h3>
+              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+                Detailed profiles, funding data, sector analysis, and system design context — built for practitioners and researchers.
+              </p>
+              <div className="flex flex-col gap-3">
+                <a
+                  href="https://research.canhav.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
+                >
+                  Access CanHav Research
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+                <button
+                  onClick={() => setShowAccessPrompt(false)}
+                  className="w-full px-6 py-3 border border-gray-200 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
