@@ -1,0 +1,517 @@
+entity_id,entity_name,sector,subsector,sector_id,subsector_id,website,description
+438,Agent Coordination Protocols (general class),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+434,Agent-Based MEV & Execution Systems,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+298,Autonolas,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://www.autonolas.network,
+119,Autonomous Governance Execution Agents,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+106,Autonomous Liquidation & Risk Agents,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+351,Autonomous Market-Making Agents (on-chain native),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+136,Bittensor (agent-focused subnets),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://bittensor.com,
+483,Chainlink Automation (agent-context usage only),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://chain.link/automation,
+497,Fetch.ai,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://fetch.ai,
+16,Gelato Automate,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://www.gelato.network,
+299,Giza,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://www.gizatech.xyz,
+54,Hyperbolic,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://hyperbolic.xyz,
+73,Keep3r Network,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://keep3r.network,
+360,Modulus Labs,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://www.moduluslabs.xyz,
+182,Multi-Agent Market Simulation Frameworks,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+392,OLAS,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://olas.network,
+263,OpenZeppelin Defender (autonomous execution usage),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://www.openzeppelin.com/defender,
+288,Protocol-Native Treasury Agents (DAO-embedded),Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,N/A,
+157,Valory,Advanced Compute & Integration,AI Agents & Autonomous Systems,7,17,https://valory.xyz,
+167,Arbitrum (cross-chain dispute role),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://arbitrum.io,Optimistic rollup using Ethereum as final court
+430,Axelar,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://axelar.network,Cross-chain execution network enabling contracts to call and execute logic across chains
+109,Axiom,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://www.axiom.xyz,ZK coprocessor for querying & proving blockchain state
+213,EigenLayer (verification & dispute contexts only),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://www.eigenlayer.xyz,Restaked ETH providing security for off-chain & cross-chain systems
+427,Espresso Systems,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://espressosys.com,Shared sequencer enabling atomicity across rollups
+27,Herodotus,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://herodotus.dev,ZK proofs for verifying state across chains
+18,Hyperlane (execution modules only),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://www.hyperlane.xyz,Permissionless cross-chain execution with pluggable verification
+323,LayerZero (execution-enabled usage only),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://layerzero.network,Modular cross-chain execution with configurable security
+460,Optimism (interop & dispute anchoring contexts),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://optimism.io,Ethereum-anchored rollup framework with interop
+267,Polymer Labs,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://polymerlabs.xyz,Bringing IBC-grade coordination to Ethereum
+310,RISC Zero,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://www.risczero.com,zkVM enabling verifiable arbitrary computation
+498,Radius,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://www.radiusxyz.com,Shared sequencer infrastructure for rollups
+413,Succinct Labs,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://succinct.xyz,ZK proof infrastructure for verifying off-chain and cross-chain computation
+78,Union,Advanced Compute & Integration,Cross-Chain Compute,7,32,https://union.build,Zero-trust orchestration across heterogeneous chains
+35,Wormhole (compute-enabled usage only),Advanced Compute & Integration,Cross-Chain Compute,7,32,https://wormhole.com,Cross-chain execution enabled by a guardian-verified network
+235,Akash Network,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://akash.network,Open marketplace for decentralized cloud compute coordinated by crypto-economic incentives
+283,Arweave (Ethereum settlement / usage only),Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://www.arweave.org,Perma-storage layer used by Ethereum apps for immutable data
+463,Chainlink (physical oracle deployments only),Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://chain.link,Canonical decentralized oracle network for real-world data
+133,DIMO,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://dimo.zone,User-owned vehicle data network
+178,EV3,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,Emerging / early-stage,Decentralized EV charging network
+189,Energy Web,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://energyweb.org,Enterprise-focused blockchain for energy coordination
+496,FOAM,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://foam.space,Trust-minimized geolocation verification
+174,Filecoin (Ethereum-anchored usage only),Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://filecoin.io,Decentralized storage network with verifiable physical storage
+96,Golem,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://www.golem.network,Peer-to-peer marketplace for general compute
+458,Helium,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://www.helium.com,Global decentralized wireless network coordinated by crypto incentives
+31,Hivemapper,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://hivemapper.com,Decentralized mapping via real-world driving
+433,LayerZero Labs (physical verification context only),Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://layerzero.network,Verification layer enabling trust-minimized state proofs
+227,Pollen Mobile,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://pollenmobile.io,Community-built decentralized cellular network
+83,Powerledger,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://powerledger.io,Blockchain-based coordination for energy trading
+442,Render Network,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://rendernetwork.com,Decentralized GPU network for rendering and AI workloads
+416,Storj,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://www.storj.io,Distributed cloud storage using physical nodes
+229,WeatherXM,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://weatherxm.com,Decentralized weather data from physical sensors
+139,XNET,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://www.xnetmobile.io,Decentralized mobile offload network using physical radios
+205,io.net,Advanced Compute & Integration,DePIN (Physical Infrastruture),7,28,https://io.net,GPU network optimized for AI training and inference
+150,Civic,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://www.civic.com,Identity verification and compliance infrastructure for Web3
+82,Collab.Land,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://collab.land,Token-gated access tooling for online communities
+390,CyberConnect,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://cyberconnect.me,Composable social graph infrastructure for Web3
+366,Ethereum Attestation Service,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://attest.sh,Canonical Ethereum-native protocol for issuing and verifying on-chain attestations
+160,Ethereum Name Service,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://ens.domains,Ethereum-native naming and identity resolution system
+242,Farcaster,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://www.farcaster.xyz,Decentralized social protocol with shared identity layer
+304,Fractal,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://www.fractal.id,Identity layer bridging institutions into Web3
+512,Gitcoin Passport,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://passport.gitcoin.co,Widely used sybil-resistance layer for Ethereum ecosystems
+429,Guild,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://guild.xyz,Widely used access-control layer for Web3 communities
+422,Krebit,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://krebit.id,Reputation and credential system for Web3 contributors
+290,Lens Protocol,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://lens.xyz,"Canonical, composable social graph for Web3"
+493,Polygon ID,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://polygon.technology/polygon-id,Zero-knowledge identity and credential framework
+153,Quadrata,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://quadrata.com,On-chain identity oracle for compliant access control
+319,Role Protocol,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://www.roleprotocol.xyz,Lightweight on-chain role assignment protocol
+265,Sismo,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://www.sismo.io,Enables identity proofs without revealing identity
+131,Spectral,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://spectral.finance,On-chain reputation and credit scoring for wallets
+225,Spruce ID,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://spruceid.com,Standards-driven DID & VC tooling for Ethereum and Web3
+287,Veramo,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://veramo.io,Developer framework for building DID & VC systems
+210,Worldcoin,Advanced Compute & Integration,Identity & Social Graphs,7,6,https://worldcoin.org,Global proof-of-personhood identity system
+52,Backed Finance,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://backed.fi,Tokenized versions of traditional securities with legal backing
+423,BlackRock BUIDL,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.blackrock.com,Institutional-grade tokenized treasury fund issued by the world’s largest asset manager
+302,Centrifuge,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://centrifuge.io,Credit-native RWA rails connecting real-world cash flows to Ethereum
+248,Chainalysis KYT (RWA transfer enforcement context),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.chainalysis.com,Transaction-level compliance signals for RWA transfers
+211,Clearpool (issuer-side only),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://clearpool.finance,Issuer-side on-chain credit pools for institutions
+163,DigiFT,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.digift.sg,MAS-regulated venue for issuing and trading RWAs
+374,Fireblocks (RWA issuance & servicing context),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.fireblocks.com,Institutional custody and policy enforcement layer for tokenized RWAs
+190,Franklin Templeton Benji,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.franklintempleton.com/benji,Tokenized access to regulated money market funds
+291,KlimaDAO,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.klimadao.finance,Liquidity and incentive layer for on-chain carbon markets built on registry-anchored credits
+472,Maple Finance (issuer-integrated RWAs only),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://maple.finance,Institutional credit marketplace with on-chain settlement
+127,Matrixdock,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://matrixdock.com,Asia-centric platform for servicing tokenized RWAs
+405,Monerium,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://monerium.com,Regulated on-chain fiat settlement infrastructure
+371,Ondo Finance,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://ondo.finance,Institutional RWA products bringing treasury yields on-chain
+132,Polymesh Association (Ethereum-connected deployments only),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://polymesh.network,Regulated security-token infrastructure with Ethereum interoperability
+56,Propy,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://propy.com,Platform enabling blockchain-based property conveyance
+437,RealT,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://realt.co,Fractionalized ownership of income-producing U.S. real estate
+134,Sumsub (RWA onboarding context),Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://sumsub.com,KYC/AML onboarding for RWA investors
+11,Superstate,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://www.superstate.co,Tokenized access to regulated treasury funds with Ethereum-based ownership
+448,Toucan Protocol,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://toucan.earth,Protocol bridging real-world carbon credits onto Ethereum
+364,Vertalo,Advanced Compute & Integration,Real World Assets (RWAs),7,26,https://vertalo.com,Bridges traditional cap tables with Ethereum-based securities
+92,Ethereum Consensus Specifications,Core Protocol Architecture,Consensus Layer,3,23,https://ethereum.org/en/developers/docs/consensus-mechanisms/,"The authoritative, normative specification defining Ethereum’s Proof-of-Stake consensus rules, including fork choice, finality, validator duties, slashing conditions, and upgrade encoding."
+279,Lighthouse,Core Protocol Architecture,Consensus Layer,3,23,https://lighthouse.sigmaprime.io/,"A high-performance Ethereum consensus client written in Rust, designed with a strong emphasis on security, correctness, and efficiency."
+151,Lodestar,Core Protocol Architecture,Consensus Layer,3,23,https://lodestar.chainsafe.io,"An Ethereum consensus client written in TypeScript, enabling JavaScript-native development, research, and tooling around Ethereum consensus."
+64,Nimbus,Core Protocol Architecture,Consensus Layer,3,23,https://nimbus.team,"A lightweight Ethereum consensus client written in Nim, optimized for low-resource environments and decentralization."
+378,Prysm,Core Protocol Architecture,Consensus Layer,3,23,https://www.offchainlabs.com/prysm,"A production-grade Ethereum consensus client written in Go, implementing Ethereum’s Proof-of-Stake consensus rules and validator duties."
+277,Teku,Core Protocol Architecture,Consensus Layer,3,23,https://consensys.io/teku,"An enterprise-grade Ethereum consensus client written in Java, optimized for institutional, regulated, and professional validator environments."
+138,Besu,Core Protocol Architecture,Execution Layer,3,11,https://consensys.io/ethereum/besu,"An enterprise-grade Ethereum execution client written in Java, designed for institutional, regulated, and compliance-focused environments."
+504,Erigon,Core Protocol Architecture,Execution Layer,3,11,https://erigon.tech/,"A performance-optimized Ethereum execution client focused on efficient state storage, fast sync, and reduced disk I/O."
+171,Execution EIPs (Execution-Layer Ethereum Improvement Proposals),Core Protocol Architecture,Execution Layer,3,11,https://eips.ethereum.org/,"A structured set of proposals that define changes, extensions, and fixes to Ethereum’s execution semantics, including gas pricing, opcode behavior, transaction processing, and state transition rules."
+149,Geth (Go Ethereum),Core Protocol Architecture,Execution Layer,3,11,https://geth.ethereum.org/,"The reference Ethereum execution client written in Go, responsible for transaction execution, EVM bytecode interpretation, state transitions, gas accounting, and maintenance of Ethereum’s canonical account and storage state."
+270,Nethermind,Core Protocol Architecture,Execution Layer,3,11,https://nethermind.io/,"A high-performance Ethereum execution client written in .NET, optimized for speed, modularity, and professional validator operations."
+51,Yellow Paper (Ethereum Execution Specification),Core Protocol Architecture,Execution Layer,3,11,https://ethereum.org/en/developers/docs/evm/,"The formal, mathematical specification of Ethereum’s execution layer, defining the Ethereum Virtual Machine (EVM), transaction execution flow, state transition function, gas accounting, and account/storage model."
+240,Builder-Native Searcher Pipelines (Aggregated),Core Protocol Architecture,MEV & Block Builders,3,3,,
+506,Builder-Relay Integrated Operators (Aggregated),Core Protocol Architecture,MEV & Block Builders,3,3,,
+297,Eden Network (Integrated MEV Stack),Core Protocol Architecture,MEV & Block Builders,3,3,,
+271,Eden Network (Searcher Infrastructure),Core Protocol Architecture,MEV & Block Builders,3,3,,
+185,Eden Relay,Core Protocol Architecture,MEV & Block Builders,3,3,,
+245,Flashbots (Block Builder),Core Protocol Architecture,MEV & Block Builders,3,3,,
+410,Flashbots (Integrated Stack),Core Protocol Architecture,MEV & Block Builders,3,3,,
+183,Flashbots (Searcher Infrastructure),Core Protocol Architecture,MEV & Block Builders,3,3,,
+479,Flashbots Relay,Core Protocol Architecture,MEV & Block Builders,3,3,,
+354,Titan Builder,Core Protocol Architecture,MEV & Block Builders,3,3,,
+357,Ultra Sound Relay,Core Protocol Architecture,MEV & Block Builders,3,3,,
+278,bloXroute (Block Builder),Core Protocol Architecture,MEV & Block Builders,3,3,,
+420,bloXroute (Integrated MEV Stack),Core Protocol Architecture,MEV & Block Builders,3,3,,
+324,bloXroute (Searcher-Builder Pipeline),Core Protocol Architecture,MEV & Block Builders,3,3,,
+159,bloXroute Relay,Core Protocol Architecture,MEV & Block Builders,3,3,,
+40,rsync-builder,Core Protocol Architecture,MEV & Block Builders,3,3,,
+176,Dencun,Core Protocol Architecture,Network Upgrades,3,1,,
+193,Fusaka,Core Protocol Architecture,Network Upgrades,3,1,,
+130,Glamsterdam (Planned),Core Protocol Architecture,Network Upgrades,3,1,,
+112,London,Core Protocol Architecture,Network Upgrades,3,1,,
+257,Pectra,Core Protocol Architecture,Network Upgrades,3,1,,
+333,Shanghai / Capella (Shapella),Core Protocol Architecture,Network Upgrades,3,1,,
+111,The Merge,Core Protocol Architecture,Network Upgrades,3,1,,
+289,Binance (Validator Operations),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+209,Chorus One,Core Protocol Architecture,Validators & Staking Providers,3,9,,
+57,Coinbase (Validator Operations),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+372,Kraken (Validator Operations),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+495,Lido (Node Operator Set),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+30,P2P.org,Core Protocol Architecture,Validators & Staking Providers,3,9,,
+330,Rocket Pool (Node Operators),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+234,Solo Validators,Core Protocol Architecture,Validators & Staking Providers,3,9,,
+1,StakeWise (Operator Infrastructure),Core Protocol Architecture,Validators & Staking Providers,3,9,,
+403,Arkham,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://arkhamintelligence.com,Intelligence platform mapping wallets to real-world entities
+311,Block Analitica,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://blockanalitica.com,DeFi research firm specializing in risk analysis and modeling
+449,Bubblemaps,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://bubblemaps.io,Visualization tool mapping token holder relationships
+226,Chaos Labs,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://chaoslabs.xyz,Risk analytics platform simulating protocol behavior under stress
+456,CipherTrace,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://ciphertrace.com,Blockchain analytics and compliance platform
+453,Credora,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://credora.io,Risk transparency platform aggregating exposure and solvency data
+87,CryptoQuant,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://cryptoquant.com,On-chain and exchange analytics platform focused on flow-based market signals
+339,DeepDAO,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://deepdao.io,Analytics platform tracking DAO governance and treasuries
+48,Gauntlet,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://gauntlet.network,Risk modeling firm optimizing DeFi protocol parameters
+224,Glassnode,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://glassnode.com,On-chain analytics platform translating blockchain activity into market indicators
+125,Lookonchain,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://lookonchain.com,Platform highlighting notable wallet and whale behavior
+380,Messari,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://messari.io,Research and intelligence platform covering crypto assets and governance
+516,Nansen,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://nansen.ai,Wallet intelligence platform labeling and tracking on-chain behavior
+236,OpenGov,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://opengov.com,Emerging governance intelligence platform
+155,Santiment,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://santiment.net,Analytics platform combining on-chain metrics with social sentiment data
+184,Token Terminal,Data & Consensus Infrastructure,Analytics & Intelligence,5,31,https://tokenterminal.com,Platform translating protocol activity into financial metrics
+104,Arbitrum AnyTrust,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://arbitrum.io,Hybrid DA model combining committee speed with Ethereum safety
+365,Avail,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://www.availproject.org,Purpose-built DA blockchain optimized for light-client verification
+251,Avail DAS,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://www.availproject.org,DA-first blockchain with DAS baked into protocol design
+26,Celestia,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://celestia.org,"Modular blockchain purpose-built to provide scalable, verifiable data availability using sampling"
+370,Celestia DAS,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://celestia.org,Data Availability Sampling system enabling light clients to verify data presence
+419,EigenDA,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://www.eigenda.xyz,Ethereum-aligned DA layer leveraging restaked ETH
+486,Ethereum Blobs (EIP-4844),Data & Consensus Infrastructure,Data Availability Systems,5,10,https://eips.ethereum.org/EIPS/eip-4844,"Protocol-native data availability mechanism introducing cheap, ephemeral blob data for rollups"
+514,Ethereum Calldata,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://ethereum.org,Original Ethereum DA mechanism using calldata for publishing rollup data
+13,Immutable X,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://www.immutable.com,NFT-focused Validium chain built on StarkEx
+238,LazyLedger,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://github.com/lazyledger,Original research prototype introducing DAS concepts
+202,NEAR DA,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://near.org,DA service leveraging NEAR’s sharded L1 for scalable availability
+322,Polygon CDK Validium,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://polygon.technology/polygon-cdk,Modular ZK rollup framework supporting Validium configurations
+221,Polygon zkEVM Volition,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://polygon.technology/polygon-zkevm,zkEVM implementation with optional Validium DA
+491,StarkEx,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://starkware.co/starkex,ZK rollup framework using off-chain DA committees
+481,zkSync Era,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://zksync.io,ZK rollup supporting hybrid DA via Volition
+41,zkSync Validium,Data & Consensus Infrastructure,Data Availability Systems,5,10,https://zksync.io,zkSync execution stack with optional Validium DA mode
+451,Alchemy (Data APIs),Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.alchemy.com,Developer platform exposing indexed Ethereum data via APIs
+428,Allium,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.allium.so,Blockchain data platform focused on enterprise-grade indexing
+346,Bitquery,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://bitquery.io,Blockchain data platform emphasizing real-time and historical query access
+309,Blocknative (conditional),Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.blocknative.com,Platform indexing mempool and transaction lifecycle events
+464,Chainbase,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://chainbase.com,"Web3 data platform focused on structured, queryable datasets"
+332,Covalent,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.covalenthq.com,Indexed blockchain data platform exposing unified APIs
+91,Dune,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://dune.com,Blockchain data platform exposing Ethereum data via SQL
+318,Ethereum ETL,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://github.com/blockchain-etl/ethereum-etl,Widely used ETL toolkit for exporting Ethereum data to warehouses
+59,Flipside,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://flipsidecrypto.xyz,"Data platform providing curated, indexed blockchain datasets"
+348,Goldsky,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.goldsky.com,"Managed indexing platform focused on fast, reliable event and subgraph data"
+397,Moralis,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://moralis.io,Web3 data platform abstracting on-chain complexity
+12,QuickNode (Data APIs),Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.quicknode.com,Infra provider offering indexed data alongside RPC
+412,Satsuma,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://www.satsuma.xyz,Managed hosting and indexing for subgraphs
+375,Subsquid,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://subsquid.io,Flexible indexing framework enabling custom Ethereum data pipelines
+398,The Graph,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://thegraph.com,Decentralized protocol for indexing and querying blockchain data using subgraphs
+105,TrueBlocks,Data & Consensus Infrastructure,Indexing & Query Engines,5,7,https://trueblocks.io,Open-source Ethereum indexing framework focused on account history
+393,API3,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://api3.org,Oracle network enabling APIs to publish data directly on-chain without intermediaries
+503,Chainlink,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://chain.link,Decentralized oracle network providing authoritative off-chain and cross-chain data to Ethereum smart contracts via independent node operators
+439,Chainlink CCIP,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://chain.link/cross-chain,Cross-chain interoperability protocol enabling secure message and asset transfer between blockchains
+188,Chainlink Functions,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://chain.link/functions,Serverless compute layer enabling smart contracts to securely call APIs and run off-chain logic
+362,Gelato,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://www.gelato.network,Decentralized automation network that executes and reports on predefined off-chain conditions
+204,LayerZero,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://layerzero.network,Messaging protocol enabling applications to send arbitrary messages across chains
+468,Marlin,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://www.marlin.org,Network providing verifiable off-chain computation and networking services to blockchain protocols
+436,Provable (formerly Oraclize),Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://provable.xyz,Early oracle service enabling smart contracts to fetch authenticated web data
+252,Pyth Network,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://pyth.network,Market-maker-native oracle network delivering high-frequency price data to Ethereum via a pull-based model
+243,RedStone,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://redstone.finance,Modular oracle network that delivers signed price data on-demand instead of continuous on-chain updates
+266,Supra,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://supra.com,"Vertically integrated oracle network offering prices, randomness, and automation"
+385,Tellor,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://tellor.io,Permissionless oracle allowing anyone to report data secured by staking and disputes
+67,UMA,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://umaproject.org,Optimistic oracle allowing arbitrary data to be resolved on-chain via economic incentives and disputes
+179,UMA KPI Options,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://umaproject.org,KPI Options primitive that settles contracts based on real-world or on-chain performance metrics
+335,Witnet,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://witnet.io,Decentralized oracle network using independent witnesses to retrieve and agree on external data
+509,Wormhole,Data & Consensus Infrastructure,Oracles & Data Networks,5,36,https://wormhole.com,Cross-chain messaging network relying on guardian attestations
+20,AWS Managed Blockchain,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://aws.amazon.com/managed-blockchain,"AWS service providing managed Ethereum nodes and RPC endpoints integrated with AWS compute, networking, and IAM"
+258,Alchemy,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.alchemy.com,"Developer-focused Ethereum infrastructure platform providing managed RPC and WebSocket access alongside monitoring, debugging, and performance tooling"
+475,Ankr,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.ankr.com,Web3 infrastructure provider offering Ethereum RPC access via a hybrid centralized and decentralized node network
+254,Blockdaemon,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.blockdaemon.com,"Institutional-grade blockchain infrastructure provider offering Ethereum RPC, node operations, and staking services"
+250,Coinbase Cloud,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.coinbase.com/cloud,"Enterprise blockchain infrastructure platform providing Ethereum RPC, node hosting, staking, and compliance-ready services"
+14,Figment,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://figment.io,"Institutional blockchain infrastructure provider offering Ethereum nodes, RPC access, and staking with compliance focus"
+7,Foundry,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://book.getfoundry.sh,"High-performance Ethereum development toolkit providing local node simulation, testing, and forking via Anvil"
+388,GetBlock,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://getblock.io,Managed blockchain node provider offering Ethereum RPC and WebSocket access with broad multi-chain support
+206,Google Cloud Web3,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://cloud.google.com/web3,"Cloud-native Web3 offering providing Ethereum RPC and node services integrated with Google Cloud’s compute, networking, and data stack"
+135,Hardhat,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://hardhat.org,"Ethereum development environment providing a local RPC endpoint for contract deployment, testing, and mainnet forking"
+320,Lava Network,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.lavanet.xyz,Decentralized RPC protocol coordinating independent providers using cryptoeconomic incentives and quality-of-service enforcement
+457,Microsoft Azure Blockchain,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://azure.microsoft.com/blockchain,Azure-based blockchain infrastructure enabling Ethereum node operation and RPC access integrated with Microsoft cloud services
+215,Pocket Network,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.pokt.network,Decentralized RPC network coordinating independent node operators to provide Ethereum RPC access via cryptoeconomic incentives
+313,Tenderly,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.tenderly.co,"Ethereum infrastructure platform providing RPC access alongside transaction simulation, debugging, and monitoring"
+417,Thirdweb,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://thirdweb.com,"Web3 developer platform offering Ethereum RPC access as part of an integrated stack for contract deployment, wallets, and SDKs"
+6,dRPC,Data & Consensus Infrastructure,RPC & Node Providers,5,16,https://www.drpc.org,RPC aggregation layer that routes requests across multiple providers to improve redundancy and resilience
+262,0x Protocol,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://0x.org,"A DEX protocol enabling onchain settlement of RFQ and limit orders, where prices are quoted by market makers and executed trustlessly on Ethereum."
+396,Balancer,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://balancer.fi,"A programmable liquidity protocol enabling multi-asset and weighted pools, optimized for portfolio-style liquidity and capital-efficient baskets."
+84,Bancor,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://bancor.network,"An AMM enabling single-sided liquidity provision, where LPs supply one asset and the protocol balances exposure using BNT, setting prices via onchain swaps."
+510,Cow Protocol,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://cow.fi,"A DEX that batches trades and clears them at a uniform price, leveraging solver competition to minimize MEV and improve execution."
+314,Curve Finance,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://curve.fi,"A specialized AMM optimized for stable and correlated assets, providing deep liquidity and minimal slippage near target prices."
+345,Kyber Network,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://kyberswap.com,A liquidity protocol combining AMM pools and professional liquidity to enable onchain swaps with broad asset coverage.
+170,Maverick Protocol,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://www.mav.xyz,"A next-generation AMM where liquidity automatically shifts directionally with price, reducing LP management overhead and adverse selection."
+63,Shell Protocol,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://shellprotocol.io,An early multi-asset AMM exploring portfolio-style invariants for efficient swaps among baskets of correlated assets.
+218,SushiSwap,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://www.sushi.com,"A general-purpose AMM offering permissionless token swaps and liquidity provision, with broad asset coverage and strong long-tail liquidity."
+77,Uniswap,DeFi Systems Architecture,DEX & Liquidity Pools,2,34,https://uniswap.org,"The dominant Ethereum AMM enabling permissionless token swaps via onchain liquidity pools, with capital-efficient concentrated liquidity introduced in v3."
+347,Aave,DeFi Systems Architecture,Lending Markets,2,14,https://aave.com (aave.com),Non-custodial liquidity markets enabling users to supply assets to earn interest and borrow against collateral via smart contracts. (aave.com)
+108,Arcade,DeFi Systems Architecture,Lending Markets,2,14,https://arcade.xyz (Alchemy),"NFT lending platform enabling lenders and borrowers to create fixed-rate, fixed-term loans with NFT collateral escrowed onchain, including vaults that bundle collateral. (Alchemy)"
+21,BendDAO,DeFi Systems Architecture,Lending Markets,2,14,https://benddao.xyz (MixBytes),NFT-collateral lending protocol enabling borrowers to obtain ETH loans using NFTs as collateral with protocol-defined solvency and liquidation. (MixBytes)
+3,Centrifuge (Tinlake / RWA pools),DeFi Systems Architecture,Lending Markets,2,14,https://centrifuge.io (Centrifuge Docs),RWA-focused DeFi credit infrastructure enabling pooled financing against tokenized real-world assets with onchain accounting and tranche structures. (Kraken)
+38,Clearpool,DeFi Systems Architecture,Lending Markets,2,14,https://clearpool.finance (Clearpool),"Onchain credit pools for institutions where liquidity providers fund borrower pools and earn yield, with protocol-defined default and auction processes. (Clearpool)"
+424,Compound,DeFi Systems Architecture,Lending Markets,2,14,https://compound.finance,"Non-custodial lending protocol enabling users to supply assets to earn interest and borrow against collateral, with simplified risk architecture in v3 (Comet)."
+145,Euler,DeFi Systems Architecture,Lending Markets,2,14,https://www.euler.finance,A modular lending protocol designed to support permissionless asset onboarding with granular risk controls and onchain liquidation logic.
+208,Goldfinch,DeFi Systems Architecture,Lending Markets,2,14,https://goldfinch.finance (goldfinch.finance),Private credit protocol that deploys stablecoin capital into borrower pools with onchain loan terms and repayment tracking. (docs.goldfinch.finance)
+94,Iron Bank (IB),DeFi Systems Architecture,Lending Markets,2,14,ib.xyz (CoinMarketCap),A money-market lending protocol designed for both standard collateralized lending and whitelisted undercollateralized protocol borrowing to improve capital efficiency for integrated DeFi systems. (defillama.com)
+404,Liquity (V1),DeFi Systems Architecture,Lending Markets,2,14,liquity.org (Liquity),ETH-collateralized borrowing protocol where users mint LUSD against ETH with liquidations primarily handled by the Stability Pool rather than auctions. (Liquity)
+334,MakerDAO,DeFi Systems Architecture,Lending Markets,2,14,https://makerdao.com,"Protocol that issues the DAI stablecoin by allowing users to borrow against onchain collateral through vaults, with liquidation and solvency enforced by smart contracts."
+465,Maple Finance,DeFi Systems Architecture,Lending Markets,2,14,https://maple.finance (Maple Finance),"Onchain private credit protocol connecting lenders to curated institutional borrowers through pools, with transparent onchain accounting of loans and collateral. (Maple Finance)"
+69,Morpho (Morpho Blue),DeFi Systems Architecture,Lending Markets,2,14,https://morpho.org (morpho.org),"A minimal, trustless lending primitive enabling permissionless creation of isolated lending markets, each defined by collateral, loan asset, LLTV, oracle, and IRM. (morpho.org)"
+28,Reflexer (RAI),DeFi Systems Architecture,Lending Markets,2,14,https://reflexer.finance (Reflexer),"Ethereum protocol where users mint RAI, a non-pegged, ETH-backed stable asset, via SAFE positions; solvency and liquidations are enforced onchain with auctions. (Reflexer)"
+445,Silo Finance,DeFi Systems Architecture,Lending Markets,2,14,https://www.silo.finance,"A lending protocol where each asset exists in its own isolated market, preventing contagion between assets while still enabling permissionless lending."
+377,Spark Protocol (SparkLend),DeFi Systems Architecture,Lending Markets,2,14,https://spark.fi (Spark Docs),"Non-custodial Ethereum money market (“SparkLend”), built on Aave v3 codebase, enabling supply/borrow with protocol-enforced interest and liquidation mechanics. (Spark Docs)"
+156,TrueFi,DeFi Systems Architecture,Lending Markets,2,14,https://truefi.io (TrueFi),"Credit protocol offering onchain lending via pools and borrower-specific Lines of Credit, with programmatic repayment flows and default backstops. (TrueFi Docs)"
+488,Coinbase,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://www.coinbase.com,"A custodial liquid staking token representing ETH staked by Coinbase, with rewards accruing via an increasing cbETH/ETH exchange rate."
+315,Ether.fi,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://www.ether.fi,"A non-custodial liquid staking protocol issuing eETH, where users retain economic exposure to ETH staking rewards while enabling optional restaking paths without ceding validator withdrawal control."
+402,Frax Finance,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://frax.finance,A hybrid liquid staking design where frxETH provides ETH liquidity while sfrxETH captures Ethereum staking rewards through protocol-managed validators.
+32,Lido,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://lido.fi,"A liquid staking protocol that pools ETH to run validators and issues stETH, a liquid, rebasing token representing a claim on Ethereum consensus staking rewards."
+147,Rocket Pool,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://rocketpool.net,"A decentralized liquid staking protocol issuing rETH, a non-rebasing token whose exchange rate to ETH increases with staking rewards from permissionless validators."
+39,StakeWise,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://stakewise.io,"A modular liquid staking protocol where ETH is staked via isolated validator vaults, issuing osETH to represent pooled staking claims with reduced slashing contagion."
+74,Swell,DeFi Systems Architecture,Liquid Staking Tokens,2,25,https://www.swellnetwork.io,"A liquid staking protocol issuing swETH, representing ETH staked with governance-selected validators, accruing Ethereum consensus rewards via an appreciating exchange rate."
+501,AltLayer,DeFi Systems Architecture,Restaking Systems,2,21,https://www.altlayer.io,A rollup-as-a-service and shared security platform that uses restaked ETH/LSTs to secure rollup components such as sequencers and finality layers.
+55,EigenLayer,DeFi Systems Architecture,Restaking Systems,2,21,https://www.eigenlayer.xyz,A restaking coordination layer that allows staked ETH or LSTs to secure external systems by opting into new slashing conditions beyond Ethereum consensus.
+142,Ether.fi (restaking layer),DeFi Systems Architecture,Restaking Systems,2,21,https://www.ether.fi,"A non-custodial restaking intermediary that enables ETH/LST holders to delegate restaking participation into AVSs, exposing them to new slashing domains beyond Ethereum consensus."
+223,Kelp DAO,DeFi Systems Architecture,Restaking Systems,2,21,https://www.kelpdao.xyz,"A liquid restaking protocol issuing rsETH that actively manages operator selection and AVS exposure, aiming to reduce slashing risk concentration while extending ETH security."
+286,Puffer Finance,DeFi Systems Architecture,Restaking Systems,2,21,https://www.puffer.fi,A restaking protocol that combines validator tooling with EigenLayer restaking to improve operator performance and reduce slashing risk while extending ETH security to external systems.
+168,Renzo,DeFi Systems Architecture,Restaking Systems,2,21,https://www.renzoprotocol.com,"A liquid restaking protocol issuing ezETH that delegates LST-backed restaking into AVSs, exposing holders to new slashing domains beyond Ethereum consensus."
+43,Symbiotic,DeFi Systems Architecture,Restaking Systems,2,21,https://symbiotic.fi,"A modular restaking coordination protocol that lets ETH or LSTs secure external systems through vault-based participation and service-defined slashing, emphasizing risk isolation."
+273,GMX,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://gmx.io,A decentralized perpetuals exchange where traders take leveraged positions against a shared liquidity pool rather than peer traders.
+264,Hegic,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://www.hegic.co,A pooled-liquidity options protocol where LPs write options and traders gain convex exposure via onchain contracts.
+356,Lyra,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://www.lyra.finance,"An options AMM that prices volatility directly, allowing traders to buy/sell options while LPs underwrite volatility risk."
+321,Notional Finance (derivatives view),DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://notional.finance,"A fixed-rate protocol where users trade time-bound cashflows, enabling hedging or locking of interest-rate exposure—functionally a rate derivative market."
+165,Opyn,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://opyn.co,An onchain options protocol enabling European-style options with programmatic settlement and collateralization.
+162,Perpetual Protocol,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://perp.com,A decentralized perpetuals protocol using virtual AMMs to provide leveraged exposure without relying on pooled spot liquidity.
+141,Synthetix (Perps),DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://synthetix.io,"A synthetic derivatives system where traders take perp exposure against SNX stakers, who collectively underwrite system risk."
+401,Synthetix (Synths),DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://synthetix.io,"A protocol that issues synthetic representations of assets (Synths), allowing users to gain price exposure without owning the underlying asset, backed by a pooled collateral system."
+60,Voltz,DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://voltz.xyz,"An onchain interest-rate swap protocol allowing users to exchange fixed and floating rate exposure on DeFi benchmarks, enabling explicit rate hedging."
+489,dYdX (v3 on Ethereum),DeFi Systems Architecture,Synthetic & Derivatives,2,4,https://dydx.exchange,"An onchain perpetual futures exchange that enabled leveraged, non-spot exposure with programmatic margining and liquidations, settling continuously on Ethereum (v3)."
+359,BarnBridge (SMART Yield),DeFi Systems Architecture,Yield & Structured Markets,2,12,barnbridge.com (historical) / docs as available via community mirrors,Structured DeFi product suite (SMART Yield) that packages underlying protocol yields into bond/tranche-like instruments. (lexology.com)
+440,Beefy Finance,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://beefy.finance (docs.beefy.finance),Yield optimizer whose vaults deploy deposits into external liquidity pools/farms and automatically compound rewards back into principal assets. (docs.beefy.finance)
+29,Element Finance,DeFi Systems Architecture,Yield & Structured Markets,2,12,element.fi (docs via Delv portal) (Delv Documentation),Protocol that created fixed/variable yield markets by splitting a yield-bearing asset into PT (principal) redeemable at maturity and YT (yield) capturing the yield component. (Delv Documentation)
+121,Enzyme,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://enzyme.finance,An on-chain asset management framework enabling managers to run funds/vaults that can implement sophisticated yield strategies across DeFi.
+102,Ether.fi Cash,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://www.ether.fi,"A cash-management style product that aggregates staking, restaking, and DeFi yields into a single user-facing yield abstraction."
+216,Harvest Finance,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://harvest.finance (docs: https://docs.harvest.finance) (Harvest Finance),Yield aggregator where vault deposits are deployed into third-party DeFi protocols via strategies to generate yield that is shared with depositors. (Harvest Finance)
+409,Idle Finance,DeFi Systems Architecture,Yield & Structured Markets,2,12,idle.finance (docs.idle.finance) (idle.finance),Yield automation protocol offering (a) best-yield allocation and (b) tranche products that split risk/return into senior and junior classes. (docs.idle.finance)
+75,Notional Finance (fixed-rate / fCash markets),DeFi Systems Architecture,Yield & Structured Markets,2,12,notional.finance (docs.notional.finance) (docs.notional.finance),"Protocol that enables fixed-rate, fixed-term lending by minting/trading fCash claims redeemable at maturity; fixed yield emerges from the discount/premium of fCash vs cash. (docs.notional.finance)"
+336,Pendle,DeFi Systems Architecture,Yield & Structured Markets,2,12,pendle.finance,Protocol that tokenizes yield by splitting yield-bearing assets into PT (principal) and YT (yield) and provides AMMs for trading those exposures. (docs.pendle.finance)
+33,Ribbon Finance (Theta Vaults; legacy DOVs),DeFi Systems Architecture,Yield & Structured Markets,2,12,ribbon.finance (docs: docs.ribbon.finance) (ribbon.finance),"Structured products vaults that automate systematic options strategies (e.g., selling OTM options) to generate yield. (docs.ribbon.finance)"
+260,Sommelier,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://sommelier.finance,An automated strategy platform where off-chain computation actively manages on-chain vaults to optimize yield across multiple DeFi venues.
+381,Swell (Yield Vault Products),DeFi Systems Architecture,Yield & Structured Markets,2,12,https://www.swellnetwork.io,Yield vault products that deploy Swell’s staking assets into additional DeFi strategies to enhance returns beyond base staking.
+478,Yearn Finance,DeFi Systems Architecture,Yield & Structured Markets,2,12,https://yearn.fi (yearn.fi),DeFi yield aggregator where vaults allocate deposited assets into programmatic strategies across underlying protocols to optimize risk-adjusted returns. (yearn.fi)
+435,Abu Dhabi Global Market blockchain sandbox (ADGM RegLab),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.adgm.com/setting-up/digital-assets,
+373,BIS Innovation Hub,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih.htm,
+338,Bank of England wholesale CBDC pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bankofengland.co.uk,
+259,Banque de France CBDC pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.banque-france.fr,
+25,City of Lugano Plan ₿,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.lugano.ch,
+177,Dubai VARA public-sector pilots (Ethereum-based),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://vara.ae,
+444,EBSI,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://digital-strategy.ec.europa.eu/en/policies/ebsi,
+300,Estonia e-Residency blockchain initiatives (Ethereum contexts),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.e-resident.gov.ee,
+470,European Central Bank — Ethereum pilot programs,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.ecb.europa.eu,
+37,Fnality,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://fnality.org,
+369,German Federal Government blockchain bond pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bundesfinanzministerium.de,
+200,Hong Kong Government Tokenized Green Bonds,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.hkma.gov.hk,
+467,Hong Kong Monetary Authority — Ethereum pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.hkma.gov.hk,
+103,JPM Coin (Ethereum-anchored only),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.jpmorgan.com/onyx,
+325,Monetary Authority of Singapore — Ethereum pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.mas.gov.sg,
+337,Onyx Digital Assets (public-sector / interbank),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.onyxjpmorgan.com,
+474,Project Dunbar,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/dunbar.htm,
+212,Project Guardian,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.mas.gov.sg,
+502,Project Helvetia,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/helvetia.htm,
+426,Project Icebreaker,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/icebreaker.htm,
+515,Project Jura,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/jura.htm,
+249,Project Rosalind,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/rosalind.htm,
+340,Project Ubin,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.mas.gov.sg,
+62,Project iAM,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://digital-strategy.ec.europa.eu,
+326,Project mBridge,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.bis.org/about/bisih/topics/cbdc/mbridge.htm,
+195,Singapore Global CBDC Challenge (Ethereum tracks),Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.mas.gov.sg/development/fintech/central-bank-digital-currency,
+508,Swiss National Bank — Ethereum settlement pilots,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.snb.ch,
+214,UK FCA Digital Sandbox,Governance & Enterprise Framework,CBDCs & Public Sector Pilots,4,27,https://www.fca.org.uk,
+425,Amberdata (regulatory analytics contexts),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://amberdata.io,
+128,Arkham (forensics contexts only),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://arkhamintelligence.com,
+358,Blockchain Intelligence Group,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://blockchaingroup.io,
+148,Chainalysis,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.chainalysis.com (Chainalysis),
+19,Chainalysis Government Solutions,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.chainalysis.com/solutions/government,
+50,Chainalysis KYT,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.chainalysis.com/product/kyt,
+421,Chainalysis Reactor,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.chainalysis.com/product/reactor,
+350,CipherTrace (Mastercard),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://ciphertrace.com,
+88,Coinfirm,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.coinfirm.com,
+85,Elliptic,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.elliptic.co (Elliptic),
+58,Elliptic Government Solutions,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.elliptic.co/solutions/government,
+368,Elliptic Navigator,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.elliptic.co/platform/navigator,
+275,Eventus (crypto integrations),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.eventus.com,
+344,Kaiko (market integrity contexts),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.kaiko.com,
+305,Lukka,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.lukka.tech,
+513,Merkle Science,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.merklescience.com,
+452,Nansen (compliance contexts only),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.nansen.ai,
+198,Notabene,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.notabene.id,
+253,Scorechain (Ethereum coverage),Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.scorechain.com,
+15,Solidus Labs,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://soliduslabs.com,
+363,TRM Entity Resolution,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.trmlabs.com,
+484,TRM Forensics,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.trmlabs.com/blockchain-intelligence-platform/forensics,
+217,TRM Labs,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.trmlabs.com (TRM Labs),
+207,TRM Public Sector,Governance & Enterprise Framework,Compliance & Regulatory Intelligence,4,20,https://www.trmlabs.com/solutions/public-sector,
+361,Agora,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://agora.xyz,
+376,Aragon,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://aragon.org,
+432,Boardroom,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://boardroom.io,
+169,Colony,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://colony.io,
+129,Commonwealth,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://commonwealth.im,
+47,Compound Governor,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://compound.finance/docs/governance,
+201,Coordinape (authority signaling only),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://coordinape.com,
+122,DAOstack (Alchemy),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://daostack.io,
+447,Delay Modifier,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://github.com/gnosis/zodiac-modifier-delay,
+353,Governor Alpha,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://github.com/compound-finance/compound-protocol,
+154,Governor Bravo,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://github.com/compound-finance/compound-protocol,
+197,Guild.xyz (on-chain role gating only),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://guild.xyz,
+98,Hats Protocol,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://hatsprotocol.xyz,
+101,Juicebox,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://juicebox.money,
+164,Moloch DAO Framework,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://molochdao.com,
+45,Moloch DAO Framework (v2/v3),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://molochdao.com,
+355,OpenZeppelin Defender (governance automation contexts only),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://openzeppelin.com/defender,
+89,OpenZeppelin Governor,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://docs.openzeppelin.com/contracts/governance,
+152,Reality.eth,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://reality.eth.link,
+5,Roles Modifier,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://github.com/gnosis/zodiac-modifier-roles,
+307,Safe,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://safe.global,
+387,Safe Core Protocol,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://docs.safe.global,
+81,Snapshot,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://snapshot.org,
+407,Tally,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://www.tally.xyz,
+191,Timelock Controller (OpenZeppelin),Governance & Enterprise Framework,DAO Governance Systems,4,18,https://docs.openzeppelin.com/contracts/api/governance,
+70,Zodiac,Governance & Enterprise Framework,DAO Governance Systems,4,18,https://zodiac.wiki,
+316,Alchemy (enterprise / infra adoption),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.alchemy.com,
+220,Axelar (enterprise contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://axelar.network,
+65,Aztec (enterprise contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://aztec.network,
+93,Baseline Protocol,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://baseline-protocol.org,
+272,"BlockApps (STRATO, Ethereum-anchored)",Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://blockapps.net,
+161,Chainlink (enterprise integration contexts only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://chain.link,
+331,Chainstack,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://chainstack.com,
+86,ConsenSys (Enterprise / Quorum stack),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://consensys.io,
+114,ConsenSys Codefi,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://consensys.io/codefi,
+329,ConsenSys Quorum Permissioning,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://consensys.io/quorum,
+394,EY OpsChain,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.ey.com/en_gl/blockchain/ey-opschain,
+120,Fireblocks (enterprise deployment & ops),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.fireblocks.com,
+256,Hyperledger Besu (enterprise context),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://besu.hyperledger.org,
+399,IBM Blockchain (Ethereum-anchored initiatives only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.ibm.com/blockchain,
+61,Infura,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://infura.io,
+284,Kaleido,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://kaleido.io,
+194,Nightfall (EY),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://nightfallprotocol.com,
+228,Onyx Digital Assets (Ethereum-anchored only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.onyxjpmorgan.com,
+411,Oracle Blockchain Platform (Ethereum interoperability),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.oracle.com/blockchain,
+203,Polygon Nightfall,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://polygon.technology/nightfall,
+494,Provenance Blockchain (Ethereum settlement bridges only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://provenance.io,
+80,QuickNode,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.quicknode.com,
+328,R3 (Ethereum interop only),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://r3.com,
+72,SAP (Ethereum integrations),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.sap.com/products/blockchain.html,
+292,SAP Blockchain Service (Ethereum integrations),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.sap.com/products/blockchain.html,
+233,Securitize,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://securitize.io,
+312,SettleMint,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://settlemint.com,
+367,Spruce (enterprise identity),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://spruceid.com,
+123,Taurus (issuance & custody),Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://www.taurushq.com,
+454,Tokeny,Governance & Enterprise Framework,Enterprise Blockchain Adoption,4,2,https://tokeny.com,
+455,AWS Key Management Service (Ethereum signing only),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://aws.amazon.com/kms,
+42,Anchorage Digital,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.anchorage.com,
+173,Anchorage Digital (recovery & insurance stack),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.anchorage.com,
+9,Anchorage Policy Engine,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.anchorage.com,
+117,BitGo,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.bitgo.com,
+274,BitGo Insurance Programs,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.bitgo.com,
+126,Blockdaemon Wallet,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://blockdaemon.com,
+400,Coinbase Custody,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://custody.coinbase.com,
+490,Copper,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://copper.co,
+294,Copper (insurance & risk services),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://copper.co,
+24,Copper ClearLoop (Ethereum contexts),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://copper.co,
+282,Fidelity Digital Assets,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.fidelitydigitalassets.com,
+352,Fireblocks,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.fireblocks.com,
+158,Fireblocks MPC Wallet,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.fireblocks.com,
+477,Fireblocks Policy Engine,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.fireblocks.com,
+53,Fordefi,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://fordefi.com,
+296,GK8,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.gk8.io,
+295,Gemini Custody,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.gemini.com/custody,
+507,HSM-backed Ethereum signing providers (category),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.thalesgroup.com,
+97,Hex Trust,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://hextrust.com,
+49,Ledger Enterprise,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.ledger.com/enterprise,
+247,Qredo,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://www.qredo.com,
+461,Safe Modules (institutional use),Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://safe.global,
+459,Safe{Core},Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://safe.global,
+308,ZenGo Institutional,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://zengo.com,
+140,Zodia Custody,Governance & Enterprise Framework,Institutional Custody & Security,4,24,https://zodia-custody.com,
+175,First Digital USD,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+71,Pax Dollar,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+66,PayPal USD,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+349,Stably USD,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+137,Tether,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+199,USD Coin,Monetary & Access Rails,Centralized Stablecoins,1,22,,
+36,Dai,Monetary & Access Rails,Decentralized Stablecoins,1,35,,
+443,Frax,Monetary & Access Rails,Decentralized Stablecoins,1,35,,
+231,Liquity USD,Monetary & Access Rails,Decentralized Stablecoins,1,35,,
+46,Rai Reflex Index,Monetary & Access Rails,Decentralized Stablecoins,1,35,,
+10,Savings Dai,Monetary & Access Rails,Decentralized Stablecoins,1,35,,
+100,Alchemy Pay,Monetary & Access Rails,Global On-Ramps,1,13,https://alchemypay.org,"Alchemy Pay is a global fiat-to-crypto on-ramp that specializes in connecting local payment methods and e-wallets to Ethereum assets, enabling users in emerging and underbanked regions to access crypto via familiar rails."
+450,Banxa,Monetary & Access Rails,Global On-Ramps,1,13,https://banxa.com,"Banxa is a global fiat-to-crypto on-ramp that enables users to purchase Ethereum assets using cards, bank transfers, and local payment methods, operating primarily as an infrastructure provider embedded into exchanges, wallets, and Web3 platforms."
+166,Binance (Binance On-Ramp),Monetary & Access Rails,Global On-Ramps,1,13,https://www.binance.com/en/fiat,"Binance On-Ramp provides a global fiat-to-crypto access layer enabling users to convert local fiat currencies into Ethereum assets using cards, bank transfers, and local payment rails, tightly integrated with Binance’s exchange and wallet infrastructure."
+95,Coinbase (Coinbase Pay / On-Ramp APIs),Monetary & Access Rails,Global On-Ramps,1,13,https://www.coinbase.com/onramp,"Coinbase Pay and On-Ramp APIs provide a regulated, globally available fiat-to-crypto access layer that enables users and applications to convert fiat into Ethereum assets using bank transfers and cards, leveraging Coinbase’s compliance and banking relationships."
+8,Mercuryo,Monetary & Access Rails,Global On-Ramps,1,13,https://mercuryo.io,"Mercuryo is a global fiat-to-crypto on-ramp that enables users and applications to convert fiat into Ethereum assets via cards, bank transfers, and local payment methods, with a strong focus on embedded Web3 payments and wallet integrations."
+341,MetaMask (MetaMask Buy),Monetary & Access Rails,Global On-Ramps,1,13,https://metamask.io,MetaMask Buy is a wallet-embedded fiat-to-crypto access layer that allows users to purchase Ethereum assets directly into their self-custody MetaMask wallet by routing transactions through multiple global on-ramp providers.
+107,MoonPay,Monetary & Access Rails,Global On-Ramps,1,13,https://www.moonpay.com,"MoonPay is a global fiat-to-crypto on-ramp that enables users to purchase Ethereum assets using cards, bank transfers, and local payment methods, acting as an access gateway embedded across wallets, dApps, and Web3 platforms."
+196,OKX (OKX On-Ramp),Monetary & Access Rails,Global On-Ramps,1,13,https://www.okx.com/buy-crypto,"OKX On-Ramp provides a global fiat-to-crypto access layer that enables users to convert local fiat into Ethereum assets via cards, bank transfers, and local payment methods, integrated into the OKX exchange and wallet ecosystem."
+480,Onramper,Monetary & Access Rails,Global On-Ramps,1,13,https://onramper.com,"Onramper is a global on-ramp aggregator that routes users to multiple fiat-to-crypto providers, optimizing for price, payment method availability, and geographic coverage to facilitate access to Ethereum assets."
+269,PayPal (Crypto On-Ramp),Monetary & Access Rails,Global On-Ramps,1,13,https://www.paypal.com/crypto,"PayPal’s crypto on-ramp allows users to purchase Ethereum assets directly from their PayPal balance or linked payment methods, leveraging PayPal’s global payments network to provide mainstream access to Ethereum."
+172,Ramp,Monetary & Access Rails,Global On-Ramps,1,13,https://ramp.network,"Ramp is a global fiat-to-crypto on-ramp specializing in low-cost bank-transfer access to Ethereum and Ethereum L2s, enabling users and applications to convert fiat into onchain assets through a compliance-first, API-driven model."
+317,Sardine,Monetary & Access Rails,Global On-Ramps,1,13,https://www.sardine.ai,"Sardine provides a compliance-first fiat-to-crypto access infrastructure layer, combining payments, KYC, AML, and fraud prevention to enable platforms to onboard users into Ethereum assets through regulated banking and card rails."
+303,Simplex,Monetary & Access Rails,Global On-Ramps,1,13,https://www.simplex.com,"Simplex is a global, card-focused fiat-to-crypto on-ramp that enables users to purchase Ethereum assets using credit and debit cards, operating primarily as a backend payment processor embedded within exchanges, wallets, and brokerage platforms."
+22,Socket (Fiat → Chain Routing),Monetary & Access Rails,Global On-Ramps,1,13,https://www.socket.tech,Socket provides a chain-aware routing layer that orchestrates fiat-to-crypto onboarding by directing users through integrated on-ramps and bridging paths to land assets directly on the target Ethereum chain or L2.
+239,Stripe (Crypto On-Ramp APIs),Monetary & Access Rails,Global On-Ramps,1,13,https://stripe.com/crypto,"Stripe’s Crypto On-Ramp APIs enable platforms and applications to embed compliant fiat-to-Ethereum asset purchases directly into their products, leveraging Stripe’s global payments infrastructure and developer tooling."
+276,Transak,Monetary & Access Rails,Global On-Ramps,1,13,https://transak.com,"Transak is a global fiat-to-crypto on-ramp and off-ramp provider that enables users to convert local fiat into Ethereum assets through cards, bank transfers, and regional payment methods, with a strong focus on API-driven distribution."
+124,Trust Wallet (Integrated Global On-Ramps),Monetary & Access Rails,Global On-Ramps,1,13,https://trustwallet.com,"Trust Wallet integrates multiple global fiat-to-crypto on-ramp providers directly into its wallet, allowing users worldwide to purchase Ethereum assets and receive them directly into self-custody without using an exchange."
+446,Airwallex (Stablecoin Settlement Pilots),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.airwallex.com,"Airwallex is exploring stablecoin-based settlement using Ethereum to improve cross-border payment efficiency and treasury operations, integrating onchain settlement behind regulated payment and FX workflows."
+186,"Bank for International Settlements (Project Agorá, Project Mariana)",Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.bis.org,"The BIS, through initiatives such as Project Agorá and Project Mariana, is exploring how public blockchains including Ethereum can interoperate with tokenized bank deposits and central-bank money to enable cross-border wholesale settlement, FX PvP, and next-generation financial market infrastructure."
+343,Circle (Circle Payments / Circle APIs),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.circle.com,"Circle Payments and Circle APIs provide institutional-grade payment and settlement infrastructure using Ethereum-native stablecoins, enabling enterprises and fintechs to move value globally with programmable compliance and onchain finality while abstracting blockchain complexity from end users."
+17,ConsenSys (Codefi Payments / Enterprise Settlement Tooling),Monetary & Access Rails,Institutional Payment Rails,1,15,https://consensys.io,"ConsenSys provides enterprise-grade Ethereum settlement and payment tooling through products such as Codefi Payments, enabling institutions to build compliant, programmable payment and treasury workflows on Ethereum while abstracting protocol complexity."
+143,Copper (ClearLoop Settlement Infrastructure),Monetary & Access Rails,Institutional Payment Rails,1,15,https://copper.co,"Copper’s ClearLoop provides institutional-grade settlement infrastructure that enables secure, off-exchange transfer and collateral management of Ethereum-based assets, allowing institutions to move value without exposing funds to exchange counterparty risk."
+342,Deutsche Bank (Tokenized Deposits & Ethereum-Based Settlement Initiatives),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.db.com,"Deutsche Bank has been exploring Ethereum-based settlement, custody, and tokenized deposit models to modernize institutional payments and capital markets infrastructure, using public Ethereum as an interoperability and settlement anchor while abstracting blockchain complexity from clients."
+232,European Central Bank (Ethereum-Linked Wholesale Settlement Pilots),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.ecb.europa.eu,"The ECB is conducting research and pilot programs exploring how distributed ledger technologies, including public Ethereum, could interoperate with central-bank money and financial market infrastructures for wholesale settlement of tokenized assets."
+110,Fireblocks Payments,Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.fireblocks.com,"Fireblocks Payments provides institutional-grade payment and settlement infrastructure on Ethereum by orchestrating secure, policy-controlled stablecoin and digital asset transfers for enterprises and financial institutions, abstracting blockchain operations behind enterprise workflows."
+268,Hyperledger Besu (Enterprise Ethereum Settlement Stacks),Monetary & Access Rails,Institutional Payment Rails,1,15,https://besu.hyperledger.org,"Hyperledger Besu is an enterprise-grade, open-source Ethereum client used by institutions to run permissioned or public Ethereum networks for payment settlement, tokenized cash, and programmable financial workflows."
+79,JPMorgan Kinexys (formerly JPM Coin),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.jpmorgan.com/kinexys,"JPMorgan Kinexys is JPMorgan’s blockchain-based institutional payment network that enables real-time, tokenized deposit settlement and treasury flows for global enterprises, with selective integration and interoperability with Ethereum-based assets and standards."
+192,Paxos (Enterprise Settlement / PYUSD Infrastructure),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.paxos.com,"Paxos provides regulated, enterprise-grade payment and settlement infrastructure using Ethereum-native stablecoins, including acting as the issuer and backend settlement layer for PYUSD and other institutional digital dollar products."
+244,"PayPal (Enterprise Crypto Settlement, PYUSD)",Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.paypal.com/pyusd,"PayPal provides enterprise-grade crypto settlement using PYUSD on Ethereum, enabling merchants and platforms to move value programmatically through PayPal’s global payments network while abstracting blockchain complexity and custody."
+511,R3 (Ethereum Interoperability for Settlement),Monetary & Access Rails,Institutional Payment Rails,1,15,https://r3.com,"R3 provides enterprise-grade interoperability infrastructure that enables institutions to settle assets and payments across permissioned DLT networks and public Ethereum, using Ethereum as a finality and interoperability anchor while abstracting blockchain complexity from users."
+115,Société Générale – Forge (EURCV Settlement),Monetary & Access Rails,Institutional Payment Rails,1,15,https://forge.societegenerale.com,"Société Générale – Forge provides regulated, euro-denominated institutional settlement infrastructure on Ethereum through EURCV, enabling compliant B2B and capital markets payments with onchain finality while abstracting blockchain complexity from enterprise users."
+499,Standard Chartered (Tokenized Deposits & Ethereum-Based Settlement Initiatives),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.sc.com,"Standard Chartered has been actively exploring Ethereum-based settlement and tokenized deposit models for institutional payments and capital markets workflows, using public Ethereum as an interoperability and settlement anchor while abstracting blockchain complexity from clients."
+146,Stripe (Stablecoin-Based Settlement for Platforms),Monetary & Access Rails,Institutional Payment Rails,1,15,https://stripe.com/crypto,"Stripe provides stablecoin-based settlement infrastructure that allows platforms and marketplaces to move value globally using Ethereum-based stablecoins, embedding blockchain settlement behind familiar payment APIs and workflows."
+34,Tether (Institutional Settlement on Ethereum),Monetary & Access Rails,Institutional Payment Rails,1,15,https://tether.to,"Tether facilitates institutional-grade payment and settlement flows on Ethereum through USDT, enabling high-value, cross-border transfers and liquidity provisioning with onchain finality, primarily serving exchanges, market makers, and global enterprises."
+180,UBS (Tokenized Deposits & Ethereum-Based Pilots),Monetary & Access Rails,Institutional Payment Rails,1,15,https://www.ubs.com,"UBS has conducted multiple pilots using Ethereum and Ethereum-compatible infrastructure to explore tokenized bank deposits and onchain settlement for institutional payments and securities workflows, with Ethereum acting as an interoperability and experimentation layer."
+473,Belo,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.belo.app,Belo is an Argentina-focused payments and savings platform that uses Ethereum-based stablecoins to provide users with dollar-denominated value storage and local payment capabilities amid inflation and capital controls.
+306,Bitso,Monetary & Access Rails,Regional Payment Networks,1,19,https://bitso.com,"Bitso operates a regionally focused payment and settlement network across Latin America, using Ethereum-based stablecoins to enable fast, low-cost cross-border payments and treasury flows while abstracting blockchain complexity behind regulated fintech infrastructure."
+414,Bitybank,Monetary & Access Rails,Regional Payment Networks,1,19,https://bitybank.com,"Bitybank operates a MENA-focused crypto payments and settlement network that uses Ethereum-based stablecoins to support regional remittances, SME payments, and treasury flows while abstracting blockchain complexity from end users."
+255,Buenbit,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.buenbit.com,"Buenbit is an Argentina-focused fintech that uses Ethereum-based stablecoins to enable payments, savings, and value transfer in a high-inflation environment, offering users practical access to dollar-denominated value."
+383,Chipper,Monetary & Access Rails,Regional Payment Networks,1,19,https://chippercash.com,"Chipper operates a pan-African consumer payments network that enables domestic and cross-border transfers across multiple African countries, using Ethereum-based stablecoins selectively to improve cross-border settlement efficiency and USD access."
+395,Coins.ph,Monetary & Access Rails,Regional Payment Networks,1,19,https://coins.ph,"Coins.ph operates a Philippines-focused payments and remittance network that uses Ethereum-based stablecoins to enable domestic payments and international remittances, providing users access to USD-denominated value through regulated fintech infrastructure."
+485,EUR CoinVertible,Monetary & Access Rails,Regional Payment Networks,1,19,,
+237,Flutterwave,Monetary & Access Rails,Regional Payment Networks,1,19,https://flutterwave.com,"Flutterwave is a leading African payments processor that enables merchants and platforms to accept and settle payments across Africa, with selective use of Ethereum-based stablecoins to improve cross-border settlement efficiency."
+382,GCash,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.gcash.com,"GCash is the Philippines’ dominant mobile payments platform, enabling domestic payments and financial services at massive scale. While users do not access crypto directly, Ethereum-based stablecoins may be used indirectly in backend settlement through remittance and payment partners."
+505,Hubpay,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.hubpay.ae,"Hubpay operates a MENA-focused payment and remittance network that uses Ethereum-based stablecoins selectively to improve cross-border settlement efficiency for high-volume expatriate corridors, while abstracting blockchain complexity from end users."
+327,Kotani Pay,Monetary & Access Rails,Regional Payment Networks,1,19,https://kotanipay.com,"Kotani Pay provides a bridge between East Africa’s mobile money systems and Ethereum-based stablecoins, enabling users and merchants in Kenya to send, receive, and store USD-denominated value using familiar mobile interfaces."
+469,Monerium E-Money Tokens,Monetary & Access Rails,Regional Payment Networks,1,19,,
+500,MonetaGo,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.monetago.com,"MonetaGo provides a trade finance network focused on Latin America that uses distributed ledger technology, including Ethereum-linked interoperability, to prevent duplicate financing and improve settlement integrity across regional trade corridors."
+391,MoneyGram,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.moneygram.com,"MoneyGram is one of the world’s largest remittance networks. Through integrations with stablecoin issuers such as Circle, it has used Ethereum-based USDC settlement to optimize cross-border liquidity and reduce pre-funding requirements, while keeping blockchain fully abstracted from consumers."
+293,PayDay,Monetary & Access Rails,Regional Payment Networks,1,19,https://payday.africa,"PayDay is a pan-African fintech that provides consumer and SMB payment accounts, cards, and cross-border transfers, with selective use of Ethereum-based stablecoins to support USD access and international settlement."
+415,Quantoz,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.quantoz.com,"Quantoz provides regulated euro-denominated digital money infrastructure, issuing compliant euro tokens on public blockchains like Ethereum to enable programmable, onchain settlement fully integrated with the European banking system."
+408,Ripio,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.ripio.com,"Ripio operates a Latin America–focused crypto payments and financial services network that uses Ethereum-based stablecoins to enable domestic payments, remittances, and access to USD-denominated value across volatile local currencies."
+144,Stasis,Monetary & Access Rails,Regional Payment Networks,1,19,https://stasis.net,"Stasis issues EURS, a euro-denominated stablecoin backed by offchain fiat reserves, enabling euro settlement on Ethereum while integrating with European banking infrastructure for issuance and redemption."
+44,Strike,Monetary & Access Rails,Regional Payment Networks,1,19,https://strike.me,"Strike is a U.S.-focused payments application enabling instant consumer and merchant payments. While users transact in dollars, the platform can leverage blockchain-based liquidity and stablecoin rails in backend settlement to reduce cost and latency."
+441,Tranglo,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.tranglo.com,"Tranglo operates a long-standing Asian remittance and payment network that connects banks and MSBs across Southeast Asia, with selective exploration of Ethereum-based stablecoin settlement to reduce cost and latency in cross-border flows."
+246,XSGD,Monetary & Access Rails,Regional Payment Networks,1,19,,
+99,Xendit,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.xendit.co,"Xendit is a leading Southeast Asian payments processor that enables merchants and platforms to accept and settle payments across fragmented domestic rails, with selective exploration of Ethereum-based stablecoin settlement to improve cross-border treasury efficiency."
+386,Yellow Card,Monetary & Access Rails,Regional Payment Networks,1,19,https://yellowcard.io,"Yellow Card operates a pan-African payment and settlement network that uses Ethereum-based stablecoins to enable affordable remittances, merchant payments, and treasury flows across countries with limited banking access and high FX friction."
+471,agEUR,Monetary & Access Rails,Regional Payment Networks,1,19,,
+482,eFinance,Monetary & Access Rails,Regional Payment Networks,1,19,https://www.efinanceinvestment.com,"eFinance is Egypt’s government-linked digital payments infrastructure provider, supporting large-scale public-sector payment flows and exploring blockchain-based settlement, including Ethereum-linked pilots, to improve transparency and interoperability."
+280,Ethena Dollar,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars,1,5,,
+68,Ondo Short-Term U.S. Government Bond Fund,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars,1,5,,
+261,Ondo U.S. Dollar Yield,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars,1,5,,
+487,Synthetix USD,Monetary & Access Rails,Synthetic & Yield-Bearing Dollars,1,5,,
+90,Arbitrum Nitro (Framework),Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,,
+181,Arbitrum Orbit,Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,https://arbitrum.io/orbit,"A framework enabling teams to launch application-specific Arbitrum chains (Orbit chains) that settle to Ethereum via Arbitrum (L2 or L3), inheriting Arbitrum’s optimistic execution and settlement model."
+118,Avalanche HyperSDK (Ethereum-anchored variants only),Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,https://docs.avax.network/build/hypersdk,"A high-performance appchain SDK developed by Avalanche that enables teams to build custom virtual machines and application-specific chains, including configurations that anchor settlement or security back to Ethereum."
+406,Caldera,Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,https://www.caldera.xyz,"A rollup deployment platform that enables teams to launch Ethereum-anchored rollups and appchains using existing rollup frameworks (e.g., OP Stack, Arbitrum Nitro, ZK stacks) without managing low-level protocol engineering or infrastructure."
+219,Conduit,Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,https://www.conduit.xyz,A rollup deployment and infrastructure platform that enables teams to launch and operate Ethereum-anchored rollups and appchains (primarily OP Stack–based) without running core infrastructure themselves.
+476,OP Stack (Framework),Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,,
+492,"OP Stack (already used, but also belongs here contextually)",Rollup & Scaling Frameworks,L3 & Appchain Frameworks,6,8,https://optimism.io/op-stack,"A modular, open-source Optimistic Rollup framework that enables teams to deploy Ethereum-anchored L2s and L3s with standardized execution, settlement, and governance components."
+379,Arbitrum,Rollup & Scaling Frameworks,Optimistic Rollups,6,30,,
+116,Base,Rollup & Scaling Frameworks,Optimistic Rollups,6,30,,
+466,Blast,Rollup & Scaling Frameworks,Optimistic Rollups,6,30,,
+389,Optimism,Rollup & Scaling Frameworks,Optimistic Rollups,6,30,,
+418,Unichain,Rollup & Scaling Frameworks,Optimistic Rollups,6,30,,
+4,Immutable X (Production NFT validium using StarkEx),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+23,Polygon CDK,Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,https://polygon.technology/cdk,"A modular ZK rollup framework enabling teams to deploy Ethereum-anchored zkEVM chains in validium mode, anchoring validity proofs to Ethereum while moving data availability off-chain for cost and throughput gains."
+113,Polygon CDK (Supports zkEVM rollups + validium-style chains),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+230,StarkEx (Validium + ZK Rollup modes; application-specific),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+431,StarkEx (borderline but architecturally critical),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+187,ZK Stack,Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,https://zksync.io/zk-stack,"A modular ZK rollup framework that enables teams to deploy Ethereum-anchored rollups, validiums, and hybrid (volition-style) chains, with configurable data availability modes and shared proving infrastructure."
+222,ZK Stack (Rollup vs Validium selectable at deployment),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+241,dYdX (historical Ethereum-anchored version) (Ethereum / StarkEx era) (High-performance validium design; DA committee model),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+281,zkSync Era (Implements Volition-style DA choice in practice),Rollup & Scaling Frameworks,"Validiums, Volitions, and Hybrid Rollups",6,33,,
+384,Linea,Rollup & Scaling Frameworks,ZK Rollup,6,29,,
+462,Polygon zkEVM,Rollup & Scaling Frameworks,ZK Rollup,6,29,,
+301,Scroll,Rollup & Scaling Frameworks,ZK Rollup,6,29,,
+76,Starknet,Rollup & Scaling Frameworks,ZK Rollup,6,29,,
+2,Taiko,Rollup & Scaling Frameworks,ZK Rollup,6,29,,
+285,zkSync,Rollup & Scaling Frameworks,ZK Rollup,6,29,,

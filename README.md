@@ -216,6 +216,17 @@ The contact form on the frontend automatically connects to the Python backend:
 - **CMS Integration** - Content management system
 - **SEO Optimization** - Meta tags and structured data
 
+## Data Audit (March 2026)
+
+The Ethereum Market Map data has been audited and corrected:
+
+- **516 entities** across **7 sectors** and **36 subsectors**, fully mapped with sector/subsector assignments
+- Corrected sector names (e.g. "DeFi Systems Architecture" standardized) and subsector names (truncations fixed)
+- Supabase schema migration available in `supabase/migrations/003_add_entity_sector_mapping.sql` — adds `sector_id`/`subsector_id` foreign keys to the `entities` table and populates them for all 516 entities
+- Full gap analysis and deduplication reports in `docs/`
+  - `docs/gap_analysis.md` — Supabase vs Google Drive comparison
+  - `docs/dedup_report.md` — Deduplication analysis of cross-sector entity references
+
 ## 🤝 Contributing
 
 1. Fork the repository
