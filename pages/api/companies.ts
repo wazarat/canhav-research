@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { getSupabaseAdmin } from '../../lib/supabaseNew'
 
 export interface MarketMapEntity {
+  entity_id: number
   name: string
   sector: string
   subsector: string
@@ -24,7 +25,8 @@ export default async function handler(
     const { data, error } = await supabase
       .from('entity_classifications')
       .select(`
-        entities ( entity_name ),
+        entity_id,
+        entities ( entity_id, entity_name ),
         subsectors ( subsector_name, sectors ( sector_name ) ),
         description,
         website,
@@ -39,6 +41,7 @@ export default async function handler(
 
     const companies: MarketMapEntity[] = (data || [])
       .map((row: any) => ({
+        entity_id: row.entities?.entity_id || 0,
         name: row.entities?.entity_name?.trim() || '',
         sector: row.subsectors?.sectors?.sector_name || '',
         subsector: row.subsectors?.subsector_name || '',
@@ -46,7 +49,7 @@ export default async function handler(
         website: row.website || undefined,
         maintaining_organization: row.maintaining_organization || undefined,
       }))
-      .filter((c: MarketMapEntity) => c.name && c.sector && c.subsector)
+      .filter((c) => c.name && c.sector && c.subsector)
 
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600')
     return res.status(200).json({ companies })

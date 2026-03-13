@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useMemo, useEffect } from 'react'
+import Link from 'next/link'
 import { companiesData as staticCompanies } from '../lib/companiesData'
 import JotFormModal from './JotFormModal'
 
 interface Company {
+  entity_id?: number
   name: string
   sector: string
   subsector: string
@@ -18,7 +20,6 @@ type SortOption = 'name' | 'sector'
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
   const [selectedSector, setSelectedSector] = useState<string | null>(null)
-  const [showAccessPrompt, setShowAccessPrompt] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortBy, setSortBy] = useState<SortOption>('name')
@@ -113,14 +114,6 @@ export default function MarketMap({}: MarketMapProps) {
               </h1>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-end items-center">
-              <a
-                href="https://research.canhav.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
-              >
-                Get Full Access
-              </a>
               <button
                 onClick={() => setShowSubmitForm(true)}
                 className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
@@ -241,47 +234,17 @@ export default function MarketMap({}: MarketMapProps) {
         </div>
         
 
-        {/* CTA Banner — always shown above the company grid */}
-        {viewMode === 'grid' && (
-          <div className="mb-4">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-8 md:px-10 md:py-10 shadow-xl">
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '28px 28px' }} />
-              <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                <div className="max-w-2xl">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-blue-200 mb-2">Full Intelligence Platform</p>
-                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2 leading-snug">
-                    Detailed profiles, funding data, sector analysis &amp; system design context
-                  </h3>
-                  <p className="text-blue-100 text-sm md:text-base">
-                    Built for practitioners and researchers navigating Ethereum infrastructure.
-                  </p>
-                </div>
-                <a
-                  href="https://research.canhav.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 inline-flex items-center gap-2 px-7 py-3.5 bg-white text-blue-700 font-semibold rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-md hover:shadow-lg text-sm md:text-base"
-                >
-                  Get Full Access
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Companies Display */}
         {viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
             {filteredCompanies.map((company, index) => {
               const colorScheme = getSectorColor(company.sector)
+              const href = company.entity_id ? `/company/${company.entity_id}` : '#'
               return (
-                <div
+                <Link
                   key={`${company.name}-${index}`}
-                  className="group cursor-pointer"
-                  onClick={() => setShowAccessPrompt(true)}
+                  href={href}
+                  className="group"
                 >
                   <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
                     <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
@@ -289,7 +252,7 @@ export default function MarketMap({}: MarketMapProps) {
                       {company.name}
                     </span>
                   </div>
-                </div>
+                </Link>
               )
             })}
           </div>
@@ -305,20 +268,23 @@ export default function MarketMap({}: MarketMapProps) {
                     <span className="ml-3 text-sm text-gray-500">({companies.length})</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                    {companies.map((company, index) => (
-                      <div
-                        key={`${company.name}-${index}`}
-                        onClick={() => setShowAccessPrompt(true)}
-                        className="cursor-pointer bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-3 transition-all duration-200 hover:shadow-md"
-                      >
-                        <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
-                          {company.name}
-                        </h3>
-                        <p className="text-xs text-gray-600 line-clamp-1">
-                          {company.subsector}
-                        </p>
-                      </div>
-                    ))}
+                    {companies.map((company, index) => {
+                      const href = company.entity_id ? `/company/${company.entity_id}` : '#'
+                      return (
+                        <Link
+                          key={`${company.name}-${index}`}
+                          href={href}
+                          className="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-3 transition-all duration-200 hover:shadow-md block"
+                        >
+                          <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
+                            {company.name}
+                          </h3>
+                          <p className="text-xs text-gray-600 line-clamp-1">
+                            {company.subsector}
+                          </p>
+                        </Link>
+                      )
+                    })}
                   </div>
                 </div>
               )
@@ -387,55 +353,6 @@ export default function MarketMap({}: MarketMapProps) {
         />
       )}
       
-      {/* Full Access Prompt Modal */}
-      {showAccessPrompt && (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="flex min-h-screen items-center justify-center p-4">
-            <div 
-              className="fixed inset-0 bg-black/50 transition-opacity"
-              onClick={() => setShowAccessPrompt(false)}
-            />
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
-              <button
-                onClick={() => setShowAccessPrompt(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <div className="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                <svg className="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Get Full Company Data</h3>
-              <p className="text-gray-600 mb-6 text-sm leading-relaxed">
-                Detailed profiles, funding data, sector analysis, and system design context — built for practitioners and researchers.
-              </p>
-              <div className="flex flex-col gap-3">
-                <a
-                  href="https://research.canhav.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-200 shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2"
-                >
-                  Access CanHav Research
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-                <button
-                  onClick={() => setShowAccessPrompt(false)}
-                  className="w-full px-6 py-3 border border-gray-200 text-gray-600 rounded-xl font-medium hover:bg-gray-50 transition-all duration-200"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
