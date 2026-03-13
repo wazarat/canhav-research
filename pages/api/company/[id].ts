@@ -26,19 +26,25 @@ export interface CompanyDetail {
   sector_details: SectorDetail[]
 }
 
-// Map sector names to their masterdata detail table names
-const SECTOR_TABLE_MAP: Record<string, string> = {
-  'Core Protocol Architecture': 'core_protocol_architecture_details',
-  'Rollup & Scaling Frameworks': 'rollup_scaling_details',
-  'Monetary & Access Rails': 'monetary_access_rails_details',
-  'DeFi Systems Architecture': 'defi_systems_architecture_details',
-  'Data & Consensus Infrastructure': 'data_consensus_infrastructure_details',
-  'Advanced Compute & Integration': 'advanced_compute_integration_details',
-  'Governance & Enterprise Framework': 'governance_enterprise_framework_details',
+// Map sector names to their masterdata v_*_clean views (richer data than *_details tables)
+const SECTOR_VIEW_MAP: Record<string, string> = {
+  'Core Protocol Architecture': 'v_core_protocol_architecture_clean',
+  'Rollup & Scaling Frameworks': 'v_rollup_scaling_clean',
+  'Monetary & Access Rails': 'v_monetary_access_rails_clean',
+  'DeFi Systems Architecture': 'v_defi_systems_architecture_clean',
+  'Data & Consensus Infrastructure': 'v_data_consensus_infra_clean',
+  'Advanced Compute & Integration': 'v_advanced_compute_integration_clean',
+  'Governance & Enterprise Framework': 'v_governance_enterprise_framework_clean',
 }
 
-// Columns to exclude from display (internal/meta columns)
-const EXCLUDED_COLS = new Set(['entity_id', 'created_at', 'updated_at'])
+// Columns to exclude from sector detail display (base fields already shown in classifications)
+const EXCLUDED_COLS = new Set([
+  'entity_id', 'created_at', 'updated_at',
+  'entity_name', 'subsector_name', 'raw_org', 'raw_orgs',
+  'website', 'description', 'reason_for_inclusion',
+  'practitioners_note', 'practitioner_validation_check',
+  'entity_group_key', 'entity_key', 'organization_key',
+])
 
 export default async function handler(
   req: NextApiRequest,
@@ -103,51 +109,42 @@ export default async function handler(
       practitioner_validation_check: row.practitioner_validation_check || '',
     }))
 
-    // Determine unique sectors and fetch detail data from masterdata schema
+    // Determine unique sectors and fetch detail data from masterdata v_*_clean views
     const uniqueSectors = Array.from(new Set(mappedClassifications.map((c: EntityClassification) => c.sector_name)))
     const sectorDetails: SectorDetail[] = []
-
-    // The masterdata schema has its own entities table with different IDs.
-    // We look up by entity_name to bridge between public and masterdata schemas.
     const entityName = (entity.entity_name || '').trim()
-    const { data: mdEntities } = await masterdata
-      .from('entities')
-      .select('entity_id')
-      .eq('entity_name', entityName)
 
-    const mdEntityIds = (mdEntities || []).map((e: any) => e.entity_id)
+    for (const sectorName of uniqueSectors) {
+      const viewName = SECTOR_VIEW_MAP[sectorName]
+      if (!viewName) continue
 
-    if (mdEntityIds.length > 0) {
-      for (const sectorName of uniqueSectors) {
-        const tableName = SECTOR_TABLE_MAP[sectorName]
-        if (!tableName) continue
+      try {
+        const { data: viewRows, error: viewError } = await masterdata
+          .from(viewName)
+          .select('*')
+          .eq('entity_name', entityName)
 
-        try {
-          const { data: detailRows, error: detailError } = await masterdata
-            .from(tableName)
-            .select('*')
-            .in('entity_id', mdEntityIds)
+        if (viewError) {
+          console.error(`Error fetching ${viewName}:`, viewError.message)
+          continue
+        }
 
-          if (detailError) {
-            console.error(`Error fetching ${tableName}:`, detailError.message)
-            continue
-          }
-
-          if (detailRows && detailRows.length > 0) {
-            const row = detailRows[0]
-            const fields: Record<string, string> = {}
+        if (viewRows && viewRows.length > 0) {
+          // Merge fields from all matching rows (entity may appear multiple times for different subsectors)
+          const allFields: Record<string, string> = {}
+          for (const row of viewRows) {
             for (const [key, value] of Object.entries(row)) {
               if (!EXCLUDED_COLS.has(key) && value !== null && value !== '') {
-                fields[key] = String(value)
+                allFields[key] = String(value)
               }
             }
-            if (Object.keys(fields).length > 0) {
-              sectorDetails.push({ sector_name: sectorName, table_name: tableName, fields })
-            }
           }
-        } catch (e) {
-          console.error(`Error fetching ${tableName}:`, e)
+          if (Object.keys(allFields).length > 0) {
+            sectorDetails.push({ sector_name: sectorName, table_name: viewName, fields: allFields })
+          }
         }
+      } catch (e) {
+        console.error(`Error fetching ${viewName}:`, e)
       }
     }
 
