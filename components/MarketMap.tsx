@@ -1,12 +1,16 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { companiesData, Company } from '../lib/companiesData'
+import { useState, useMemo, useEffect } from 'react'
+import { companiesData as staticCompanies } from '../lib/companiesData'
 import JotFormModal from './JotFormModal'
 
-interface MarketMapProps {
-  // We'll use the companies data directly instead of grouped data
+interface Company {
+  name: string
+  sector: string
+  subsector: string
 }
+
+interface MarketMapProps {}
 
 type ViewMode = 'grid' | 'grouped'
 type SortOption = 'name' | 'sector'
@@ -18,15 +22,35 @@ export default function MarketMap({}: MarketMapProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [viewMode, setViewMode] = useState<ViewMode>('grid')
   const [sortBy, setSortBy] = useState<SortOption>('name')
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  
-  // Get all unique sectors from static data
+  const [companiesData, setCompaniesData] = useState<Company[]>(staticCompanies)
+  const [loading, setLoading] = useState(true)
+  const [dataSource, setDataSource] = useState<'supabase' | 'static'>('static')
+
+  // Fetch companies from Supabase API on mount
+  useEffect(() => {
+    async function fetchCompanies() {
+      try {
+        const res = await fetch('/api/companies')
+        if (!res.ok) throw new Error('API error')
+        const { companies } = await res.json()
+        if (companies && companies.length > 0) {
+          setCompaniesData(companies)
+          setDataSource('supabase')
+        }
+      } catch (err) {
+        console.warn('Falling back to static data:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCompanies()
+  }, [])
+
+  // Get all unique sectors
   const sectors = useMemo(() => {
     const sectorSet = new Set(companiesData.map(c => c.sector))
     return Array.from(sectorSet).sort()
-  }, [])
-  
-  const allTags: string[] = []
+  }, [companiesData])
   
   // Filter and sort companies
   const filteredCompanies = useMemo(() => {
@@ -35,12 +59,10 @@ export default function MarketMap({}: MarketMapProps) {
       const matchesSearch = searchQuery === '' || 
         company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         company.subsector.toLowerCase().includes(searchQuery.toLowerCase())
-      const matchesTags = selectedTags.length === 0
       
-      return matchesSector && matchesSearch && matchesTags
+      return matchesSector && matchesSearch
     })
     
-    // Sort companies
     filtered.sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name)
@@ -51,7 +73,7 @@ export default function MarketMap({}: MarketMapProps) {
     })
     
     return filtered
-  }, [selectedSector, searchQuery, selectedTags, sortBy])
+  }, [companiesData, selectedSector, searchQuery, sortBy])
   
   // Group companies by sector for grouped view
   const groupedCompanies = useMemo(() => {
@@ -64,12 +86,6 @@ export default function MarketMap({}: MarketMapProps) {
     })
     return groups
   }, [filteredCompanies])
-  
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    )
-  }
   
   const SECTOR_COLOR_MAP: Record<string, { bg: string; text: string; border: string; dot: string }> = {
     'Core Protocol Architecture':       { bg: 'bg-blue-100',   text: 'text-blue-800',   border: 'border-blue-200',   dot: 'bg-blue-500' },
@@ -224,35 +240,6 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
         </div>
         
-        {/* Tag Filter */}
-        {allTags.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter by Tags:</h3>
-            <div className="flex flex-wrap gap-2">
-              {allTags.slice(0, 15).map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
-                    selectedTags.includes(tag)
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-              {selectedTags.length > 0 && (
-                <button
-                  onClick={() => setSelectedTags([])}
-                  className="px-3 py-1.5 rounded-full text-xs font-medium bg-red-100 text-red-600 hover:bg-red-200 transition-all duration-200"
-                >
-                  Clear Tags
-                </button>
-              )}
-            </div>
-          </div>
-        )}
 
         {/* CTA Banner — always shown above the company grid */}
         {viewMode === 'grid' && (
@@ -351,7 +338,6 @@ export default function MarketMap({}: MarketMapProps) {
               onClick={() => {
                 setSearchQuery('')
                 setSelectedSector(null)
-                setSelectedTags([])
               }}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
