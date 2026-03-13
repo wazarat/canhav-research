@@ -15,10 +15,17 @@ interface Classification {
   practitioner_validation_check: string
 }
 
+interface SectorDetail {
+  sector_name: string
+  table_name: string
+  fields: Record<string, string>
+}
+
 interface CompanyDetail {
   entity_id: number
   entity_name: string
   classifications: Classification[]
+  sector_details: SectorDetail[]
 }
 
 const SECTOR_COLOR_MAP: Record<string, { bg: string; text: string; dot: string; border: string }> = {
@@ -66,6 +73,10 @@ export default function CompanyDetailPage() {
   }, [id])
 
   const getColor = (sector: string) => SECTOR_COLOR_MAP[sector] ?? FALLBACK
+
+  // Convert snake_case column names to readable labels
+  const formatFieldName = (key: string) =>
+    key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 
   // Get unique sectors this entity belongs to
   const uniqueSectors = company
@@ -285,6 +296,47 @@ export default function CompanyDetailPage() {
                 })}
               </div>
             </div>
+
+            {/* Sector-Specific Detail Data */}
+            {company.sector_details && company.sector_details.length > 0 && (
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 mb-4">
+                  Sector-Specific Data
+                </h2>
+                <div className="space-y-6">
+                  {company.sector_details.map((detail) => {
+                    const color = getColor(detail.sector_name)
+                    const entries = Object.entries(detail.fields)
+                    return (
+                      <div key={detail.table_name} className={`bg-white rounded-xl border ${color.border} shadow-sm overflow-hidden`}>
+                        <div className={`${color.bg} px-6 py-3 flex items-center gap-3`}>
+                          <span className={`w-2.5 h-2.5 rounded-full ${color.dot}`} />
+                          <span className={`text-sm font-semibold ${color.text}`}>{detail.sector_name}</span>
+                          <span className="text-xs text-gray-400 ml-auto">{entries.length} fields</span>
+                        </div>
+                        <div className="p-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                            {entries.map(([key, value]) => {
+                              const isLong = value.length > 120
+                              return (
+                                <div key={key} className={isLong ? 'md:col-span-2' : ''}>
+                                  <dt className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                                    {formatFieldName(key)}
+                                  </dt>
+                                  <dd className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                                    {value}
+                                  </dd>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Cross-sector note if entity appears in multiple sectors */}
             {uniqueSectors.length > 1 && (

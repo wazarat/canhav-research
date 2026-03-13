@@ -12,3 +12,10 @@ export function getSupabaseAdmin() {
   const serviceKey = process.env.NEW_SUPABASE_SERVICE_ROLE_KEY!
   return createClient(url, serviceKey)
 }
+
+// Server-side client for masterdata schema (sector detail tables)
+export function getSupabaseMasterdata() {
+  const url = process.env.NEW_NEXT_PUBLIC_SUPABASE_URL!
+  const serviceKey = process.env.NEW_SUPABASE_SERVICE_ROLE_KEY!
+  return createClient(url, serviceKey, { db: { schema: 'masterdata' } })
+}
