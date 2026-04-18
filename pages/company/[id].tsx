@@ -31,7 +31,9 @@ import { useRealtimeTables } from '../../lib/useRealtimeTables'
 
 interface Classification {
   entity_classification_id: number
+  sector_id: number
   sector_name: string
+  subsector_id: number
   subsector_name: string
   description: string
   website: string

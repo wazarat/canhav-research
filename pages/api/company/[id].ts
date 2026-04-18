@@ -6,7 +6,9 @@ export interface EntityClassification {
   entity_id: number           // source entity (parent or child)
   entity_name: string
   is_primary: boolean
+  sector_id: number
   sector_name: string
+  subsector_id: number
   subsector_name: string
   description: string
   website: string
@@ -131,7 +133,9 @@ export default async function handler(
       entity_id: r.entity_id,
       entity_name: (r.entity_name || '').trim(),
       is_primary: !!r.is_primary,
+      sector_id: r.sector_id,
       sector_name: r.sector_name || '',
+      subsector_id: r.subsector_id,
       subsector_name: r.subsector_name || '',
       description: r.description || '',
       website: r.website || '',
