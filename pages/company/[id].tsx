@@ -147,6 +147,7 @@ export default function CompanyDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [activeSector, setActiveSector] = useState<string | 'all'>('all')
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -236,6 +237,62 @@ export default function CompanyDetailPage() {
   const primaryColor = primarySector ? getColor(primarySector) : FALLBACK
   const websiteToShow =
     company?.canonical_website || primaryClassification?.website || null
+
+  // Ordered sectors with the primary-bearing sector first, then alphabetical.
+  const sectorOrder = company
+    ? Array.from(new Set(company.classifications.map((c) => c.sector_name))).sort((a, b) => {
+        const aIsPrimary = a === primarySector ? -1 : 0
+        const bIsPrimary = b === primarySector ? -1 : 0
+        if (aIsPrimary !== bIsPrimary) return aIsPrimary - bIsPrimary
+        return a.localeCompare(b)
+      })
+    : []
+
+  // Reset sector filter when the entity changes or the company's sectors change.
+  useEffect(() => {
+    if (activeSector !== 'all' && !sectorOrder.includes(activeSector)) {
+      setActiveSector('all')
+    }
+  }, [sectorOrder, activeSector])
+
+  const classificationsBySector = company
+    ? company.classifications.reduce<Record<string, Classification[]>>((acc, cls) => {
+        if (!acc[cls.sector_name]) acc[cls.sector_name] = []
+        acc[cls.sector_name].push(cls)
+        return acc
+      }, {})
+    : {}
+
+  const sectorDetailsBySector = (company?.sector_details ?? []).reduce<
+    Record<string, SectorDetail>
+  >((acc, detail) => {
+    acc[detail.sector_name] = detail
+    return acc
+  }, {})
+
+  const visibleSectors =
+    activeSector === 'all' ? sectorOrder : sectorOrder.filter((s) => s === activeSector)
+
+  // Overview (common across all companies) — pulled from the primary
+  // classification. Falls back to the first classification if no primary.
+  const overview = primaryClassification
+    ? {
+        description: primaryClassification.description || '',
+        reason_for_inclusion: primaryClassification.reason_for_inclusion || '',
+        practitioners_note: primaryClassification.practitioners_note || '',
+        validation_check: primaryClassification.practitioner_validation_check || '',
+        maintainer: primaryClassification.maintaining_organization || '',
+        website: primaryClassification.website || '',
+      }
+    : null
+
+  const hasOverviewContent = !!(
+    overview &&
+    (overview.description ||
+      overview.reason_for_inclusion ||
+      overview.practitioners_note ||
+      overview.validation_check)
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -504,91 +561,206 @@ export default function CompanyDetailPage() {
                   </section>
                 )}
 
-                {/* Classifications — one card per subsector */}
-                <section>
-                  <h2 className="text-sm font-semibold text-gray-900 mb-3">
-                    Classifications
-                    <span className="ml-2 text-xs font-normal text-gray-500">
-                      ({company.classifications.length})
-                    </span>
-                  </h2>
-                  <div className="space-y-4">
-                    {company.classifications.map((cls) => {
-                      const color = getColor(cls.sector_name)
-                      return (
-                        <div key={cls.entity_classification_id} className={`bg-white rounded-xl border ${color.border} shadow-sm overflow-hidden`}>
-                          <div className={`${color.bg} px-5 py-2.5 flex items-center gap-2.5 flex-wrap`}>
-                            <span className={`w-2 h-2 rounded-full ${color.dot}`} />
-                            <span className={`text-xs font-semibold ${color.text}`}>{cls.sector_name}</span>
-                            <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                            <span className={`text-xs font-medium ${color.text}`}>{cls.subsector_name}</span>
-                            {cls.is_primary && (
-                              <span className="ml-auto text-[10px] uppercase tracking-wider font-semibold text-gray-400">
-                                Primary
-                              </span>
-                            )}
-                          </div>
-                          <div className="p-5 space-y-4">
-                            {cls.description && (
-                              <div>
-                                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Description</h4>
-                                <p className="text-gray-700 leading-relaxed text-sm">{cls.description}</p>
-                              </div>
-                            )}
-                            {cls.reason_for_inclusion && (
-                              <div>
-                                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Reason for inclusion</h4>
-                                <div className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
-                                  {cls.reason_for_inclusion}
-                                </div>
-                              </div>
-                            )}
-                            {cls.practitioners_note && (
-                              <div className="bg-gray-50 rounded-lg p-3.5 border border-gray-100">
-                                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Practitioner&apos;s note</h4>
-                                <p className="text-gray-700 leading-relaxed text-sm italic">{cls.practitioners_note}</p>
-                              </div>
-                            )}
-                            {cls.practitioner_validation_check && (
-                              <div>
-                                <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Validation check</h4>
-                                <p className="text-gray-600 leading-relaxed text-sm">{cls.practitioner_validation_check}</p>
-                              </div>
-                            )}
+                {/* =====================================================
+                    Overview — common fields lifted from primary classification.
+                    Description, reason for inclusion, practitioner's note,
+                    and validation check sit once, above sector-specific data.
+                    ===================================================== */}
+                {hasOverviewContent && (
+                  <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+                    <div className="p-6 md:p-7 space-y-5">
+                      {overview!.description && (
+                        <div>
+                          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mb-1.5">
+                            Overview
+                          </h3>
+                          <p className="text-gray-800 leading-relaxed text-[15px]">
+                            {overview!.description}
+                          </p>
+                        </div>
+                      )}
+                      {overview!.reason_for_inclusion && (
+                        <div>
+                          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mb-1.5">
+                            Reason for inclusion
+                          </h3>
+                          <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+                            {overview!.reason_for_inclusion}
+                          </p>
+                        </div>
+                      )}
+                      {overview!.practitioners_note && (
+                        <div className="relative rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-100 px-4 py-3.5">
+                          <div className={`absolute left-0 top-3 bottom-3 w-0.5 rounded-r-full ${primaryColor.solid}`} />
+                          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mb-1 pl-2">
+                            Practitioner&apos;s note
+                          </h3>
+                          <p className="text-gray-700 leading-relaxed text-sm italic pl-2">
+                            {overview!.practitioners_note}
+                          </p>
+                        </div>
+                      )}
+                      {overview!.validation_check && (
+                        <div>
+                          <h3 className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mb-1.5">
+                            Validation check
+                          </h3>
+                          <p className="text-gray-700 leading-relaxed text-sm whitespace-pre-line">
+                            {overview!.validation_check}
+                          </p>
+                        </div>
+                      )}
+                      {overview!.maintainer && (
+                        <div className="pt-1 flex items-baseline gap-2 text-[13px]">
+                          <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400">
+                            Maintained by
+                          </span>
+                          <span className="text-gray-700">{overview!.maintainer}</span>
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
 
-                            {(() => {
-                              const block = subsectorBlocks.find(
-                                (b) => b.subsector_id === cls.subsector_id && b.data
-                              )
-                              if (!block || !block.data) return null
-                              const entries = block.display_schema
-                                .map((col) => ({
-                                  col,
-                                  value: block.data?.[col.key],
-                                }))
-                                .filter(
-                                  (e) =>
-                                    e.value !== null &&
-                                    e.value !== undefined &&
-                                    String(e.value).trim() !== ''
-                                )
-                              if (entries.length === 0) return null
-                              return (
-                                <div className="pt-3 border-t border-gray-100">
-                                  <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-2">
-                                    Subsector datapoints
-                                  </h4>
+                {/* =====================================================
+                    Sector filter — pills let the viewer focus on a single
+                    sector. Default is "All" which shows every sector block.
+                    ===================================================== */}
+                {sectorOrder.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 items-center sticky top-[68px] z-10 bg-gray-50/80 backdrop-blur py-1 -mx-1 px-1">
+                    <button
+                      type="button"
+                      onClick={() => setActiveSector('all')}
+                      className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-colors border ${
+                        activeSector === 'all'
+                          ? 'bg-gray-900 text-white border-gray-900 shadow-sm'
+                          : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      All sectors
+                      <span className="ml-1.5 text-[10px] opacity-70">{sectorOrder.length}</span>
+                    </button>
+                    {sectorOrder.map((sector, idx) => {
+                      const color = getColor(sector)
+                      const isActive = activeSector === sector
+                      return (
+                        <button
+                          type="button"
+                          key={sector}
+                          onClick={() => setActiveSector(sector)}
+                          className={`px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all border inline-flex items-center gap-1.5 ${
+                            isActive
+                              ? `${color.solid} text-white border-transparent shadow-sm`
+                              : `bg-white ${color.text} border-gray-200 hover:border-gray-300 hover:bg-gray-50`
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              isActive ? 'bg-white/80' : color.dot
+                            }`}
+                          />
+                          <span className="opacity-60 mr-0.5">{idx + 1}.</span>
+                          {sector}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* =====================================================
+                    Sector blocks — one per visible sector. Each block fuses
+                    its subsector cards (description + datapoints) with the
+                    shared sector-level masterdata fields, no extra header.
+                    ===================================================== */}
+                <div className="space-y-5">
+                  {visibleSectors.map((sector) => {
+                    const color = getColor(sector)
+                    const classifications = classificationsBySector[sector] ?? []
+                    const sectorDetail = sectorDetailsBySector[sector]
+                    return (
+                      <section
+                        key={sector}
+                        className={`bg-white rounded-2xl border ${color.border} shadow-sm overflow-hidden`}
+                      >
+                        <div
+                          className={`${color.bg} px-5 py-2.5 flex items-center gap-2.5 flex-wrap`}
+                        >
+                          <span className={`w-2 h-2 rounded-full ${color.dot}`} />
+                          <span
+                            className={`text-[11px] font-semibold uppercase tracking-wider ${color.text}`}
+                          >
+                            {sector}
+                          </span>
+                          <span className="ml-auto text-[10px] text-gray-400">
+                            {classifications.length} subsector{classifications.length !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+
+                        <div className="divide-y divide-gray-100">
+                          {classifications.map((cls) => {
+                            const block = subsectorBlocks.find(
+                              (b) => b.subsector_id === cls.subsector_id && b.data
+                            )
+                            const datapointEntries = block
+                              ? block.display_schema
+                                  .map((col) => ({ col, value: block.data?.[col.key] }))
+                                  .filter(
+                                    (e) =>
+                                      e.value !== null &&
+                                      e.value !== undefined &&
+                                      String(e.value).trim() !== ''
+                                  )
+                              : []
+
+                            const showReason =
+                              cls.reason_for_inclusion &&
+                              cls.reason_for_inclusion !== primaryClassification?.reason_for_inclusion
+                            const showDescription =
+                              cls.description &&
+                              cls.description !== primaryClassification?.description
+
+                            return (
+                              <div key={cls.entity_classification_id} className="p-5 md:p-6">
+                                <div className="flex items-center gap-2 mb-3.5">
+                                  <svg
+                                    className="w-3 h-3 text-gray-300 flex-shrink-0"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M9 5l7 7-7 7"
+                                    />
+                                  </svg>
+                                  <h3 className="text-sm font-semibold text-gray-900">
+                                    {cls.subsector_name}
+                                  </h3>
+                                </div>
+
+                                {showDescription && (
+                                  <p className="text-sm text-gray-600 leading-relaxed mb-3">
+                                    {cls.description}
+                                  </p>
+                                )}
+                                {showReason && (
+                                  <p className="text-xs text-gray-500 leading-relaxed italic mb-3 whitespace-pre-line">
+                                    {cls.reason_for_inclusion}
+                                  </p>
+                                )}
+
+                                {datapointEntries.length > 0 && (
                                   <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                                    {entries.map(({ col, value }) => {
+                                    {datapointEntries.map(({ col, value }) => {
                                       const str = String(value)
                                       const isLong = col.type === 'long_text' || str.length > 120
                                       const isUrl =
                                         col.type === 'url' && /^https?:\/\//i.test(str)
                                       return (
                                         <div key={col.key} className={isLong ? 'md:col-span-2' : ''}>
-                                          <dt className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">
+                                          <dt className="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-0.5">
                                             {col.label}
                                           </dt>
                                           <dd className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
@@ -609,38 +781,22 @@ export default function CompanyDetailPage() {
                                       )
                                     })}
                                   </dl>
-                                </div>
-                              )
-                            })()}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </section>
+                                )}
+                              </div>
+                            )
+                          })}
 
-                {/* Sector-specific tables (masterdata) */}
-                {company.sector_details && company.sector_details.length > 0 && (
-                  <section>
-                    <h2 className="text-sm font-semibold text-gray-900 mb-3">Sector-specific data</h2>
-                    <div className="space-y-4">
-                      {company.sector_details.map((detail) => {
-                        const color = getColor(detail.sector_name)
-                        const entries = Object.entries(detail.fields)
-                        return (
-                          <div key={detail.table_name} className={`bg-white rounded-xl border ${color.border} shadow-sm overflow-hidden`}>
-                            <div className={`${color.bg} px-5 py-2.5 flex items-center gap-2.5`}>
-                              <span className={`w-2 h-2 rounded-full ${color.dot}`} />
-                              <span className={`text-xs font-semibold ${color.text}`}>{detail.sector_name}</span>
-                              <span className="text-[11px] text-gray-400 ml-auto">{entries.length} fields</span>
-                            </div>
-                            <div className="p-5">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
-                                {entries.map(([key, value]) => {
+                          {sectorDetail && Object.keys(sectorDetail.fields).length > 0 && (
+                            <div className="p-5 md:p-6 bg-gray-50/50">
+                              <h4 className="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-3">
+                                Additional sector data
+                              </h4>
+                              <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                                {Object.entries(sectorDetail.fields).map(([key, value]) => {
                                   const isLong = value.length > 120
                                   return (
                                     <div key={key} className={isLong ? 'md:col-span-2' : ''}>
-                                      <dt className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">
+                                      <dt className="text-[10px] font-semibold uppercase tracking-[0.1em] text-gray-400 mb-0.5">
                                         {formatFieldName(key)}
                                       </dt>
                                       <dd className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
@@ -649,14 +805,14 @@ export default function CompanyDetailPage() {
                                     </div>
                                   )
                                 })}
-                              </div>
+                              </dl>
                             </div>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </section>
-                )}
+                          )}
+                        </div>
+                      </section>
+                    )
+                  })}
+                </div>
 
                 {/* Footer utilities */}
                 <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 flex flex-wrap items-center justify-between gap-3 text-xs text-gray-500">
