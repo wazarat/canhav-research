@@ -48,7 +48,7 @@ export default function MarketMapLandscape({
   onSelect,
   selectedSector,
 }: Props) {
-  const [density, setDensity] = useState<Density>('compact')
+  const [density, setDensity] = useState<Density>('standard')
 
   // Bucket: sector -> subsector -> companies[].
   const bucketed = useMemo(() => {

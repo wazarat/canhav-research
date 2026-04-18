@@ -84,6 +84,22 @@ interface RelatedCompany {
   primary_subsector: string | null
 }
 
+interface SubsectorBlockColumn {
+  key: string
+  label: string
+  type: string
+}
+
+interface SubsectorBlock {
+  subsector_id: number
+  subsector_name: string
+  sector_name: string
+  is_primary: boolean
+  table_name: string | null
+  display_schema: SubsectorBlockColumn[]
+  data: Record<string, unknown> | null
+}
+
 const SECTOR_COLOR_MAP: Record<
   string,
   { bg: string; text: string; dot: string; border: string; solid: string }
@@ -125,6 +141,7 @@ export default function CompanyDetailPage() {
   const { id } = router.query
   const [company, setCompany] = useState<CompanyDetail | null>(null)
   const [related, setRelated] = useState<RelatedCompany[]>([])
+  const [subsectorBlocks, setSubsectorBlocks] = useState<SubsectorBlock[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -164,10 +181,26 @@ export default function CompanyDetailPage() {
     }
   }, [id])
 
+  const fetchSubsectorData = useCallback(async () => {
+    if (!id) return
+    try {
+      const res = await fetch(`/api/company/${id}/subsector-data`, { cache: 'no-store' })
+      if (!res.ok) {
+        setSubsectorBlocks([])
+        return
+      }
+      const data = await res.json()
+      setSubsectorBlocks(data.blocks || [])
+    } catch {
+      setSubsectorBlocks([])
+    }
+  }, [id])
+
   useEffect(() => {
     fetchCompany()
     fetchRelated()
-  }, [fetchCompany, fetchRelated])
+    fetchSubsectorData()
+  }, [fetchCompany, fetchRelated, fetchSubsectorData])
 
   // Fire-and-forget view event. Gated by middleware already, so the
   // viewer must be signed in to reach this. /api/events upserts a row in
@@ -522,6 +555,61 @@ export default function CompanyDetailPage() {
                                 <p className="text-gray-600 leading-relaxed text-sm">{cls.practitioner_validation_check}</p>
                               </div>
                             )}
+
+                            {(() => {
+                              const block = subsectorBlocks.find(
+                                (b) => b.subsector_id === cls.subsector_id && b.data
+                              )
+                              if (!block || !block.data) return null
+                              const entries = block.display_schema
+                                .map((col) => ({
+                                  col,
+                                  value: block.data?.[col.key],
+                                }))
+                                .filter(
+                                  (e) =>
+                                    e.value !== null &&
+                                    e.value !== undefined &&
+                                    String(e.value).trim() !== ''
+                                )
+                              if (entries.length === 0) return null
+                              return (
+                                <div className="pt-3 border-t border-gray-100">
+                                  <h4 className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-2">
+                                    Subsector datapoints
+                                  </h4>
+                                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3">
+                                    {entries.map(({ col, value }) => {
+                                      const str = String(value)
+                                      const isLong = col.type === 'long_text' || str.length > 120
+                                      const isUrl =
+                                        col.type === 'url' && /^https?:\/\//i.test(str)
+                                      return (
+                                        <div key={col.key} className={isLong ? 'md:col-span-2' : ''}>
+                                          <dt className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-0.5">
+                                            {col.label}
+                                          </dt>
+                                          <dd className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                                            {isUrl ? (
+                                              <a
+                                                href={str}
+                                                target="_blank"
+                                                rel="noreferrer noopener"
+                                                className="text-blue-600 hover:text-blue-700 break-all"
+                                              >
+                                                {str.replace(/^https?:\/\/(www\.)?/, '')}
+                                              </a>
+                                            ) : (
+                                              str
+                                            )}
+                                          </dd>
+                                        </div>
+                                      )
+                                    })}
+                                  </dl>
+                                </div>
+                              )
+                            })()}
                           </div>
                         </div>
                       )

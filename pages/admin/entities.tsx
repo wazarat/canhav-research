@@ -218,6 +218,18 @@ export default function AdminEntities() {
               </button>
             ))}
             <Link
+              href="/admin/subsector-ingest"
+              className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800 rounded-md"
+            >
+              Ingest
+            </Link>
+            <Link
+              href="/admin/subsector-review"
+              className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800 rounded-md"
+            >
+              Review
+            </Link>
+            <Link
               href="/admin/members"
               className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800 rounded-md"
             >

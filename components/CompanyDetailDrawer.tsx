@@ -172,6 +172,14 @@ export default function CompanyDetailDrawer({
                   {data.year_founded && <span>Founded {data.year_founded}</span>}
                   {data.funding_stage && <span>{data.funding_stage}</span>}
                 </div>
+                <div className="mt-2">
+                  <Link
+                    href={`/company/${data.entity_id}`}
+                    className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700"
+                  >
+                    View full profile →
+                  </Link>
+                </div>
               </>
             )}
           </div>
@@ -319,13 +327,16 @@ export default function CompanyDetailDrawer({
         </div>
 
         {data && !editing && (
-          <footer className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-xs">
-            <span className="text-gray-400">#{data.entity_id}</span>
+          <footer className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between gap-3">
+            <span className="text-xs text-gray-400">#{data.entity_id}</span>
             <Link
               href={`/company/${data.entity_id}`}
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
             >
-              Open full page →
+              View full profile
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
             </Link>
           </footer>
         )}
