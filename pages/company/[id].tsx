@@ -3,8 +3,9 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRealtimeTables } from '../../lib/useRealtimeTables'
-import EntityEditForm, { EntityEditable } from '../../components/EntityEditForm'
+import { EntityEditable } from '../../components/EntityEditForm'
 import MergeWithPicker from '../../components/MergeWithPicker'
+import CompanyFullEditor, { EditorClassification } from '../../components/CompanyFullEditor'
 
 /**
  * /company/[id] — Rich profile page for a single root entity.
@@ -33,6 +34,8 @@ import MergeWithPicker from '../../components/MergeWithPicker'
 
 interface Classification {
   entity_classification_id: number
+  entity_id: number
+  entity_name: string
   sector_id: number
   sector_name: string
   subsector_id: number
@@ -984,28 +987,17 @@ export default function CompanyDetailPage() {
           above sticky nav/sector filter without stacking-context bugs.
           ========================================================= */}
       {editing && company && isSuperAdmin && (
-        <div
-          className="fixed inset-0 z-[60] flex items-start justify-center pt-10 md:pt-16 px-4 bg-black/40"
-          onClick={() => setEditing(false)}
-        >
-          <div
-            className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-[85vh]"
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-          >
-            <div className="overflow-y-auto flex-1 min-h-0">
-              <EntityEditForm
-                initial={toEditable(company)}
-                onCancel={() => setEditing(false)}
-                onSaved={() => {
-                  setEditing(false)
-                  fetchCompany()
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        <CompanyFullEditor
+          entity={toEditable(company)}
+          classifications={company.classifications.map(toEditorClassification)}
+          onClose={() => setEditing(false)}
+          onSaved={() => {
+            // Keep the modal open so an admin can keep editing across tabs
+            // (entity → each subsector) without constant re-opens. Fresh data
+            // flows in via the realtime refetch below.
+            fetchCompany()
+          }}
+        />
       )}
 
       {merging && company && isSuperAdmin && (
@@ -1055,6 +1047,28 @@ function toEditable(c: CompanyDetail): EntityEditable {
     telegram_url: c.telegram_url,
     farcaster_handle: c.farcaster_handle,
     status: c.status,
+  }
+}
+
+function toEditorClassification(c: Classification): EditorClassification {
+  return {
+    entity_classification_id: c.entity_classification_id,
+    // Classifications can belong to the root OR a collapsed child entity;
+    // the editor needs the owning id so subsector-data writes land on the
+    // right row.
+    entity_id: c.entity_id,
+    entity_name: c.entity_name ?? '',
+    sector_id: c.sector_id,
+    sector_name: c.sector_name,
+    subsector_id: c.subsector_id,
+    subsector_name: c.subsector_name,
+    is_primary: c.is_primary,
+    description: c.description ?? '',
+    website: c.website ?? '',
+    maintaining_organization: c.maintaining_organization ?? '',
+    reason_for_inclusion: c.reason_for_inclusion ?? '',
+    practitioners_note: c.practitioners_note ?? '',
+    practitioner_validation_check: c.practitioner_validation_check ?? '',
   }
 }
 
