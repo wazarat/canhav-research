@@ -1,15 +1,23 @@
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { companiesData as staticCompanies } from '../lib/companiesData'
+import { useRealtimeTables } from '../lib/useRealtimeTables'
 import JotFormModal from './JotFormModal'
 
 interface Company {
   entity_id?: number
   name: string
+  // Primary (headline) sector/subsector for card color + sort
   sector: string
   subsector: string
+  // Full tag arrays from v_market_map_grid. Multi-sector entities have > 1.
+  // Optional to keep backwards compatibility with the static fallback dataset.
+  sectors?: string[]
+  subsectors?: string[]
+  description?: string
+  website?: string
 }
 
 interface MarketMapProps {}
@@ -26,44 +34,69 @@ export default function MarketMap({}: MarketMapProps) {
   const [companiesData, setCompaniesData] = useState<Company[]>(staticCompanies)
   const [loading, setLoading] = useState(true)
   const [dataSource, setDataSource] = useState<'supabase' | 'static'>('static')
+  const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null)
 
-  // Fetch companies from Supabase API on mount
-  useEffect(() => {
-    async function fetchCompanies() {
-      try {
-        const res = await fetch('/api/companies')
-        if (!res.ok) throw new Error('API error')
-        const { companies } = await res.json()
-        if (companies && companies.length > 0) {
-          setCompaniesData(companies)
-          setDataSource('supabase')
-        }
-      } catch (err) {
-        console.warn('Falling back to static data:', err)
-      } finally {
-        setLoading(false)
+  // Hoisted so the initial mount AND the Realtime subscription can share it.
+  // `cache: 'no-store'` bypasses the browser's HTTP cache so we always see
+  // fresh data from /api/companies after a Realtime event.
+  const fetchCompanies = useCallback(async () => {
+    try {
+      const res = await fetch('/api/companies', { cache: 'no-store' })
+      if (!res.ok) throw new Error('API error')
+      const { companies } = await res.json()
+      if (companies && companies.length > 0) {
+        setCompaniesData(companies)
+        setDataSource('supabase')
+        setLastSyncedAt(new Date())
       }
+    } catch (err) {
+      console.warn('Falling back to static data:', err)
+    } finally {
+      setLoading(false)
     }
-    fetchCompanies()
   }, [])
 
-  // Get all unique sectors
+  useEffect(() => {
+    fetchCompanies()
+  }, [fetchCompanies])
+
+  // Push-based sync: any change to these tables in Supabase triggers a
+  // debounced refetch so open tabs stay live without a page reload.
+  useRealtimeTables(
+    ['entities', 'entity_classifications', 'sectors', 'subsectors'],
+    fetchCompanies,
+    { channelName: 'market-map-grid' }
+  )
+
+  // All sectors a company belongs to — falls back to the primary when the
+  // row came from the static (legacy) dataset that doesn't carry the array.
+  const getSectors = (c: Company): string[] =>
+    c.sectors && c.sectors.length > 0 ? c.sectors : [c.sector]
+  const getSubsectors = (c: Company): string[] =>
+    c.subsectors && c.subsectors.length > 0 ? c.subsectors : [c.subsector]
+
+  // Unique sector list drawn from every tag on every company.
   const sectors = useMemo(() => {
-    const sectorSet = new Set(companiesData.map(c => c.sector))
+    const sectorSet = new Set<string>()
+    companiesData.forEach(c => getSectors(c).forEach(s => s && sectorSet.add(s)))
     return Array.from(sectorSet).sort()
   }, [companiesData])
-  
-  // Filter and sort companies
+
+  // Filter and sort companies. A multi-sector company matches when the
+  // selected sector is in its `sectors` array — card stays deduped.
   const filteredCompanies = useMemo(() => {
     let filtered = companiesData.filter(company => {
-      const matchesSector = selectedSector === null || company.sector === selectedSector
-      const matchesSearch = searchQuery === '' || 
-        company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        company.subsector.toLowerCase().includes(searchQuery.toLowerCase())
-      
+      const matchesSector =
+        selectedSector === null || getSectors(company).includes(selectedSector)
+      const q = searchQuery.toLowerCase()
+      const matchesSearch = q === '' ||
+        company.name.toLowerCase().includes(q) ||
+        getSubsectors(company).some(s => s.toLowerCase().includes(q)) ||
+        (company.description?.toLowerCase().includes(q) ?? false)
+
       return matchesSector && matchesSearch
     })
-    
+
     filtered.sort((a, b) => {
       if (sortBy === 'name') {
         return a.name.localeCompare(b.name)
@@ -72,18 +105,20 @@ export default function MarketMap({}: MarketMapProps) {
       }
       return 0
     })
-    
+
     return filtered
   }, [companiesData, selectedSector, searchQuery, sortBy])
-  
-  // Group companies by sector for grouped view
+
+  // Grouped view: a multi-sector company appears under each of its sectors
+  // in the grouped layout, but only once in the flat grid view above.
   const groupedCompanies = useMemo(() => {
     const groups: { [key: string]: Company[] } = {}
     filteredCompanies.forEach(company => {
-      if (!groups[company.sector]) {
-        groups[company.sector] = []
-      }
-      groups[company.sector].push(company)
+      getSectors(company).forEach(sector => {
+        if (!sector) return
+        if (!groups[sector]) groups[sector] = []
+        groups[sector].push(company)
+      })
     })
     return groups
   }, [filteredCompanies])
@@ -193,8 +228,22 @@ export default function MarketMap({}: MarketMapProps) {
               </select>
             </div>
             
-            <div className="text-sm text-gray-600">
-              <span className="font-semibold text-gray-900">{filteredCompanies.length}</span> companies
+            <div className="flex items-center gap-3 text-sm text-gray-600">
+              <span>
+                <span className="font-semibold text-gray-900">{filteredCompanies.length}</span> companies
+              </span>
+              {dataSource === 'supabase' && (
+                <span
+                  className="inline-flex items-center gap-1.5 text-xs text-gray-500"
+                  title={lastSyncedAt ? `Last synced ${lastSyncedAt.toLocaleTimeString()}` : 'Live'}
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  Live
+                </span>
+              )}
             </div>
           </div>
         </div>
@@ -215,7 +264,7 @@ export default function MarketMap({}: MarketMapProps) {
             </button>
             {sectors.map((sector) => {
               const colorScheme = getSectorColor(sector)
-              const count = companiesData.filter(c => c.sector === sector).length
+              const count = companiesData.filter(c => getSectors(c).includes(sector)).length
               return (
                 <button
                   key={sector}
@@ -325,7 +374,11 @@ export default function MarketMap({}: MarketMapProps) {
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
               <div className="text-3xl font-bold text-blue-600 mb-2">
-                {new Set(companiesData.map(c => c.subsector)).size}
+                {(() => {
+                  const set = new Set<string>()
+                  companiesData.forEach(c => getSubsectors(c).forEach(s => s && set.add(s)))
+                  return set.size
+                })()}
               </div>
               <div className="text-gray-600 text-sm">
                 Subsectors

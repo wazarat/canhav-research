@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRealtimeTables } from '../../lib/useRealtimeTables'
 
 interface Classification {
   entity_classification_id: number
@@ -55,22 +56,36 @@ export default function CompanyDetailPage() {
     { name: 'About Us', href: '/about-us' },
   ]
 
-  useEffect(() => {
+  // Hoisted so mount and Realtime both refetch via one function.
+  const fetchCompany = useCallback(async () => {
     if (!id) return
-    async function fetchCompany() {
-      try {
-        const res = await fetch(`/api/company/${id}`)
-        if (!res.ok) throw new Error('Not found')
-        const data = await res.json()
-        setCompany(data)
-      } catch {
-        setError('Company not found')
-      } finally {
-        setLoading(false)
-      }
+    try {
+      const res = await fetch(`/api/company/${id}`, { cache: 'no-store' })
+      if (!res.ok) throw new Error('Not found')
+      const data = await res.json()
+      setCompany(data)
+      setError(null)
+    } catch {
+      setError('Company not found')
+    } finally {
+      setLoading(false)
     }
-    fetchCompany()
   }, [id])
+
+  useEffect(() => {
+    fetchCompany()
+  }, [fetchCompany])
+
+  // Subscribe to Supabase Realtime — any change to the entities table or
+  // its classifications (including child entities for collapsed parents)
+  // re-pulls /api/company/[id] so the page stays live without a reload.
+  // The refetch itself is server-side and already filters to this entity's
+  // root, so a broad channel is fine and keeps the code simple.
+  useRealtimeTables(
+    ['entities', 'entity_classifications'],
+    fetchCompany,
+    { channelName: id ? `company-detail-${id}` : undefined }
+  )
 
   const getColor = (sector: string) => SECTOR_COLOR_MAP[sector] ?? FALLBACK
 

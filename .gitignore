@@ -25,6 +25,9 @@ yarn-error.log*
 # Local env files
 .env*.local
 
+# Cursor MCP config with secrets (commit .cursor/mcp.json.example instead)
+.cursor/mcp.json
+
 # Vercel
 .vercel
 

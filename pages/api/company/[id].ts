@@ -3,6 +3,9 @@ import { getSupabaseAdmin, getSupabaseMasterdata } from '../../../lib/supabaseNe
 
 export interface EntityClassification {
   entity_classification_id: number
+  entity_id: number           // source entity (parent or child)
+  entity_name: string
+  is_primary: boolean
   sector_name: string
   subsector_name: string
   description: string
@@ -20,13 +23,22 @@ export interface SectorDetail {
 }
 
 export interface CompanyDetail {
-  entity_id: number
-  entity_name: string
+  entity_id: number                     // root entity id (what the URL resolves to)
+  entity_name: string                   // root entity name
+  canonical_website: string | null
+  logo_url: string | null
+  year_founded: number | null
+  hq_location: string | null
+  funding_stage: string | null
+  twitter_handle: string | null
+  github_org: string | null
+  tags: string[] | null
   classifications: EntityClassification[]
   sector_details: SectorDetail[]
+  sub_entities: Array<{ entity_id: number; entity_name: string }>
 }
 
-// Map sector names to their masterdata v_*_clean views (richer data than *_details tables)
+// Map sector names to masterdata v_*_clean views for richer sector-specific data.
 const SECTOR_VIEW_MAP: Record<string, string> = {
   'Core Protocol Architecture': 'v_core_protocol_architecture_clean',
   'Rollup & Scaling Frameworks': 'v_rollup_scaling_clean',
@@ -37,7 +49,7 @@ const SECTOR_VIEW_MAP: Record<string, string> = {
   'Governance & Enterprise Framework': 'v_governance_enterprise_framework_clean',
 }
 
-// Columns to exclude from sector detail display (base fields already shown in classifications)
+// Columns to exclude from sector detail display (base fields shown in classifications).
 const EXCLUDED_COLS = new Set([
   'entity_id', 'created_at', 'updated_at',
   'entity_name', 'subsector_name', 'raw_org', 'raw_orgs',
@@ -65,97 +77,128 @@ export default async function handler(
     const supabase = getSupabaseAdmin()
     const masterdata = getSupabaseMasterdata()
 
-    // Get entity name
-    const { data: entity, error: entityError } = await supabase
-      .from('entities')
-      .select('entity_id, entity_name')
+    // v_entity_detail carries both the requested entity (if root) and any
+    // classifications of its collapsed children. If the requested id is a
+    // child, we resolve its root via the same view and redirect the query.
+    const { data: rootLookup, error: rootErr } = await supabase
+      .from('v_entity_detail')
+      .select('root_entity_id')
       .eq('entity_id', entityId)
-      .single()
+      .limit(1)
+      .maybeSingle()
 
-    if (entityError || !entity) {
-      return res.status(404).json({ error: 'Entity not found' })
+    if (rootErr) {
+      console.error('Root lookup error:', rootErr)
+      return res.status(500).json({ error: 'Failed to resolve entity' })
     }
 
-    // Get all classifications for this entity
-    const { data: classifications, error: classError } = await supabase
-      .from('entity_classifications')
-      .select(`
-        entity_classification_id,
-        subsectors ( subsector_name, sectors ( sector_name ) ),
-        description,
-        website,
-        maintaining_organization,
-        reason_for_inclusion,
-        practitioners_note,
-        practitioner_validation_check
-      `)
-      .eq('entity_id', entityId)
-      .order('entity_classification_id', { ascending: true })
+    const rootId = rootLookup?.root_entity_id ?? entityId
 
-    if (classError) {
-      console.error('Classifications query error:', classError)
+    // Pull every classification owned by the root or any of its children.
+    const { data: detailRows, error: detailErr } = await supabase
+      .from('v_entity_detail')
+      .select('*')
+      .eq('root_entity_id', rootId)
+      .order('is_primary', { ascending: false })
+      .order('sector_name', { ascending: true })
+      .order('subsector_name', { ascending: true })
+
+    if (detailErr) {
+      console.error('Detail query error:', detailErr)
       return res.status(500).json({ error: 'Failed to fetch classifications' })
     }
 
-    const mappedClassifications = (classifications || []).map((row: any) => ({
-      entity_classification_id: row.entity_classification_id,
-      sector_name: row.subsectors?.sectors?.sector_name || '',
-      subsector_name: row.subsectors?.subsector_name || '',
-      description: row.description || '',
-      website: row.website || '',
-      maintaining_organization: row.maintaining_organization || '',
-      reason_for_inclusion: row.reason_for_inclusion || '',
-      practitioners_note: row.practitioners_note || '',
-      practitioner_validation_check: row.practitioner_validation_check || '',
+    if (!detailRows || detailRows.length === 0) {
+      return res.status(404).json({ error: 'Entity not found' })
+    }
+
+    const first = detailRows[0] as any
+
+    const mappedClassifications: EntityClassification[] = detailRows.map((r: any) => ({
+      entity_classification_id: r.entity_classification_id,
+      entity_id: r.entity_id,
+      entity_name: (r.entity_name || '').trim(),
+      is_primary: !!r.is_primary,
+      sector_name: r.sector_name || '',
+      subsector_name: r.subsector_name || '',
+      description: r.description || '',
+      website: r.website || '',
+      maintaining_organization: r.maintaining_organization || '',
+      reason_for_inclusion: r.reason_for_inclusion || '',
+      practitioners_note: r.practitioners_note || '',
+      practitioner_validation_check: r.practitioner_validation_check || '',
     }))
 
-    // Determine unique sectors and fetch detail data from masterdata v_*_clean views
-    const uniqueSectors = Array.from(new Set(mappedClassifications.map((c: EntityClassification) => c.sector_name)))
+    // Enrich with sector-specific columns from masterdata.v_*_clean (best-effort).
+    const uniqueSectors = Array.from(new Set(mappedClassifications.map((c) => c.sector_name)))
+    const rootName = (first.root_entity_name || '').trim()
+    const memberNames = Array.from(
+      new Set(mappedClassifications.map((c) => c.entity_name).filter(Boolean))
+    )
     const sectorDetails: SectorDetail[] = []
-    const entityName = (entity.entity_name || '').trim()
 
     for (const sectorName of uniqueSectors) {
       const viewName = SECTOR_VIEW_MAP[sectorName]
       if (!viewName) continue
 
       try {
-        const { data: viewRows, error: viewError } = await masterdata
+        const { data: viewRows, error: viewErr } = await masterdata
           .from(viewName)
           .select('*')
-          .eq('entity_name', entityName)
+          .in('entity_name', memberNames.length ? memberNames : [rootName])
 
-        if (viewError) {
-          console.error(`Error fetching ${viewName}:`, viewError.message)
+        if (viewErr) {
+          console.error(`Error fetching ${viewName}:`, viewErr.message)
           continue
         }
+        if (!viewRows || viewRows.length === 0) continue
 
-        if (viewRows && viewRows.length > 0) {
-          // Merge fields from all matching rows (entity may appear multiple times for different subsectors)
-          const allFields: Record<string, string> = {}
-          for (const row of viewRows) {
-            for (const [key, value] of Object.entries(row)) {
-              if (!EXCLUDED_COLS.has(key) && value !== null && value !== '') {
-                allFields[key] = String(value)
-              }
-            }
+        const allFields: Record<string, string> = {}
+        for (const row of viewRows as Record<string, unknown>[]) {
+          for (const [key, value] of Object.entries(row)) {
+            if (EXCLUDED_COLS.has(key)) continue
+            if (value === null || value === '') continue
+            allFields[key] = String(value)
           }
-          if (Object.keys(allFields).length > 0) {
-            sectorDetails.push({ sector_name: sectorName, table_name: viewName, fields: allFields })
-          }
+        }
+        if (Object.keys(allFields).length > 0) {
+          sectorDetails.push({ sector_name: sectorName, table_name: viewName, fields: allFields })
         }
       } catch (e) {
         console.error(`Error fetching ${viewName}:`, e)
       }
     }
 
+    // Collect the collapsed children list (distinct from classifications).
+    const { data: children } = await supabase
+      .from('entities')
+      .select('entity_id, entity_name')
+      .eq('parent_entity_id', rootId)
+      .order('entity_name', { ascending: true })
+
     const result: CompanyDetail = {
-      entity_id: entity.entity_id,
-      entity_name: (entity.entity_name || '').trim(),
+      entity_id: rootId,
+      entity_name: rootName,
+      canonical_website: first.root_canonical_website ?? null,
+      logo_url: first.root_logo_url ?? null,
+      year_founded: first.root_year_founded ?? null,
+      hq_location: first.root_hq_location ?? null,
+      funding_stage: first.root_funding_stage ?? null,
+      twitter_handle: first.root_twitter_handle ?? null,
+      github_org: first.root_github_org ?? null,
+      tags: first.root_tags ?? null,
       classifications: mappedClassifications,
       sector_details: sectorDetails,
+      sub_entities: (children || []).map((c: any) => ({
+        entity_id: c.entity_id,
+        entity_name: (c.entity_name || '').trim(),
+      })),
     }
 
-    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600')
+    // No edge caching — the detail page subscribes to Supabase Realtime
+    // and refetches when its entity's rows change. Edge caching would mask
+    // that. See lib/useRealtimeTables.ts.
+    res.setHeader('Cache-Control', 'no-store, max-age=0, must-revalidate')
     return res.status(200).json(result)
   } catch (err) {
     console.error('API error:', err)
