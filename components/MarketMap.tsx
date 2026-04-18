@@ -5,25 +5,108 @@ import Link from 'next/link'
 import { companiesData as staticCompanies } from '../lib/companiesData'
 import { useRealtimeTables } from '../lib/useRealtimeTables'
 import JotFormModal from './JotFormModal'
+import CompanyDetailDrawer from './CompanyDetailDrawer'
+import MarketMapLandscape from './MarketMapLandscape'
 
 interface Company {
   entity_id?: number
   name: string
-  // Primary (headline) sector/subsector for card color + sort
+  // Primary (headline) sector/subsector — used for card accent + sort.
   sector: string
   subsector: string
   // Full tag arrays from v_market_map_grid. Multi-sector entities have > 1.
-  // Optional to keep backwards compatibility with the static fallback dataset.
   sectors?: string[]
   subsectors?: string[]
   description?: string
   website?: string
+  logo_url?: string | null
+  hq_location?: string | null
 }
 
 interface MarketMapProps {}
 
-type ViewMode = 'grid' | 'grouped'
+type ViewMode = 'grid' | 'grouped' | 'landscape'
 type SortOption = 'name' | 'sector'
+
+// ------------------------------------------------------------------
+// Sector color palette. Each sector has:
+//   accent = solid hex used for the card's left border / dot
+//   bg/text = tailwind classes for filter pills and inline badges
+// ------------------------------------------------------------------
+type SectorTokens = {
+  accent: string
+  bg: string
+  text: string
+  ring: string
+  soft: string
+}
+
+const SECTOR_TOKENS: Record<string, SectorTokens> = {
+  'Core Protocol Architecture': {
+    accent: '#3b82f6',
+    bg: 'bg-blue-100',
+    text: 'text-blue-800',
+    ring: 'ring-blue-200',
+    soft: 'bg-blue-50',
+  },
+  'Rollup & Scaling Frameworks': {
+    accent: '#8b5cf6',
+    bg: 'bg-violet-100',
+    text: 'text-violet-800',
+    ring: 'ring-violet-200',
+    soft: 'bg-violet-50',
+  },
+  'Monetary & Access Rails': {
+    accent: '#10b981',
+    bg: 'bg-emerald-100',
+    text: 'text-emerald-800',
+    ring: 'ring-emerald-200',
+    soft: 'bg-emerald-50',
+  },
+  'DeFi Systems Architecture': {
+    accent: '#f97316',
+    bg: 'bg-orange-100',
+    text: 'text-orange-800',
+    ring: 'ring-orange-200',
+    soft: 'bg-orange-50',
+  },
+  'Data & Consensus Infrastructure': {
+    accent: '#06b6d4',
+    bg: 'bg-cyan-100',
+    text: 'text-cyan-800',
+    ring: 'ring-cyan-200',
+    soft: 'bg-cyan-50',
+  },
+  'Advanced Compute & Integration': {
+    accent: '#ec4899',
+    bg: 'bg-pink-100',
+    text: 'text-pink-800',
+    ring: 'ring-pink-200',
+    soft: 'bg-pink-50',
+  },
+  'Governance & Enterprise Framework': {
+    accent: '#f59e0b',
+    bg: 'bg-amber-100',
+    text: 'text-amber-800',
+    ring: 'ring-amber-200',
+    soft: 'bg-amber-50',
+  },
+}
+
+const FALLBACK_TOKENS: SectorTokens = {
+  accent: '#9ca3af',
+  bg: 'bg-gray-100',
+  text: 'text-gray-700',
+  ring: 'ring-gray-200',
+  soft: 'bg-gray-50',
+}
+
+const getSectorTokens = (sector: string): SectorTokens =>
+  SECTOR_TOKENS[sector] ?? FALLBACK_TOKENS
+
+// ------------------------------------------------------------------
+// Main component
+// ------------------------------------------------------------------
 
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
@@ -35,10 +118,9 @@ export default function MarketMap({}: MarketMapProps) {
   const [loading, setLoading] = useState(true)
   const [dataSource, setDataSource] = useState<'supabase' | 'static'>('static')
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null)
+  // Drawer state — used by Grid + Landscape views. Null means closed.
+  const [selectedEntityId, setSelectedEntityId] = useState<number | null>(null)
 
-  // Hoisted so the initial mount AND the Realtime subscription can share it.
-  // `cache: 'no-store'` bypasses the browser's HTTP cache so we always see
-  // fresh data from /api/companies after a Realtime event.
   const fetchCompanies = useCallback(async () => {
     try {
       const res = await fetch('/api/companies', { cache: 'no-store' })
@@ -60,61 +142,49 @@ export default function MarketMap({}: MarketMapProps) {
     fetchCompanies()
   }, [fetchCompanies])
 
-  // Push-based sync: any change to these tables in Supabase triggers a
-  // debounced refetch so open tabs stay live without a page reload.
   useRealtimeTables(
     ['entities', 'entity_classifications', 'sectors', 'subsectors'],
     fetchCompanies,
     { channelName: 'market-map-grid' }
   )
 
-  // All sectors a company belongs to — falls back to the primary when the
-  // row came from the static (legacy) dataset that doesn't carry the array.
   const getSectors = (c: Company): string[] =>
     c.sectors && c.sectors.length > 0 ? c.sectors : [c.sector]
   const getSubsectors = (c: Company): string[] =>
     c.subsectors && c.subsectors.length > 0 ? c.subsectors : [c.subsector]
 
-  // Unique sector list drawn from every tag on every company.
   const sectors = useMemo(() => {
-    const sectorSet = new Set<string>()
-    companiesData.forEach(c => getSectors(c).forEach(s => s && sectorSet.add(s)))
-    return Array.from(sectorSet).sort()
+    const set = new Set<string>()
+    companiesData.forEach((c) => getSectors(c).forEach((s) => s && set.add(s)))
+    return Array.from(set).sort()
   }, [companiesData])
 
-  // Filter and sort companies. A multi-sector company matches when the
-  // selected sector is in its `sectors` array — card stays deduped.
   const filteredCompanies = useMemo(() => {
-    let filtered = companiesData.filter(company => {
+    const q = searchQuery.trim().toLowerCase()
+    const matches = companiesData.filter((company) => {
       const matchesSector =
         selectedSector === null || getSectors(company).includes(selectedSector)
-      const q = searchQuery.toLowerCase()
-      const matchesSearch = q === '' ||
+      const matchesSearch =
+        q === '' ||
         company.name.toLowerCase().includes(q) ||
-        getSubsectors(company).some(s => s.toLowerCase().includes(q)) ||
+        getSubsectors(company).some((s) => s.toLowerCase().includes(q)) ||
         (company.description?.toLowerCase().includes(q) ?? false)
-
       return matchesSector && matchesSearch
     })
-
-    filtered.sort((a, b) => {
-      if (sortBy === 'name') {
-        return a.name.localeCompare(b.name)
-      } else if (sortBy === 'sector') {
-        return a.sector.localeCompare(b.sector) || a.subsector.localeCompare(b.subsector)
-      }
-      return 0
+    matches.sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name)
+      return (
+        a.sector.localeCompare(b.sector) ||
+        a.subsector.localeCompare(b.subsector)
+      )
     })
-
-    return filtered
+    return matches
   }, [companiesData, selectedSector, searchQuery, sortBy])
 
-  // Grouped view: a multi-sector company appears under each of its sectors
-  // in the grouped layout, but only once in the flat grid view above.
   const groupedCompanies = useMemo(() => {
-    const groups: { [key: string]: Company[] } = {}
-    filteredCompanies.forEach(company => {
-      getSectors(company).forEach(sector => {
+    const groups: Record<string, Company[]> = {}
+    filteredCompanies.forEach((company) => {
+      getSectors(company).forEach((sector) => {
         if (!sector) return
         if (!groups[sector]) groups[sector] = []
         groups[sector].push(company)
@@ -122,279 +192,311 @@ export default function MarketMap({}: MarketMapProps) {
     })
     return groups
   }, [filteredCompanies])
-  
-  const SECTOR_COLOR_MAP: Record<string, { bg: string; text: string; border: string; dot: string }> = {
-    'Core Protocol Architecture':       { bg: 'bg-blue-100',   text: 'text-blue-800',   border: 'border-blue-200',   dot: 'bg-blue-500' },
-    'Rollup & Scaling Frameworks':      { bg: 'bg-violet-100', text: 'text-violet-800', border: 'border-violet-200', dot: 'bg-violet-500' },
-    'Monetary & Access Rails':          { bg: 'bg-emerald-100',text: 'text-emerald-800',border: 'border-emerald-200',dot: 'bg-emerald-500' },
-    'DeFi Systems Architecture':        { bg: 'bg-orange-100', text: 'text-orange-800', border: 'border-orange-200', dot: 'bg-orange-500' },
-    'Data & Consensus Infrastructure':  { bg: 'bg-cyan-100',   text: 'text-cyan-800',   border: 'border-cyan-200',   dot: 'bg-cyan-500' },
-    'Advanced Compute & Integration':   { bg: 'bg-pink-100',   text: 'text-pink-800',   border: 'border-pink-200',   dot: 'bg-pink-500' },
-    'Governance & Enterprise Framework':{ bg: 'bg-amber-100',  text: 'text-amber-800',  border: 'border-amber-200',  dot: 'bg-amber-500' },
-  }
-  const FALLBACK_COLOR = { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-200', dot: 'bg-gray-400' }
 
-  const getSectorColor = (sector: string) => SECTOR_COLOR_MAP[sector] ?? FALLBACK_COLOR
+  const subsectorCount = useMemo(() => {
+    const set = new Set<string>()
+    companiesData.forEach((c) => getSubsectors(c).forEach((s) => s && set.add(s)))
+    return set.size
+  }, [companiesData])
+
+  // Show skeleton only on first load, and only while the static data is
+  // still showing (dataSource === 'static' and loading). After the first
+  // fetch we keep rendering the grid while Realtime refetches silently.
+  const showSkeleton = loading && dataSource === 'static'
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="container mx-auto px-6 py-8">
-        <div className="mb-8">
-          {/* Title and Buttons Row */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-            <div className="text-center lg:text-left mb-4 lg:mb-0">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-                The Ethereum Infrastructure Atlas
-              </h1>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-end items-center">
-              <button
-                onClick={() => setShowSubmitForm(true)}
-                className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-all duration-300 shadow-md hover:shadow-lg"
-              >
-                Submit a Company
-              </button>
-            </div>
-          </div>
-          
-          {/* Subtitle */}
-          <div className="text-center lg:text-left">
-            <p className="text-lg text-gray-600 max-w-3xl lg:max-w-none lg:mx-0 mx-auto">
-              A curated, research-driven map of Ethereum's infrastructure, protocols, and applications.
+    <div className="min-h-screen bg-gray-50">
+      {/* ------------------------------------------------------------------
+           Hero: compact intro + submit button. Minimal vertical weight so
+           the filter bar + cards dominate the fold.
+           ------------------------------------------------------------------ */}
+      <div className="max-w-7xl mx-auto px-6 pt-10 pb-6">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 tracking-tight">
+              The Ethereum Infrastructure Atlas
+            </h1>
+            <p className="mt-2 text-sm md:text-[15px] text-gray-500 max-w-2xl">
+              A curated, research-driven map of Ethereum&apos;s infrastructure,
+              protocols, and applications.
             </p>
           </div>
-        </div>
-        
-        {/* Search and Controls */}
-        <div className="mb-6 space-y-4">
-          {/* Search Bar */}
-          <div className="relative max-w-2xl mx-auto">
-            <input
-              type="text"
-              placeholder="Search companies, descriptions, or subsectors..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-5 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-            />
-            <svg className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            )}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowSubmitForm(true)}
+              className="px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-md text-xs font-medium transition shadow-sm"
+            >
+              Submit a company
+            </button>
           </div>
-          
-          {/* View Mode and Sort Controls */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">View:</span>
-              <div className="flex bg-gray-100 rounded-lg p-1">
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------
+           Sticky filter bar. Offsets under the site header (`top-16` on the
+           existing nav). Contains: search + sector chips + view toggle +
+           sort + live indicator.
+           ------------------------------------------------------------------ */}
+      <div
+        className="sticky z-20 bg-white/80 backdrop-blur border-b border-gray-200"
+        style={{ top: 68 }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-3 space-y-3">
+          {/* Row 1: search + toolbar */}
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            <div className="relative flex-1 min-w-[200px]">
+              <svg
+                className="absolute left-3 top-2.5 w-4 h-4 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="Search companies, descriptions, subsectors…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2 bg-white border border-gray-200 rounded-lg text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              {searchQuery && (
                 <button
-                  onClick={() => setViewMode('grid')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'grid' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-                  }`}
+                  onClick={() => setSearchQuery('')}
+                  aria-label="Clear search"
+                  className="absolute right-2.5 top-2.5 text-gray-400 hover:text-gray-700"
                 >
-                  Grid
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
                 </button>
-                <button
-                  onClick={() => setViewMode('grouped')}
-                  className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all duration-200 ${
-                    viewMode === 'grouped' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  Grouped
-                </button>
-              </div>
+              )}
             </div>
-            
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Sort by:</span>
+
+            <div className="flex items-center gap-2">
+              <div className="flex bg-gray-100 rounded-lg p-0.5">
+                {(['grid', 'grouped', 'landscape'] as ViewMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setViewMode(mode)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium capitalize transition ${
+                      viewMode === mode
+                        ? 'bg-white text-gray-900 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                ))}
+              </div>
+
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className="px-4 py-1.5 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="px-2.5 py-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="name">Name</option>
-                <option value="sector">Sector</option>
+                <option value="name">Sort: Name</option>
+                <option value="sector">Sort: Sector</option>
               </select>
-            </div>
-            
-            <div className="flex items-center gap-3 text-sm text-gray-600">
-              <span>
-                <span className="font-semibold text-gray-900">{filteredCompanies.length}</span> companies
-              </span>
-              {dataSource === 'supabase' && (
-                <span
-                  className="inline-flex items-center gap-1.5 text-xs text-gray-500"
-                  title={lastSyncedAt ? `Last synced ${lastSyncedAt.toLocaleTimeString()}` : 'Live'}
-                >
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                  </span>
-                  Live
+
+              <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500 pl-3 ml-1 border-l border-gray-200">
+                <span>
+                  <span className="font-semibold text-gray-900">
+                    {filteredCompanies.length}
+                  </span>{' '}
+                  companies
                 </span>
-              )}
+                {dataSource === 'supabase' && (
+                  <span
+                    className="inline-flex items-center gap-1.5 text-gray-500"
+                    title={
+                      lastSyncedAt
+                        ? `Last synced ${lastSyncedAt.toLocaleTimeString()}`
+                        : 'Live'
+                    }
+                  >
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
+                    </span>
+                    Live
+                  </span>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Sector Filter Tabs */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">Filter by Sector:</h3>
-          <div className="flex flex-wrap gap-2">
-            <button
+          {/* Row 2: sector filter chips */}
+          <div className="flex flex-wrap gap-1.5">
+            <SectorChip
+              label="All sectors"
+              active={selectedSector === null}
+              count={companiesData.length}
               onClick={() => setSelectedSector(null)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                selectedSector === null
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              All Sectors
-            </button>
+            />
             {sectors.map((sector) => {
-              const colorScheme = getSectorColor(sector)
-              const count = companiesData.filter(c => getSectors(c).includes(sector)).length
+              const tokens = getSectorTokens(sector)
+              const count = companiesData.filter((c) =>
+                getSectors(c).includes(sector)
+              ).length
               return (
-                <button
+                <SectorChip
                   key={sector}
-                  onClick={() => setSelectedSector(selectedSector === sector ? null : sector)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                    selectedSector === sector
-                      ? `${colorScheme.bg} ${colorScheme.text} shadow-md`
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {sector} <span className="ml-1 text-xs opacity-75">({count})</span>
-                </button>
+                  label={sector}
+                  count={count}
+                  active={selectedSector === sector}
+                  accent={tokens.accent}
+                  bg={tokens.bg}
+                  text={tokens.text}
+                  onClick={() =>
+                    setSelectedSector(selectedSector === sector ? null : sector)
+                  }
+                />
               )
             })}
           </div>
         </div>
-        
+      </div>
 
-        {/* Companies Display */}
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3">
-            {filteredCompanies.map((company, index) => {
-              const colorScheme = getSectorColor(company.sector)
-              const href = company.entity_id ? `/company/${company.entity_id}` : '#'
-              return (
-                <Link
-                  key={`${company.name}-${index}`}
-                  href={href}
-                  className="group"
-                >
-                  <div className="bg-white border border-gray-200 rounded-lg px-3 py-3 hover:shadow-md transition-all duration-200 hover:border-blue-300 flex items-center gap-2.5 h-full">
-                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${colorScheme.dot}`} />
-                    <span className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors truncate leading-tight">
-                      {company.name}
-                    </span>
-                  </div>
-                </Link>
-              )
-            })}
+      {/* ------------------------------------------------------------------
+           Companies display. Skeleton during initial load; otherwise either
+           the flat grid or the grouped layout.
+           ------------------------------------------------------------------ */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {showSkeleton ? (
+          <SkeletonGrid />
+        ) : viewMode === 'landscape' ? (
+          <MarketMapLandscape
+            companies={filteredCompanies}
+            sectorOrder={sectors}
+            sectorTokens={getSectorTokens}
+            onSelect={(id) => setSelectedEntityId(id)}
+            selectedSector={selectedSector}
+          />
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            {filteredCompanies.map((company, index) => (
+              <CompanyCard
+                key={`${company.entity_id ?? company.name}-${index}`}
+                company={company}
+                getSectors={getSectors}
+                onSelect={(id) => setSelectedEntityId(id)}
+              />
+            ))}
           </div>
         ) : (
-          <div className="space-y-8">
-            {Object.entries(groupedCompanies).map(([sector, companies]) => {
-              const colorScheme = getSectorColor(sector)
+          <div className="space-y-6">
+            {sectors.map((sector) => {
+              const list = groupedCompanies[sector]
+              if (!list || list.length === 0) return null
+              const tokens = getSectorTokens(sector)
               return (
-                <div key={sector} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                  <div className="flex items-center mb-4">
-                    <div className={`w-1 h-8 ${colorScheme.bg} rounded-full mr-3`}></div>
-                    <h2 className="text-xl font-bold text-gray-900">{sector}</h2>
-                    <span className="ml-3 text-sm text-gray-500">({companies.length})</span>
+                <div
+                  key={sector}
+                  className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden"
+                >
+                  <div
+                    className="px-5 py-3 flex items-center gap-3 border-b border-gray-100"
+                    style={{
+                      borderLeft: `3px solid ${tokens.accent}`,
+                    }}
+                  >
+                    <h2 className="text-sm font-semibold text-gray-900">
+                      {sector}
+                    </h2>
+                    <span className="text-xs text-gray-400">
+                      {list.length} {list.length === 1 ? 'company' : 'companies'}
+                    </span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                    {companies.map((company, index) => {
-                      const href = company.entity_id ? `/company/${company.entity_id}` : '#'
-                      return (
-                        <Link
-                          key={`${company.name}-${index}`}
-                          href={href}
-                          className="bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-300 rounded-lg p-3 transition-all duration-200 hover:shadow-md block"
-                        >
-                          <h3 className="text-sm font-semibold text-gray-900 mb-1 line-clamp-1">
-                            {company.name}
-                          </h3>
-                          <p className="text-xs text-gray-600 line-clamp-1">
-                            {company.subsector}
-                          </p>
-                        </Link>
-                      )
-                    })}
+                  <div className="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+                    {list.map((company, index) => (
+                      <CompanyCard
+                        key={`${sector}-${company.entity_id ?? company.name}-${index}`}
+                        company={company}
+                        getSectors={getSectors}
+                        onSelect={(id) => setSelectedEntityId(id)}
+                      />
+                    ))}
                   </div>
                 </div>
               )
             })}
           </div>
         )}
-        
-        {/* Empty State */}
-        {filteredCompanies.length === 0 && (
-          <div className="text-center py-16">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+
+        {/* Empty state */}
+        {!showSkeleton && filteredCompanies.length === 0 && (
+          <div className="text-center py-20 rounded-2xl border border-dashed border-gray-300 bg-white">
+            <svg
+              className="mx-auto h-10 w-10 text-gray-300"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No companies found</h3>
-            <p className="mt-2 text-sm text-gray-500">Try adjusting your search or filters</p>
+            <h3 className="mt-4 text-base font-medium text-gray-900">
+              No companies match those filters
+            </h3>
+            <p className="mt-1 text-sm text-gray-500">
+              Try a broader search or clear the sector filter.
+            </p>
             <button
               onClick={() => {
                 setSearchQuery('')
                 setSelectedSector(null)
               }}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="mt-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md hover:bg-gray-800"
             >
-              Clear all filters
+              Clear filters
             </button>
           </div>
         )}
 
-        {/* Stats Section */}
-        <div className="mt-16 text-center">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                {sectors.length}
-              </div>
-              <div className="text-gray-600 text-sm">
-                Major Sectors
-              </div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                {(() => {
-                  const set = new Set<string>()
-                  companiesData.forEach(c => getSubsectors(c).forEach(s => s && set.add(s)))
-                  return set.size
-                })()}
-              </div>
-              <div className="text-gray-600 text-sm">
-                Subsectors
-              </div>
-            </div>
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                {companiesData.length}+
-              </div>
-              <div className="text-gray-600 text-sm">
-                Companies
-              </div>
+        {/* Stats strip — compact, single-row, not three big cards */}
+        <div className="mt-12 pt-6 border-t border-gray-200">
+          <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2 text-sm text-gray-500">
+            <StatCell label="Major sectors" value={sectors.length} />
+            <div className="h-4 w-px bg-gray-200 hidden sm:block" />
+            <StatCell label="Subsectors" value={subsectorCount} />
+            <div className="h-4 w-px bg-gray-200 hidden sm:block" />
+            <StatCell label="Companies" value={companiesData.length} />
+            <div className="ml-auto text-xs text-gray-400">
+              {dataSource === 'supabase'
+                ? lastSyncedAt
+                  ? `Synced ${lastSyncedAt.toLocaleTimeString()}`
+                  : 'Live'
+                : 'Static fallback'}
             </div>
           </div>
         </div>
       </div>
+
+      {/* Company Detail Drawer — shared by Grid, Grouped, and Landscape views */}
+      <CompanyDetailDrawer
+        entityId={selectedEntityId}
+        onClose={() => setSelectedEntityId(null)}
+      />
 
       {/* Submit Company Modal */}
       {showSubmitForm && (
@@ -405,7 +507,216 @@ export default function MarketMap({}: MarketMapProps) {
           title="Submit a Company"
         />
       )}
-      
     </div>
   )
+}
+
+// ------------------------------------------------------------------
+// Building blocks
+// ------------------------------------------------------------------
+
+function SectorChip({
+  label,
+  count,
+  active,
+  accent,
+  bg,
+  text,
+  onClick,
+}: {
+  label: string
+  count: number
+  active: boolean
+  accent?: string
+  bg?: string
+  text?: string
+  onClick: () => void
+}) {
+  const activeStyles = active
+    ? bg && text
+      ? `${bg} ${text} border-transparent`
+      : 'bg-gray-900 text-white border-transparent'
+    : 'bg-white text-gray-700 border-gray-200 hover:border-gray-300 hover:text-gray-900'
+
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition ${activeStyles}`}
+    >
+      {accent && (
+        <span
+          className="w-1.5 h-1.5 rounded-full"
+          style={{ backgroundColor: accent }}
+        />
+      )}
+      <span>{label}</span>
+      <span className="text-[10px] opacity-70">{count}</span>
+    </button>
+  )
+}
+
+function CompanyCard({
+  company,
+  getSectors,
+  onSelect,
+}: {
+  company: Company
+  getSectors: (c: Company) => string[]
+  /**
+   * Optional click handler. When provided (and the company has an
+   * entity_id) the card renders as a <button> that opens the detail
+   * drawer. Without it the card falls back to a Link that navigates to
+   * /company/[id] for deep-linking.
+   */
+  onSelect?: (entityId: number) => void
+}) {
+  const sectors = getSectors(company)
+  const extraSectorCount = Math.max(0, sectors.length - 1)
+  const tokens = getSectorTokens(company.sector)
+  const href = company.entity_id ? `/company/${company.entity_id}` : '#'
+  const initials = getInitials(company.name)
+
+  // Full description used as native title (accessible hover tooltip).
+  const title = [
+    company.name,
+    company.subsector ? `— ${company.subsector}` : '',
+    company.description ? `\n\n${company.description}` : '',
+  ]
+    .join(' ')
+    .trim()
+
+  const cardClass =
+    'group relative text-left w-full bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-[0_4px_12px_-4px_rgba(15,23,42,0.12)] transition-all duration-150 overflow-hidden'
+
+  const body = (
+    <>
+      <div
+        aria-hidden
+        className="absolute left-0 top-0 bottom-0 w-[3px]"
+        style={{ backgroundColor: tokens.accent }}
+      />
+      <div className="px-3 py-2.5 pl-3.5 flex items-center gap-2.5 h-full">
+        <Logo logo_url={company.logo_url} initials={initials} accent={tokens.accent} />
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-1.5">
+            <span className="block text-[13px] font-medium text-gray-900 group-hover:text-gray-700 truncate leading-tight">
+              {company.name}
+            </span>
+          </div>
+          {company.subsector && (
+            <div className="text-[11px] text-gray-400 truncate leading-tight mt-0.5">
+              {company.subsector}
+            </div>
+          )}
+        </div>
+
+        {extraSectorCount > 0 && (
+          <span
+            className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${tokens.bg} ${tokens.text}`}
+            title={`Also in: ${sectors.slice(1).join(', ')}`}
+          >
+            +{extraSectorCount}
+          </span>
+        )}
+      </div>
+    </>
+  )
+
+  const canUseDrawer = onSelect && typeof company.entity_id === 'number'
+  if (canUseDrawer) {
+    return (
+      <button
+        type="button"
+        onClick={() => onSelect!(company.entity_id!)}
+        title={title}
+        className={cardClass}
+      >
+        {body}
+      </button>
+    )
+  }
+
+  return (
+    <Link href={href} title={title} className={cardClass}>
+      {body}
+    </Link>
+  )
+}
+
+function Logo({
+  logo_url,
+  initials,
+  accent,
+}: {
+  logo_url?: string | null
+  initials: string
+  accent: string
+}) {
+  const [broken, setBroken] = useState(false)
+  const showImage = !!logo_url && !broken
+
+  if (showImage) {
+    return (
+      <span className="shrink-0 w-6 h-6 rounded-md overflow-hidden bg-white border border-gray-100 flex items-center justify-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={logo_url!}
+          alt=""
+          className="w-full h-full object-contain"
+          onError={() => setBroken(true)}
+          loading="lazy"
+        />
+      </span>
+    )
+  }
+
+  return (
+    <span
+      aria-hidden
+      className="shrink-0 w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-semibold text-white"
+      style={{ backgroundColor: accent }}
+    >
+      {initials}
+    </span>
+  )
+}
+
+function StatCell({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="flex items-baseline gap-1.5">
+      <span className="text-base font-semibold text-gray-900">{value}</span>
+      <span className="text-xs text-gray-500">{label}</span>
+    </div>
+  )
+}
+
+function SkeletonGrid() {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+      {Array.from({ length: 30 }).map((_, i) => (
+        <div
+          key={i}
+          className="relative h-[54px] rounded-lg bg-white border border-gray-200 overflow-hidden animate-pulse flex items-center gap-2.5 px-3.5 py-2.5"
+        >
+          <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-gray-200" />
+          <div className="w-6 h-6 rounded-md bg-gray-100" />
+          <div className="flex-1 space-y-1.5">
+            <div className="h-2 bg-gray-100 rounded w-4/5" />
+            <div className="h-2 bg-gray-100 rounded w-2/5" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function getInitials(name: string): string {
+  if (!name) return '?'
+  // "Chainalysis KYT" -> "CK". "Alchemy (Data APIs)" -> "AD".
+  const cleaned = name.replace(/[()\[\]]/g, ' ')
+  const parts = cleaned.split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return '?'
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return (parts[0][0] + parts[1][0]).toUpperCase()
 }
