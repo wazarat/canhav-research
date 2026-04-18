@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getEditorName, requireAdmin } from '../../../lib/adminAuth'
+import { requireAdmin } from '../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../lib/supabaseNew'
 
 /**
@@ -35,7 +35,8 @@ type Body = {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!requireAdmin(req, res)) return
+  const session = await requireAdmin(req, res)
+  if (!session) return
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })
@@ -49,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       )
     : []
   const reason = (body.reason ?? '').toString().slice(0, 500) || null
-  const mergedBy = getEditorName(req) ?? 'admin'
+  const mergedBy = session.user.email
 
   if (!Number.isInteger(parentId) || parentId <= 0) {
     return res.status(400).json({ error: 'parent_entity_id must be a positive integer' })

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getEditorName, requireAdmin } from '../../../lib/adminAuth'
+import { requireAdmin } from '../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../lib/supabaseNew'
 
 /**
@@ -14,7 +14,8 @@ import { getSupabaseAdmin } from '../../../lib/supabaseNew'
 type Body = { merge_id?: number }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!requireAdmin(req, res)) return
+  const session = await requireAdmin(req, res)
+  if (!session) return
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return res.status(405).json({ error: 'Method not allowed' })
@@ -54,7 +55,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('entity_merges')
       .update({
         reverted_at: new Date().toISOString(),
-        reverted_by: getEditorName(req) ?? 'admin',
+        reverted_by: session.user.email,
       })
       .eq('merge_id', id)
     if (stampErr) throw stampErr

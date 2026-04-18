@@ -51,7 +51,7 @@ This is enough to answer questions like:
 
 > "Did the last deploy succeed?"
 > "What's in the build log for canhav-research's preview?"
-> "Is ADMIN_AUTH_TOKEN set on production?"
+> "Are the Supabase env vars set on production?"
 
 ## 4. Scoping to a specific team or project (optional)
 

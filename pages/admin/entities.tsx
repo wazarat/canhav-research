@@ -58,6 +58,7 @@ function confidenceTone(score: number) {
 export default function AdminEntities() {
   const router = useRouter()
   const [editorName, setEditorName] = useState<string | null>(null)
+  const [editorRole, setEditorRole] = useState<'admin' | 'super_admin' | null>(null)
   const [tab, setTab] = useState<Tab>('candidates')
   const [groups, setGroups] = useState<CandidateGroup[]>([])
   const [recentMerges, setRecentMerges] = useState<RecentMerge[]>([])
@@ -99,14 +100,15 @@ export default function AdminEntities() {
   }, [search, minConfidence, router])
 
   useEffect(() => {
-    // Kick off initial fetch + read editor name from the non-HttpOnly cookie.
-    const cookies = Object.fromEntries(
-      document.cookie.split(';').map((c) => {
-        const [k, ...v] = c.trim().split('=')
-        return [k, decodeURIComponent(v.join('='))]
+    // Read the current Supabase-backed session to show "Signed in as …"
+    // and decide whether to surface super-admin-only nav items.
+    fetch('/api/admin/session', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((s) => {
+        setEditorName(s?.email ?? null)
+        setEditorRole(s?.role ?? null)
       })
-    )
-    setEditorName(cookies['cah_admin_editor'] ?? null)
+      .catch(() => undefined)
     refresh()
   }, [refresh])
 
@@ -215,11 +217,23 @@ export default function AdminEntities() {
                 {TAB_LABEL[t]}
               </button>
             ))}
+            <Link
+              href="/admin/members"
+              className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800 rounded-md"
+            >
+              Editors
+            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-3 text-xs text-gray-500">
             {editorName && (
               <span>
-                Signed in as <span className="font-medium text-gray-800">{editorName}</span>
+                Signed in as{' '}
+                <span className="font-medium text-gray-800">{editorName}</span>
+                {editorRole === 'super_admin' && (
+                  <span className="ml-1 text-[10px] uppercase tracking-wider text-blue-600">
+                    super
+                  </span>
+                )}
               </span>
             )}
             <Link

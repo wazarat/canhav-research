@@ -1,104 +1,107 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { createSupabaseApiClient } from './supabaseServer'
+import { getSupabaseAdmin } from './supabaseNew'
 
 /**
- * Minimal shared-secret admin auth for the /admin/entities editorial tool.
+ * Admin authentication, backed by Supabase Auth + public.admin_users.
  *
- * The cookie is a straight HttpOnly copy of ADMIN_AUTH_TOKEN (not a JWT): the
- * secret is an internal-only value and the cookie is SameSite=Strict + Secure
- * in production so it's safe from XSS exfil and CSRF. A constant-time
- * comparison is used to avoid leaking token characters via timing.
+ * Replaces the old ADMIN_AUTH_TOKEN shared-secret. A caller is
+ * "authorised" iff:
+ *   1. They have a valid Supabase session cookie (signed in via OAuth or
+ *      magic link), AND
+ *   2. Their auth.users.id appears in public.admin_users.
  *
- * Env vars (server only — NEVER prefix with NEXT_PUBLIC_):
- *   ADMIN_AUTH_TOKEN   - the shared secret an editor enters on /admin/login
+ * The role field (admin | super_admin) controls whether they can promote
+ * / demote other editors (see /api/admin/members).
+ *
+ * Usage from an API route:
+ *   const session = await requireAdmin(req, res)
+ *   if (!session) return            // 401/403 already written
+ *   // ... session.user.email, session.role available
  */
 
-export const ADMIN_COOKIE = 'cah_admin_token'
-export const EDITOR_COOKIE = 'cah_admin_editor'
+export type AdminRole = 'admin' | 'super_admin'
 
-const SEVEN_DAYS_SECONDS = 60 * 60 * 24 * 7
-
-export function timingSafeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false
-  let diff = 0
-  for (let i = 0; i < a.length; i++) {
-    diff |= a.charCodeAt(i) ^ b.charCodeAt(i)
+export interface AdminSession {
+  user: {
+    id: string
+    email: string
   }
-  return diff === 0
-}
-
-/** Read a cookie value from a Next.js API request (uses req.cookies). */
-function readCookie(req: NextApiRequest, name: string): string | null {
-  const v = req.cookies?.[name]
-  return typeof v === 'string' && v.length > 0 ? v : null
-}
-
-/** Return true iff the caller presented the admin token cookie. */
-export function isAuthed(req: NextApiRequest): boolean {
-  const expected = process.env.ADMIN_AUTH_TOKEN
-  if (!expected) return false
-  const got = readCookie(req, ADMIN_COOKIE)
-  if (!got) return false
-  return timingSafeEqual(got, expected)
-}
-
-/** Read the editor display name (non-secret, set alongside the token cookie). */
-export function getEditorName(req: NextApiRequest): string | null {
-  return readCookie(req, EDITOR_COOKIE)
+  role: AdminRole
 }
 
 /**
- * Gate an admin API route. Returns true if authorised; otherwise writes a
- * 401 to `res` and returns false. Callers should `return` immediately on
- * false.
+ * Fetch the current admin session or null. Does NOT write to the response.
+ * Use this when you need to branch on auth state without short-circuiting
+ * (e.g. a page that shows extra controls for super_admin).
  */
-export function requireAdmin(req: NextApiRequest, res: NextApiResponse): boolean {
-  if (isAuthed(req)) return true
-  res.status(401).json({ error: 'Unauthorized' })
-  return false
-}
+export async function getAdminSession(
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<AdminSession | null> {
+  const supabase = createSupabaseApiClient(req, res)
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser()
+  if (userErr || !user || !user.email) return null
 
-/** Serialize a Set-Cookie header value. */
-export function buildCookie(
-  name: string,
-  value: string,
-  opts: {
-    httpOnly?: boolean
-    maxAgeSeconds?: number
-    expires?: Date | null
-    path?: string
-  } = {}
-): string {
-  const parts: string[] = [`${name}=${encodeURIComponent(value)}`]
-  parts.push(`Path=${opts.path ?? '/'}`)
-  parts.push(`SameSite=Strict`)
-  if (opts.httpOnly !== false) parts.push('HttpOnly')
-  if (process.env.NODE_ENV === 'production') parts.push('Secure')
-  if (opts.maxAgeSeconds !== undefined) {
-    parts.push(`Max-Age=${opts.maxAgeSeconds}`)
+  // Service-role lookup so RLS doesn't hide the row from the user themself.
+  const admin = getSupabaseAdmin()
+  const { data, error } = await admin
+    .from('admin_users')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  if (error || !data) return null
+
+  return {
+    user: { id: user.id, email: user.email },
+    role: data.role as AdminRole,
   }
-  if (opts.expires) parts.push(`Expires=${opts.expires.toUTCString()}`)
-  return parts.join('; ')
 }
 
-export function buildLoginCookies(token: string, editorName: string): string[] {
-  return [
-    buildCookie(ADMIN_COOKIE, token, {
-      httpOnly: true,
-      maxAgeSeconds: SEVEN_DAYS_SECONDS,
-    }),
-    // Editor name is NOT a secret — the UI reads it client-side to show
-    // "Signed in as <name>", so HttpOnly is off here.
-    buildCookie(EDITOR_COOKIE, editorName, {
-      httpOnly: false,
-      maxAgeSeconds: SEVEN_DAYS_SECONDS,
-    }),
-  ]
-}
+/**
+ * Gate an admin API route. If the caller isn't signed in the response is
+ * 401; if they're signed in but not an admin it's 403. Returns the session
+ * on success, null otherwise — callers should `return` immediately on null.
+ */
+export async function requireAdmin(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  options: { requireSuper?: boolean } = {}
+): Promise<AdminSession | null> {
+  const supabase = createSupabaseApiClient(req, res)
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser()
+  if (userErr || !user || !user.email) {
+    res.status(401).json({ error: 'Not signed in' })
+    return null
+  }
 
-export function buildLogoutCookies(): string[] {
-  const past = new Date(0)
-  return [
-    buildCookie(ADMIN_COOKIE, '', { httpOnly: true, maxAgeSeconds: 0, expires: past }),
-    buildCookie(EDITOR_COOKIE, '', { httpOnly: false, maxAgeSeconds: 0, expires: past }),
-  ]
+  const admin = getSupabaseAdmin()
+  const { data, error } = await admin
+    .from('admin_users')
+    .select('role')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  if (error) {
+    console.error('[requireAdmin] lookup failed:', error)
+    res.status(500).json({ error: 'Failed to check admin status' })
+    return null
+  }
+  if (!data) {
+    res.status(403).json({ error: 'Not authorised for admin tools' })
+    return null
+  }
+
+  const role = data.role as AdminRole
+  if (options.requireSuper && role !== 'super_admin') {
+    res.status(403).json({ error: 'Super-admin required' })
+    return null
+  }
+
+  return { user: { id: user.id, email: user.email }, role }
 }

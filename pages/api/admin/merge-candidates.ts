@@ -45,7 +45,8 @@ export interface CandidateGroup {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!requireAdmin(req, res)) return
+  const session = await requireAdmin(req, res)
+  if (!session) return
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET')
     return res.status(405).json({ error: 'Method not allowed' })

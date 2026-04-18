@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getEditorName, requireAdmin } from '../../../lib/adminAuth'
+import { requireAdmin } from '../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../lib/supabaseNew'
 
 /**
@@ -19,7 +19,8 @@ import { getSupabaseAdmin } from '../../../lib/supabaseNew'
 type Body = { entity_a?: number; entity_b?: number; reason?: string }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (!requireAdmin(req, res)) return
+  const session = await requireAdmin(req, res)
+  if (!session) return
   if (req.method !== 'POST' && req.method !== 'DELETE') {
     res.setHeader('Allow', 'POST, DELETE')
     return res.status(405).json({ error: 'Method not allowed' })
@@ -44,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             entity_a: lo,
             entity_b: hi,
             reason: (reason ?? '').toString().slice(0, 500) || null,
-            added_by: getEditorName(req) ?? 'admin',
+            added_by: session.user.email,
           },
           { onConflict: 'entity_a,entity_b', ignoreDuplicates: false }
         )
