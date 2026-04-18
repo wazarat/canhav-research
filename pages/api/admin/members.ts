@@ -187,5 +187,5 @@ function buildCallbackUrl(req: NextApiRequest): string {
     (req.headers['x-forwarded-proto'] && req.headers.host
       ? `${req.headers['x-forwarded-proto']}://${req.headers.host}`
       : 'http://localhost:3000')
-  return `${site}/auth/callback?next=/admin/entities`
+  return `${site}/api/auth/callback?next=/admin/entities`
 }

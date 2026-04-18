@@ -6,29 +6,27 @@ import { getSupabaseAuthBrowser } from '../../lib/supabaseBrowser'
 /**
  * /admin/login — Supabase-Auth sign-in for the /admin/* editorial tools.
  *
- * Three entry points:
- *   * "Continue with Google"     — OAuth through Google (Gmail accounts).
- *   * "Continue with Microsoft"  — OAuth through Azure (Outlook + work).
- *   * Email magic link           — fallback for setups where OAuth isn't
- *                                  configured yet. Sends a one-click
- *                                  sign-in link via Supabase.
+ * Two entry points:
+ *   * "Continue with Google" — OAuth through Google (Gmail or any Google
+ *     Workspace account).
+ *   * Email magic link         — one-click sign-in link for everyone
+ *     else, including Outlook / Hotmail / work email. Supabase sends the
+ *     link; clicking it creates / refreshes the session.
  *
- * After sign-in, Supabase redirects to /auth/callback (see
- * pages/auth/callback.ts) which exchanges the code for a session and
- * redirects back to ?next=... (defaults to /admin/entities).
+ * After sign-in Supabase redirects to /api/auth/callback, which swaps
+ * the OAuth code for a session cookie and redirects back to ?next=...
+ * (defaults to /admin/entities). Note: /api/auth/callback is a server
+ * API route on purpose — placing it under /pages/auth/ would let Next
+ * try to statically prerender an async handler.
  *
- * The middleware routes already-signed-in admins past /admin/login, but
- * signed-in non-admins land on /admin/forbidden. This page doesn't
- * enforce that — the middleware does.
+ * The middleware already sends signed-in admins past /admin/login and
+ * non-admins to /admin/forbidden, so this page just handles the pre-
+ * auth state.
  */
-
-type OAuthProvider = 'google' | 'azure'
 
 export default function AdminLogin() {
   const router = useRouter()
-  const [submitting, setSubmitting] = useState<OAuthProvider | 'email' | null>(
-    null
-  )
+  const [submitting, setSubmitting] = useState<'google' | 'email' | null>(null)
   const [email, setEmail] = useState('')
   const [emailSent, setEmailSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -39,19 +37,19 @@ export default function AdminLogin() {
       : '/admin/entities'
 
   useEffect(() => {
-    // Surface ?error= from the OAuth callback.
+    // Surface ?error= from the OAuth callback (e.g. user cancelled).
     if (typeof router.query.error === 'string') setError(router.query.error)
   }, [router.query.error])
 
   function buildCallbackUrl() {
     const origin = typeof window !== 'undefined' ? window.location.origin : ''
     const next = encodeURIComponent(nextPath)
-    return `${origin}/auth/callback?next=${next}`
+    return `${origin}/api/auth/callback?next=${next}`
   }
 
-  async function onOAuth(provider: OAuthProvider) {
+  async function onGoogle() {
     setError(null)
-    setSubmitting(provider)
+    setSubmitting('google')
     const supabase = getSupabaseAuthBrowser()
     if (!supabase) {
       setError('Auth not configured (missing NEXT_PUBLIC_ETHDATA_SUPABASE_*).')
@@ -59,7 +57,7 @@ export default function AdminLogin() {
       return
     }
     const { error } = await supabase.auth.signInWithOAuth({
-      provider,
+      provider: 'google',
       options: {
         redirectTo: buildCallbackUrl(),
       },
@@ -68,8 +66,7 @@ export default function AdminLogin() {
       setError(error.message)
       setSubmitting(null)
     }
-    // On success Supabase will full-page redirect away; no need to reset
-    // submitting state.
+    // On success Supabase full-page-redirects away.
   }
 
   async function onEmailLink(e: FormEvent) {
@@ -83,7 +80,7 @@ export default function AdminLogin() {
         email: email.trim(),
         options: {
           emailRedirectTo: buildCallbackUrl(),
-          shouldCreateUser: false, // must already be an admin
+          shouldCreateUser: false, // editor must already exist in auth.users
         },
       })
       if (error) throw error
@@ -106,34 +103,20 @@ export default function AdminLogin() {
             Editor sign-in
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Sign in with your authorised Google or Microsoft account to use
-            the market-map editorial tools. The rest of the site is public.
+            Sign in with your authorised Google account to use the market-map
+            editorial tools. The rest of the site is public.
           </p>
         </div>
 
-        <div className="space-y-2">
-          <button
-            type="button"
-            onClick={() => onOAuth('google')}
-            disabled={submitting !== null}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-60"
-          >
-            <GoogleIcon />
-            {submitting === 'google' ? 'Redirecting…' : 'Continue with Google'}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onOAuth('azure')}
-            disabled={submitting !== null}
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-60"
-          >
-            <MicrosoftIcon />
-            {submitting === 'azure'
-              ? 'Redirecting…'
-              : 'Continue with Microsoft'}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={onGoogle}
+          disabled={submitting !== null}
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-60"
+        >
+          <GoogleIcon />
+          {submitting === 'google' ? 'Redirecting…' : 'Continue with Google'}
+        </button>
 
         <div className="relative flex items-center">
           <div className="flex-grow border-t border-gray-200" />
@@ -145,13 +128,13 @@ export default function AdminLogin() {
 
         <form onSubmit={onEmailLink} className="space-y-2">
           <label className="block text-xs font-medium text-gray-700">
-            Email magic link
+            Email sign-in link
           </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="waz@canhav.com"
+            placeholder="you@example.com"
             disabled={emailSent}
             autoComplete="email"
             required
@@ -168,11 +151,16 @@ export default function AdminLogin() {
               ? 'Sending…'
               : 'Send sign-in link'}
           </button>
-          {emailSent && (
+          {emailSent ? (
             <p className="text-[11px] text-gray-500 pt-1">
               A one-click sign-in link was sent to{' '}
               <span className="font-medium text-gray-700">{email}</span>. You
               can close this tab.
+            </p>
+          ) : (
+            <p className="text-[11px] text-gray-500 pt-1">
+              Works with Outlook, Hotmail, work email — any inbox. We&apos;ll
+              email you a one-click sign-in link.
             </p>
           )}
         </form>
@@ -191,10 +179,6 @@ export default function AdminLogin() {
     </div>
   )
 }
-
-// ------------------------------------------------------------------
-// Inline brand icons (SVG, no extra deps)
-// ------------------------------------------------------------------
 
 function GoogleIcon() {
   return (
@@ -215,17 +199,6 @@ function GoogleIcon() {
         fill="#1976D2"
         d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4-4.1 5.3l6.1 5c4.3-4 7.3-10 7.3-16.3 0-1.3-.2-2.3-.4-3.5z"
       />
-    </svg>
-  )
-}
-
-function MicrosoftIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 23 23" aria-hidden>
-      <rect x="1" y="1" width="10" height="10" fill="#F25022" />
-      <rect x="12" y="1" width="10" height="10" fill="#7FBA00" />
-      <rect x="1" y="12" width="10" height="10" fill="#00A4EF" />
-      <rect x="12" y="12" width="10" height="10" fill="#FFB900" />
     </svg>
   )
 }

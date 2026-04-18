@@ -11,7 +11,7 @@ import { createSupabaseMiddlewareClient } from './lib/supabaseServer'
  *      anon client — RLS on admin_users allows authenticated users to
  *      read (see migration 008), so this works without service-role.
  *   3. Gatekeeping:
- *        * /admin/login, /auth/callback, and the /api/admin/members
+ *        * /admin/login, /admin/forbidden, and the /api/admin/members
  *          session probes are always public.
  *        * /admin/* unauthenticated -> 302 /admin/login?next=...
  *        * /admin/* authenticated but not admin -> 302 /admin/forbidden
@@ -26,7 +26,6 @@ import { createSupabaseMiddlewareClient } from './lib/supabaseServer'
 const PUBLIC_PATHS = new Set<string>([
   '/admin/login',
   '/admin/forbidden',
-  '/auth/callback',
 ])
 
 export async function middleware(req: NextRequest) {
