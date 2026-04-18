@@ -122,12 +122,47 @@ export default function MarketMapPage() {
         <MarketMap />
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-20">
+      {/* Research cross-link band — the market map is the entry point,
+          but the research is where most of the depth lives. We surface
+          a prominent link at the foot of the map so scroll-to-bottom
+          visitors have an obvious next step. */}
+      <section className="bg-gradient-to-r from-blue-50 via-white to-blue-50 border-y border-blue-100 mt-12">
+        <div className="container mx-auto px-6 py-10 max-w-5xl">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                Want the deeper read?
+              </h2>
+              <p className="text-sm text-gray-600 mt-1 max-w-xl">
+                The Market Map tells you <em>where</em> the ecosystem is.
+                Our research tells you <em>why</em> it&apos;s heading there.
+                Monthly sector deep-dives, frameworks, and primers.
+              </p>
+            </div>
+            <a
+              href="https://research.canhav.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors shadow-sm hover:shadow flex-shrink-0"
+            >
+              Visit research.canhav.com
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="bg-white border-t border-gray-200">
         <div className="container mx-auto px-6 py-8">
-          <div className="text-center text-gray-600">
-            <p>&copy; 2024–2026 CanHav Research. All rights reserved.</p>
-            <p className="mt-2 text-sm">Making understanding and building with ethereum easier</p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-600">
+            <p className="text-sm">&copy; 2024–2026 CanHav Research. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-sm">
+              <Link href="/market-map" className="hover:text-blue-600">Market Map</Link>
+              <a href="https://research.canhav.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-600">Research</a>
+              <Link href="/about-us" className="hover:text-blue-600">About</Link>
+            </div>
           </div>
         </div>
       </footer>

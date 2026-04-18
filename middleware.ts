@@ -2,36 +2,51 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createSupabaseMiddlewareClient } from './lib/supabaseServer'
 
 /**
- * Edge middleware that gates /admin/* pages and /api/admin/* routes.
+ * Edge middleware — two gate tiers:
  *
- * Auth model (replaces the old ADMIN_AUTH_TOKEN shared-secret):
- *   1. Read the Supabase session cookie via @supabase/ssr. If missing or
- *      invalid, treat as unauthenticated.
- *   2. If authenticated, look the user up in public.admin_users using the
- *      anon client — RLS on admin_users allows authenticated users to
- *      read (see migration 008), so this works without service-role.
- *   3. Gatekeeping:
- *        * /admin/login, /admin/forbidden, and the /api/admin/members
- *          session probes are always public.
- *        * /admin/* unauthenticated -> 302 /admin/login?next=...
- *        * /admin/* authenticated but not admin -> 302 /admin/forbidden
- *        * /api/admin/* unauthenticated -> 401 JSON
- *        * /api/admin/* authenticated but not admin -> 403 JSON
+ *   (a) Admin tier  — /admin/*, /api/admin/*
+ *       Requires Supabase session  AND  public.admin_users membership.
+ *       Failure modes:
+ *         * unauth page  -> 302 /admin/login?next=...
+ *         * unauth API   -> 401 JSON
+ *         * auth non-admin page -> 302 /admin/forbidden
+ *         * auth non-admin API  -> 403 JSON
  *
- * The final auth / role check is ALWAYS re-done in the API handlers via
- * lib/adminAuth.ts#requireAdmin so a misconfigured matcher can never be
- * the only line of defence.
+ *   (b) Viewer tier — /company/*
+ *       Requires any Supabase session. Admin lookup is skipped. Unauth
+ *       page visits redirect to /login?next=... . The market-map /drawer
+ *       stays public (the drawer is rendered inside /market-map, not
+ *       /company/*).
+ *
+ * /admin/login, /admin/forbidden, and /login are always public.
+ *
+ * Auth / role checks are ALSO re-done in every handler via
+ * lib/adminAuth.ts#requireAdmin and lib/viewerAuth.ts#requireViewer so a
+ * misconfigured matcher can never be the only line of defence.
  */
 
 const PUBLIC_PATHS = new Set<string>([
   '/admin/login',
   '/admin/forbidden',
+  '/login',
 ])
+
+function isAdminPath(pathname: string): boolean {
+  return pathname.startsWith('/admin/') || pathname.startsWith('/api/admin/')
+}
+
+function isViewerPath(pathname: string): boolean {
+  return pathname.startsWith('/company/')
+}
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
   if (PUBLIC_PATHS.has(pathname)) return NextResponse.next()
+
+  const needsAdmin = isAdminPath(pathname)
+  const needsViewer = isViewerPath(pathname)
+  if (!needsAdmin && !needsViewer) return NextResponse.next()
 
   // Pre-build the response so the Supabase SSR helper can attach refreshed
   // cookies to it. If we end up redirecting we copy the cookies onto the
@@ -50,13 +65,16 @@ export async function middleware(req: NextRequest) {
     if (user?.id) {
       isAuthed = true
       userId = user.id
-      const { data } = await supabase
-        .from('admin_users')
-        .select('user_id')
-        .eq('user_id', user.id)
-        .limit(1)
-        .maybeSingle()
-      isAdmin = !!data
+
+      if (needsAdmin) {
+        const { data } = await supabase
+          .from('admin_users')
+          .select('user_id')
+          .eq('user_id', user.id)
+          .limit(1)
+          .maybeSingle()
+        isAdmin = !!data
+      }
     }
   } catch (err) {
     // Env missing or Supabase unreachable — treat as unauthenticated and
@@ -64,9 +82,20 @@ export async function middleware(req: NextRequest) {
     console.error('[middleware] auth check failed:', err)
   }
 
+  // ---- Viewer tier: any session is enough ---------------------------
+  if (needsViewer) {
+    if (isAuthed) return res
+    const redirect = req.nextUrl.clone()
+    redirect.pathname = '/login'
+    redirect.searchParams.set('next', pathname + (req.nextUrl.search ?? ''))
+    const out = NextResponse.redirect(redirect)
+    res.cookies.getAll().forEach((c) => out.cookies.set(c))
+    return out
+  }
+
+  // ---- Admin tier: session + allow-list ------------------------------
   if (isAuthed && isAdmin) return res
 
-  // --- Deny paths ---
   if (pathname.startsWith('/api/admin/')) {
     return new NextResponse(
       JSON.stringify({
@@ -80,7 +109,6 @@ export async function middleware(req: NextRequest) {
     )
   }
 
-  // Pages
   const redirect = req.nextUrl.clone()
   if (isAuthed) {
     redirect.pathname = '/admin/forbidden'
@@ -89,11 +117,10 @@ export async function middleware(req: NextRequest) {
     redirect.searchParams.set('next', pathname + (req.nextUrl.search ?? ''))
   }
   const out = NextResponse.redirect(redirect)
-  // Preserve any refreshed-session cookies on the redirect response.
   res.cookies.getAll().forEach((c) => out.cookies.set(c))
   return out
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/api/admin/:path*'],
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/company/:path*'],
 }

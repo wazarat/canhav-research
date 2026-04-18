@@ -33,6 +33,9 @@ export interface MarketMapEntity {
   twitter_handle?: string | null
   github_org?: string | null
   tags?: string[] | null
+  token_symbol?: string | null
+  chains?: string[] | null
+  status?: string | null
   // Bookkeeping
   classification_count: number
   sub_entity_count: number
@@ -49,6 +52,9 @@ type GridRow = {
   twitter_handle: string | null
   github_org: string | null
   tags: string[] | null
+  token_symbol: string | null
+  chains: string[] | null
+  status: string | null
   primary_sector: string | null
   primary_subsector: string | null
   primary_description: string | null
@@ -105,6 +111,9 @@ export default async function handler(
           twitter_handle: row.twitter_handle,
           github_org: row.github_org,
           tags: row.tags,
+          token_symbol: row.token_symbol,
+          chains: row.chains,
+          status: row.status,
           classification_count: row.classification_count ?? row.sectors?.length ?? 1,
           sub_entity_count: row.sub_entities?.length ?? 0,
         }

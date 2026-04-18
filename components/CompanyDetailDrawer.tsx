@@ -3,12 +3,19 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRealtimeTables } from '../lib/useRealtimeTables'
+import EntityEditForm, { EntityEditable } from './EntityEditForm'
+import MergeWithPicker from './MergeWithPicker'
 
 /**
  * Right-side slide-in drawer that fetches /api/company/[id] for the given
- * entity id and renders a compact detail view. Used by the Landscape + Grid
- * views as a softer alternative to full-page navigation; the standalone
- * /company/[id] page stays for deep-linking.
+ * entity id and renders a compact detail view.
+ *
+ * Super-admin affordances (visible only when /api/admin/session returns
+ * role === 'super_admin'):
+ *   * Pencil icon in the header → swaps the read view for EntityEditForm.
+ *   * Merge icon in the header  → opens MergeWithPicker modal.
+ * Both are additive to /admin/entities, which stays the home for batch
+ * merge work.
  */
 
 interface EntityClassification {
@@ -22,17 +29,7 @@ interface EntityClassification {
   website: string
 }
 
-interface CompanyDetail {
-  entity_id: number
-  entity_name: string
-  canonical_website: string | null
-  logo_url: string | null
-  year_founded: number | null
-  hq_location: string | null
-  funding_stage: string | null
-  twitter_handle: string | null
-  github_org: string | null
-  tags: string[] | null
+interface CompanyDetail extends EntityEditable {
   classifications: EntityClassification[]
   sub_entities: Array<{ entity_id: number; entity_name: string }>
 }
@@ -57,6 +54,18 @@ export default function CompanyDetailDrawer({
   const [data, setData] = useState<CompanyDetail | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [role, setRole] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [merging, setMerging] = useState(false)
+
+  // Admin role probe (silent; 403/401 means "not super-admin" which is fine).
+  useEffect(() => {
+    if (!entityId) return
+    fetch('/api/admin/session', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => setRole(body?.role ?? null))
+      .catch(() => setRole(null))
+  }, [entityId])
 
   const fetchDetail = useCallback(async () => {
     if (!entityId) return
@@ -77,21 +86,30 @@ export default function CompanyDetailDrawer({
   }, [entityId])
 
   useEffect(() => {
-    if (entityId) fetchDetail()
-    else setData(null)
+    if (entityId) {
+      fetchDetail()
+      setEditing(false)
+      setMerging(false)
+    } else {
+      setData(null)
+      setEditing(false)
+      setMerging(false)
+    }
   }, [entityId, fetchDetail])
 
-  // Close on Esc.
   useEffect(() => {
     if (!entityId) return
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+      if (e.key === 'Escape') {
+        if (merging) setMerging(false)
+        else if (editing) setEditing(false)
+        else onClose()
+      }
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [entityId, onClose])
+  }, [entityId, onClose, editing, merging])
 
-  // Live refresh the open drawer if its entity is edited in the DB.
   useRealtimeTables(
     ['entities', 'entity_classifications'],
     fetchDetail,
@@ -102,6 +120,7 @@ export default function CompanyDetailDrawer({
   const primary = data?.classifications.find((c) => c.is_primary) ??
     data?.classifications[0]
   const accent = primary ? SECTOR_ACCENT[primary.sector_name] ?? '#9ca3af' : '#9ca3af'
+  const isSuper = role === 'super_admin'
 
   return (
     <>
@@ -156,6 +175,31 @@ export default function CompanyDetailDrawer({
               </>
             )}
           </div>
+
+          {/* Super-admin controls */}
+          {data && isSuper && !editing && (
+            <div className="flex items-center gap-1">
+              <IconButton
+                label="Merge with…"
+                onClick={() => setMerging(true)}
+                title="Merge this with another entity"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v10l4 4 4-4V7m-8 0l4-4 4 4M8 7h8" />
+                </svg>
+              </IconButton>
+              <IconButton
+                label="Edit"
+                onClick={() => setEditing(true)}
+                title="Edit this entity"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+              </IconButton>
+            </div>
+          )}
+
           <button
             onClick={onClose}
             aria-label="Close"
@@ -174,7 +218,20 @@ export default function CompanyDetailDrawer({
             </div>
           )}
 
-          {data && (
+          {/* Edit mode */}
+          {data && editing && isSuper && (
+            <EntityEditForm
+              initial={data}
+              onCancel={() => setEditing(false)}
+              onSaved={() => {
+                setEditing(false)
+                fetchDetail()
+              }}
+            />
+          )}
+
+          {/* Read mode */}
+          {data && !editing && (
             <div className="p-5 space-y-5">
               {data.sub_entities.length > 0 && (
                 <section>
@@ -191,6 +248,17 @@ export default function CompanyDetailDrawer({
                       </span>
                     ))}
                   </div>
+                </section>
+              )}
+
+              {data.long_description && (
+                <section>
+                  <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    About
+                  </h3>
+                  <p className="text-sm text-gray-700 leading-snug whitespace-pre-line">
+                    {data.long_description}
+                  </p>
                 </section>
               )}
 
@@ -250,7 +318,7 @@ export default function CompanyDetailDrawer({
           )}
         </div>
 
-        {data && (
+        {data && !editing && (
           <footer className="px-5 py-3 border-t border-gray-100 bg-gray-50 flex items-center justify-between text-xs">
             <span className="text-gray-400">#{data.entity_id}</span>
             <Link
@@ -262,6 +330,48 @@ export default function CompanyDetailDrawer({
           </footer>
         )}
       </aside>
+
+      {merging && data && (
+        <MergeWithPicker
+          source={{
+            entity_id: data.entity_id,
+            entity_name: data.entity_name,
+            canonical_website: data.canonical_website,
+          }}
+          onClose={() => setMerging(false)}
+          onMerged={() => {
+            setMerging(false)
+            // After a merge the merged-away id may no longer exist. Close the
+            // drawer rather than risk a 404 refetch; /market-map's realtime
+            // subscription will refresh the grid.
+            onClose()
+          }}
+        />
+      )}
     </>
+  )
+}
+
+function IconButton({
+  children,
+  onClick,
+  label,
+  title,
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  label: string
+  title?: string
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={title ?? label}
+      className="p-1.5 rounded-md text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
+    >
+      {children}
+    </button>
   )
 }

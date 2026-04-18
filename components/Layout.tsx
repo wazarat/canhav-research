@@ -9,8 +9,10 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Market Map is rendered separately as a pill (see below) so it stands
+  // out from the rest of the nav items. The remaining items are plain
+  // text links.
   const navItems = [
-    { name: 'Market Map', href: '/market-map' },
     { name: 'Research', href: 'https://research.canhav.com', external: true },
     { name: 'Enterprise Users', href: '/enterprise-users' },
     { name: 'About Us', href: '/about-us' },
@@ -42,7 +44,16 @@ export default function Layout({ children }: LayoutProps) {
             </Link>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-6">
+              {/* Market Map pill — visually promoted since it's the primary
+                  product entry point. */}
+              <Link
+                href="/market-map"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 hover:text-white hover:bg-blue-500/20 text-sm font-medium transition-colors"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                Market Map
+              </Link>
               {navItems.map((item) => (
                 item.external ? (
                   <a 
@@ -91,6 +102,13 @@ export default function Layout({ children }: LayoutProps) {
           {/* Mobile Navigation */}
           {isMenuOpen && (
             <nav className="lg:hidden mt-4 pb-4 border-t border-gray-800/50 pt-4">
+              <Link
+                href="/market-map"
+                className="block py-2 text-blue-300 hover:text-blue-200 font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                · Market Map
+              </Link>
               {navItems.map((item) => (
                 item.external ? (
                   <a 
@@ -132,9 +150,21 @@ export default function Layout({ children }: LayoutProps) {
       {/* Footer */}
       <footer className="border-t border-gray-800/50 glass mt-20">
         <div className="container mx-auto px-6 py-8">
-          <div className="text-center text-gray-400">
-            <p>&copy; 2024–2026 CanHav Research. All rights reserved.</p>
-            <p className="mt-2 text-sm">Making understanding and building with ethereum easier</p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-400">
+            <p className="text-sm">&copy; 2024–2026 CanHav Research. All rights reserved.</p>
+            <div className="flex items-center gap-4 text-sm">
+              <Link href="/market-map" className="hover:text-blue-300">Market Map</Link>
+              <a
+                href="https://research.canhav.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-blue-300"
+              >
+                Research
+              </a>
+              <Link href="/about-us" className="hover:text-blue-300">About</Link>
+              <Link href="/login" className="hover:text-blue-300">Sign in</Link>
+            </div>
           </div>
         </div>
       </footer>

@@ -33,6 +33,18 @@ export interface CompanyDetail {
   twitter_handle: string | null
   github_org: string | null
   tags: string[] | null
+  long_description: string | null
+  founders: string[] | null
+  total_funding_usd: number | null
+  last_funding_date: string | null
+  investors: string[] | null
+  token_symbol: string | null
+  chains: string[] | null
+  linkedin_url: string | null
+  discord_url: string | null
+  telegram_url: string | null
+  farcaster_handle: string | null
+  status: string | null
   classifications: EntityClassification[]
   sector_details: SectorDetail[]
   sub_entities: Array<{ entity_id: number; entity_name: string }>
@@ -187,6 +199,18 @@ export default async function handler(
       twitter_handle: first.root_twitter_handle ?? null,
       github_org: first.root_github_org ?? null,
       tags: first.root_tags ?? null,
+      long_description: first.root_long_description ?? null,
+      founders: first.root_founders ?? null,
+      total_funding_usd: first.root_total_funding_usd != null ? Number(first.root_total_funding_usd) : null,
+      last_funding_date: first.root_last_funding_date ?? null,
+      investors: first.root_investors ?? null,
+      token_symbol: first.root_token_symbol ?? null,
+      chains: first.root_chains ?? null,
+      linkedin_url: first.root_linkedin_url ?? null,
+      discord_url: first.root_discord_url ?? null,
+      telegram_url: first.root_telegram_url ?? null,
+      farcaster_handle: first.root_farcaster_handle ?? null,
+      status: first.root_status ?? null,
       classifications: mappedClassifications,
       sector_details: sectorDetails,
       sub_entities: (children || []).map((c: any) => ({
