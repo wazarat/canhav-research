@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRealtimeTables } from '../../lib/useRealtimeTables'
+import EntityEditForm, { EntityEditable } from '../../components/EntityEditForm'
+import MergeWithPicker from '../../components/MergeWithPicker'
 
 /**
  * /company/[id] — Rich profile page for a single root entity.
@@ -148,6 +150,22 @@ export default function CompanyDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [activeSector, setActiveSector] = useState<string | 'all'>('all')
+  const [adminRole, setAdminRole] = useState<string | null>(null)
+  const [editing, setEditing] = useState(false)
+  const [merging, setMerging] = useState(false)
+
+  // Silent admin-session probe. A 401/403 just means "not an admin" — fine;
+  // the extra controls stay hidden. We re-run when the entity changes so the
+  // probe piggybacks on the detail fetch lifecycle.
+  useEffect(() => {
+    if (!id) return
+    fetch('/api/admin/session', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => setAdminRole(body?.role ?? null))
+      .catch(() => setAdminRole(null))
+  }, [id])
+
+  const isSuperAdmin = adminRole === 'super_admin'
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -221,6 +239,16 @@ export default function CompanyDetailPage() {
   useRealtimeTables(['entities', 'entity_classifications'], fetchCompany, {
     channelName: id ? `company-detail-${id}` : undefined,
   })
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (merging) setMerging(false)
+      else if (editing) setEditing(false)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [editing, merging])
 
   const getColor = (sector: string) => SECTOR_COLOR_MAP[sector] ?? FALLBACK
 
@@ -357,12 +385,43 @@ export default function CompanyDetailPage() {
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 py-6 max-w-6xl">
-        <Link href="/market-map" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 mb-5 transition-colors">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back to Market Map
-        </Link>
+        <div className="flex items-center justify-between mb-5">
+          <Link href="/market-map" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Market Map
+          </Link>
+          {company && isSuperAdmin && (
+            <div className="flex items-center gap-2">
+              <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mr-1">
+                Super-admin
+              </span>
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                title="Edit company fields"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors shadow-sm"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => setMerging(true)}
+                title="Merge this company with another"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-300 transition-colors shadow-sm"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h8m0 0l-3-3m3 3l-3 3M16 17H8m0 0l3 3m-3-3l3-3" />
+                </svg>
+                Merge with…
+              </button>
+            </div>
+          )}
+        </div>
 
         {loading && (
           <div className="flex items-center justify-center py-32">
@@ -919,8 +978,84 @@ export default function CompanyDetailPage() {
           </div>
         </div>
       </footer>
+
+      {/* =========================================================
+          Super-admin overlays — mounted outside <main> so they float
+          above sticky nav/sector filter without stacking-context bugs.
+          ========================================================= */}
+      {editing && company && isSuperAdmin && (
+        <div
+          className="fixed inset-0 z-[60] flex items-start justify-center pt-10 md:pt-16 px-4 bg-black/40"
+          onClick={() => setEditing(false)}
+        >
+          <div
+            className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden flex flex-col max-h-[85vh]"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="overflow-y-auto flex-1 min-h-0">
+              <EntityEditForm
+                initial={toEditable(company)}
+                onCancel={() => setEditing(false)}
+                onSaved={() => {
+                  setEditing(false)
+                  fetchCompany()
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {merging && company && isSuperAdmin && (
+        <MergeWithPicker
+          source={{
+            entity_id: company.entity_id,
+            entity_name: company.entity_name,
+            canonical_website: company.canonical_website,
+          }}
+          onClose={() => setMerging(false)}
+          onMerged={() => {
+            setMerging(false)
+            // If this entity got collapsed under a parent, fetching by its id
+            // via /api/company resolves to the parent and we auto-redirect.
+            fetchCompany()
+          }}
+        />
+      )}
     </div>
   )
+}
+
+// Narrow the full CompanyDetail into the edit-form-friendly subset. The
+// detail page carries extra aggregate fields (classifications, related,
+// sub-entities) that the edit form doesn't need or write to.
+function toEditable(c: CompanyDetail): EntityEditable {
+  return {
+    entity_id: c.entity_id,
+    entity_name: c.entity_name,
+    canonical_website: c.canonical_website,
+    logo_url: c.logo_url,
+    year_founded: c.year_founded,
+    hq_location: c.hq_location,
+    funding_stage: c.funding_stage,
+    twitter_handle: c.twitter_handle,
+    github_org: c.github_org,
+    tags: c.tags,
+    long_description: c.long_description,
+    founders: c.founders,
+    total_funding_usd: c.total_funding_usd,
+    last_funding_date: c.last_funding_date,
+    investors: c.investors,
+    token_symbol: c.token_symbol,
+    chains: c.chains,
+    linkedin_url: c.linkedin_url,
+    discord_url: c.discord_url,
+    telegram_url: c.telegram_url,
+    farcaster_handle: c.farcaster_handle,
+    status: c.status,
+  }
 }
 
 // -----------------------------------------------------------------------------
