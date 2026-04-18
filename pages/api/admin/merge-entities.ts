@@ -134,13 +134,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     }
 
-    const { data: childRows, error: childErr } = await supabase
+    const { data: childData, error: childErr } = await supabase
       .from('entities')
       .select(fullSelect)
       .in('entity_id', childIds)
     if (childErr) throw childErr
-    if (!childRows || childRows.length !== childIds.length) {
-      const found = new Set((childRows ?? []).map((r) => r.entity_id))
+    // The dynamic select string prevents Supabase from inferring row shape,
+    // so we cast once up front and treat rows as loose records below.
+    const childRows = (childData ?? []) as unknown as Array<Record<string, any>>
+    if (childRows.length !== childIds.length) {
+      const found = new Set(childRows.map((r) => r.entity_id))
       const missing = childIds.filter((id) => !found.has(id))
       return res.status(404).json({ error: 'child entities not found', missing })
     }
@@ -197,7 +200,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       applied_fields: string[]
     }> = []
 
-    for (const child of childRows as any[]) {
+    for (const child of childRows) {
       if (child.parent_entity_id === parentId) continue // idempotent skip
 
       const childResolutions = fieldResolutions[String(child.entity_id)] ?? {}
@@ -296,8 +299,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       parent_entity_id: parentId,
       applied,
       skipped: childRows
-        .filter((c: any) => c.parent_entity_id === parentId)
-        .map((c: any) => c.entity_id),
+        .filter((c) => c.parent_entity_id === parentId)
+        .map((c) => c.entity_id),
     })
   } catch (err: any) {
     console.error('[merge-entities] error:', err)

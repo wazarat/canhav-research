@@ -104,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const supabase = getSupabaseAdmin()
 
-  const { data: rows, error } = await supabase
+  const { data: rowsRaw, error } = await supabase
     .from('entities')
     .select(SELECT_COLS)
     .in('entity_id', [parentId, childId])
@@ -112,8 +112,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error('[merge-preview] fetch failed:', error)
     return res.status(500).json({ error: error.message })
   }
-  const parent = rows?.find((r: any) => r.entity_id === parentId) as any
-  const child = rows?.find((r: any) => r.entity_id === childId) as any
+  // Dynamic select string → fall back to loose typing.
+  const rows = (rowsRaw ?? []) as unknown as Array<Record<string, any>>
+  const parent = rows.find((r) => r.entity_id === parentId)
+  const child = rows.find((r) => r.entity_id === childId)
   if (!parent) return res.status(404).json({ error: 'parent entity not found' })
   if (!child) return res.status(404).json({ error: 'child entity not found' })
   if (parent.parent_entity_id !== null) {
