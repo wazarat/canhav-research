@@ -356,22 +356,18 @@ export default function ComparePage() {
       .finally(() => setLoading(false))
 
     Promise.all(
-      idList.map((id) =>
-        fetch(`/api/company/${id}/subsector-data`, { cache: 'no-store' }).then(async (r) => {
-          if (r.status === 401) return { unauth: true as const }
-          if (!r.ok) return { blocks: [] as SubsectorBlock[] }
-          const json = await r.json()
-          return { blocks: (json.blocks ?? []) as SubsectorBlock[] }
-        })
-      )
+      idList.map(async (id): Promise<{ unauth: boolean; blocks: SubsectorBlock[] }> => {
+        const r = await fetch(`/api/company/${id}/subsector-data`, { cache: 'no-store' })
+        if (r.status === 401) return { unauth: true, blocks: [] }
+        if (!r.ok) return { unauth: false, blocks: [] }
+        const json = await r.json()
+        return { unauth: false, blocks: (json.blocks ?? []) as SubsectorBlock[] }
+      })
     )
       .then(([a, b]) => {
-        const unauth =
-          (a && 'unauth' in a && a.unauth) ||
-          (b && 'unauth' in b && b.unauth)
-        setBlocksSignedIn(!unauth)
-        setLeftBlocks(a && 'blocks' in a ? a.blocks : [])
-        setRightBlocks(b && 'blocks' in b ? b.blocks : [])
+        setBlocksSignedIn(!(a.unauth || b.unauth))
+        setLeftBlocks(a.blocks)
+        setRightBlocks(b.blocks)
       })
       .catch(() => {
         setLeftBlocks([])
