@@ -162,6 +162,17 @@ export default function CompanyDetailPage() {
   const [starred, setStarred] = useState(false)
   const [starLoaded, setStarLoaded] = useState(false)
   const [viewerSignedIn, setViewerSignedIn] = useState(false)
+  // CAN-NEW-07: articles that reference this entity (sidebar "Featured in").
+  const [featuredArticles, setFeaturedArticles] = useState<
+    Array<{
+      slug: string
+      title: string
+      summary: string
+      author: string
+      published_at: string
+      external_url: string | null
+    }>
+  >([])
 
   // Silent admin-session probe. A 401/403 just means "not an admin" — fine;
   // the extra controls stay hidden. We re-run when the entity changes so the
@@ -172,6 +183,20 @@ export default function CompanyDetailPage() {
       .then((r) => (r.ok ? r.json() : null))
       .then((body) => setAdminRole(body?.role ?? null))
       .catch(() => setAdminRole(null))
+  }, [id])
+
+  // CAN-NEW-07: fetch the article cross-reference. Registry reads are cheap
+  // and cached at the edge; silent failures just hide the block.
+  useEffect(() => {
+    if (!id) return
+    const entityId = Number(id)
+    if (!Number.isFinite(entityId)) return
+    fetch(`/api/articles/for-entity?entity_id=${entityId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => {
+        if (Array.isArray(body?.articles)) setFeaturedArticles(body.articles)
+      })
+      .catch(() => setFeaturedArticles([]))
   }, [id])
 
   const isSuperAdmin = adminRole === 'super_admin'
@@ -1059,6 +1084,42 @@ export default function CompanyDetailPage() {
                         </span>
                       ))}
                     </div>
+                  </SidebarBlock>
+                )}
+
+                {/* CAN-NEW-07: Articles that reference this entity. */}
+                {featuredArticles.length > 0 && (
+                  <SidebarBlock title="Featured in">
+                    <ul className="space-y-2.5">
+                      {featuredArticles.map((a) => {
+                        const isExternal = !!a.external_url
+                        const href = isExternal ? a.external_url! : `/research/${a.slug}`
+                        return (
+                          <li key={a.slug}>
+                            <a
+                              href={href}
+                              {...(isExternal
+                                ? { target: '_blank', rel: 'noopener noreferrer' }
+                                : {})}
+                              className="block group"
+                            >
+                              <div className="text-sm font-medium text-gray-800 group-hover:text-blue-600 transition-colors leading-snug">
+                                {a.title}
+                              </div>
+                              {a.published_at && (
+                                <div className="mt-0.5 text-[11px] text-gray-400">
+                                  {new Date(a.published_at).toLocaleDateString(
+                                    undefined,
+                                    { year: 'numeric', month: 'short', day: 'numeric' }
+                                  )}
+                                  {isExternal && <span className="ml-1">↗</span>}
+                                </div>
+                              )}
+                            </a>
+                          </li>
+                        )
+                      })}
+                    </ul>
                   </SidebarBlock>
                 )}
 

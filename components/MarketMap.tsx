@@ -8,6 +8,7 @@ import { useRealtimeTables } from '../lib/useRealtimeTables'
 import { toSlug, fromSlug, parseMultiParam } from '../lib/slug'
 import CompanyDetailDrawer from './CompanyDetailDrawer'
 import MarketMapLandscape from './MarketMapLandscape'
+import SubsectorHero from './SubsectorHero'
 
 interface Company {
   entity_id?: number
@@ -252,6 +253,24 @@ export default function MarketMap({}: MarketMapProps) {
     const set = new Set<string>()
     companiesData.forEach((c) => getSectors(c).forEach((s) => s && set.add(s)))
     return Array.from(set).sort()
+  }, [companiesData])
+
+  // CAN-NEW-03: distinct-root-entity counts per sector, computed from the
+  // full dataset (not the currently-filtered view) so chips advertise
+  // overall depth. Counts deliberately omitted from subsector chips to
+  // respect the earlier "remove the numbers" directive — flip a boolean
+  // below to re-enable if we want them back.
+  const sectorCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    companiesData.forEach((c) => {
+      const seen = new Set<string>()
+      getSectors(c).forEach((s) => {
+        if (!s || seen.has(s)) return
+        seen.add(s)
+        counts.set(s, (counts.get(s) ?? 0) + 1)
+      })
+    })
+    return counts
   }, [companiesData])
 
   // Subsector chip set is derived from the currently selected sectors so the
@@ -807,6 +826,7 @@ export default function MarketMap({}: MarketMapProps) {
                   accent={tokens.accent}
                   bg={tokens.bg}
                   text={tokens.text}
+                  count={sectorCounts.get(sector)}
                   onClick={() => toggleSector(sector)}
                 />
               )
@@ -852,6 +872,20 @@ export default function MarketMap({}: MarketMapProps) {
            the flat grid or the grouped layout.
            ------------------------------------------------------------------ */}
       <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* CAN-NEW-04: Subsector summary card. Only shown when exactly one
+            subsector filter is active — otherwise the context would be
+            misleading. The component itself no-ops when no summary is
+            configured for the slug. */}
+        {!showSkeleton && selectedSubsectors.size === 1 && (
+          <SubsectorHero
+            subsectorName={Array.from(selectedSubsectors)[0]}
+            sectorName={
+              selectedSectors.size === 1 ? Array.from(selectedSectors)[0] : null
+            }
+            entityCount={filteredCompanies.length}
+          />
+        )}
+
         {showSkeleton ? (
           <SkeletonGrid />
         ) : viewMode === 'landscape' ? (
@@ -1095,6 +1129,7 @@ function SectorChip({
   accent,
   bg,
   text,
+  count,
   onClick,
 }: {
   label: string
@@ -1102,6 +1137,7 @@ function SectorChip({
   accent?: string
   bg?: string
   text?: string
+  count?: number
   onClick: () => void
 }) {
   const activeStyles = active
@@ -1122,6 +1158,15 @@ function SectorChip({
         />
       )}
       <span>{label}</span>
+      {typeof count === 'number' && count > 0 && (
+        <span
+          className={`text-[10px] font-semibold tabular-nums ${
+            active ? 'opacity-80' : 'text-gray-400'
+          }`}
+        >
+          {count}
+        </span>
+      )}
     </button>
   )
 }

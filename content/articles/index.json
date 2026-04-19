@@ -1,0 +1,18 @@
+{
+  "_comment": "Article registry for /research + entity 'Featured in' cross-reference. Each article is surfaced as a card on /research, and any article whose `entity_ids` includes an entity is listed under 'Featured in' on that entity's profile page. Keep slugs stable once published — they become canonical URLs. If an article lives off-platform (Substack, Mirror, …) set `external_url` and leave `body` empty; clicking the card will open the external page in a new tab. For in-app articles, populate `body` with an array of paragraph strings (simple text; no markdown parser shipped with the site).",
+  "articles": [
+    {
+      "slug": "stablecoin-market-map-2026",
+      "title": "The Stablecoin Market Map",
+      "summary": "A guided tour of the six subsectors that make up modern stablecoin infrastructure — centralized issuers, decentralized collateral, synthetic dollars, on-ramps, institutional rails, and regional networks.",
+      "author": "Wazarat Ali",
+      "published_at": "2026-03-18",
+      "sector": "Monetary & Access Rails",
+      "subsector": null,
+      "tags": ["stablecoins", "payments", "market-map"],
+      "entity_ids": [],
+      "external_url": "https://research.canhav.com",
+      "body": []
+    }
+  ]
+}

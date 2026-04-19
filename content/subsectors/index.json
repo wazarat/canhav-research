@@ -1,0 +1,65 @@
+{
+  "_comment": "Subsector summaries for the <SubsectorHero /> card that sits above /market-map results when a single subsector filter is active, and the header block on /sectors/[slug]. Keyed by `toSlug(subsector_name)`. Omit a subsector to disable the hero — the grid falls back to its default empty state. Keep prose tight (2-3 sentences max) so the hero doesn't push the grid below the fold.",
+  "subsectors": {
+    "centralized-stablecoins": {
+      "name": "Centralized Stablecoins",
+      "what": "Fiat-backed dollars issued by a centralized entity that holds reserves off-chain (USDC, USDT, PYUSD, and so on).",
+      "why": "Still the plumbing for the vast majority of on-chain dollar flow. Reserve composition, attestation cadence, and issuer jurisdiction are the risk vectors that matter.",
+      "trust_model": "Issuer custody + attestation / audit; regulated banking rails for mint and redeem."
+    },
+    "decentralized-stablecoins": {
+      "name": "Decentralized Stablecoins",
+      "what": "Stablecoins backed by on-chain collateral (DAI, LUSD, crvUSD, …) with protocol-enforced liquidation and redemption mechanics.",
+      "why": "The canonical hedge against issuer risk. Trade-offs live between capital efficiency, peg robustness, and the collateral mix.",
+      "trust_model": "Smart-contract-enforced over-collateralisation; governance controls parameters and collateral admission."
+    },
+    "synthetic-and-yield-bearing-dollars": {
+      "name": "Synthetic & Yield-Bearing Dollars",
+      "what": "Delta-neutral and basis-trade tokens (USDe, sUSDe, yield-bearing variants) that combine stable exposure with native yield.",
+      "why": "Fastest-growing corner of the stablecoin stack. Understand the trade mechanics, unwind path, and redemption queue before sizing up.",
+      "trust_model": "Hedged exposure via perp / basis trade; relies on CEX custody, funding-rate regime, and collateral liquidity."
+    },
+    "global-on-ramps": {
+      "name": "Global On-Ramps",
+      "what": "Payment-method-to-crypto bridges (Stripe, MoonPay, Transak, Ramp, …) that convert cards, bank transfers, and mobile money into stablecoins.",
+      "why": "First-mile user experience. Coverage, fees, and KYC depth vary drastically by corridor.",
+      "trust_model": "Licensed money-services businesses; FX and settlement risk sits with the operator."
+    },
+    "institutional-payment-rails": {
+      "name": "Institutional Payment Rails",
+      "what": "B2B settlement networks for large-ticket stablecoin flow (Fireblocks Network, Visa, Mastercard Crypto Credential, bank tokenisation pilots).",
+      "why": "Where corporate treasury and cross-border B2B is actually moving. Throughput and compliance tooling separate credible entrants from press-release plays.",
+      "trust_model": "Regulated institutional custodians + permissioned networks; KYB / AML enforced at the edge."
+    },
+    "regional-payment-networks": {
+      "name": "Regional Payment Networks",
+      "what": "Local-currency rails using stablecoins under the hood (LatAm, SEA, Africa). Often bundled with off-ramps and payroll tooling.",
+      "why": "The clearest product-market fit for stablecoins today. Corridor economics and cash-out partners drive volumes.",
+      "trust_model": "Regional MSB/PSP licensing; stablecoin leg introduces issuer + bridge risk."
+    },
+    "lending-markets": {
+      "name": "Lending Markets",
+      "what": "Over-collateralised lending protocols (Aave, Compound, Morpho, Spark) that let users borrow against on-chain collateral.",
+      "why": "The backbone of DeFi leverage and yield. Understanding IRM shape, oracle choice, and collateral factors is table stakes.",
+      "trust_model": "Smart-contract-enforced collateralisation with oracle-driven liquidations."
+    },
+    "dex-and-liquidity-pools": {
+      "name": "DEX & Liquidity Pools",
+      "what": "Automated market makers and order-book DEXs (Uniswap, Curve, Balancer, dYdX, …) where price discovery and routing happen on-chain.",
+      "why": "Controls execution quality for every DeFi app downstream. AMM shape and MEV exposure drive returns for LPs and searchers.",
+      "trust_model": "Non-custodial smart contracts; governance-controlled parameters."
+    },
+    "liquid-staking-tokens": {
+      "name": "Liquid Staking Tokens",
+      "what": "Tokenised ETH staking positions (stETH, rETH, cbETH, sfrxETH, …) issued by staking pools or providers.",
+      "why": "The largest DeFi asset category. Validator-set decentralisation, slashing insurance, and peg resilience decide winners.",
+      "trust_model": "Operator trust + smart-contract custody; peg maintained via redemption / LST secondary markets."
+    },
+    "restaking-systems": {
+      "name": "Restaking Systems",
+      "what": "Protocols (EigenLayer, Symbiotic, Karak, …) that let staked ETH or LSTs opt in to securing additional services (AVSs).",
+      "why": "Rapidly expanding shared-security primitive. Slashing conditions per AVS and operator-set quality are the live risks.",
+      "trust_model": "Stake-based cryptoeconomic security with opt-in slashing; still maturing."
+    }
+  }
+}

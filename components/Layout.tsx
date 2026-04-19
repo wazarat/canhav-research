@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import NewsletterBanner from './NewsletterBanner';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const navItems = [
     { name: 'Market Map', href: '/market-map', external: false },
-    { name: 'Research', href: 'https://research.canhav.com', external: true },
+    { name: 'Research', href: '/research', external: false },
     { name: 'Enterprise Users', href: '/enterprise-users', external: false },
     { name: 'About Us', href: '/about-us', external: false },
   ];
@@ -211,20 +212,15 @@ export default function Layout({ children }: LayoutProps) {
 
       <main className="relative">{children}</main>
 
-      <footer className="border-t border-gray-800/50 glass mt-20">
+      <NewsletterBanner source="footer" variant="footer" />
+
+      <footer className="border-t border-gray-800/50 glass">
         <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-gray-400">
             <p className="text-sm">&copy; 2024–2026 CanHav Research. All rights reserved.</p>
             <div className="flex items-center gap-4 text-sm">
               <Link href="/market-map" className="hover:text-blue-300">Market Map</Link>
-              <a
-                href="https://research.canhav.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-blue-300"
-              >
-                Research
-              </a>
+              <Link href="/research" className="hover:text-blue-300">Research</Link>
               <Link href="/about-us" className="hover:text-blue-300">About</Link>
               {viewer ? (
                 <button onClick={handleSignOut} className="hover:text-blue-300">

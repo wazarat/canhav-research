@@ -67,6 +67,10 @@ export default function CompanyDetailDrawer({
   const [role, setRole] = useState<string | null>(null)
   const [editing, setEditing] = useState(false)
   const [merging, setMerging] = useState(false)
+  // CAN-NEW-07: article cross-reference for this entity.
+  const [featuredArticles, setFeaturedArticles] = useState<
+    Array<{ slug: string; title: string; published_at: string; external_url: string | null }>
+  >([])
 
   // Admin role probe (silent; 403/401 means "not super-admin" which is fine).
   useEffect(() => {
@@ -106,6 +110,20 @@ export default function CompanyDetailDrawer({
       setMerging(false)
     }
   }, [entityId, fetchDetail])
+
+  useEffect(() => {
+    if (!entityId) {
+      setFeaturedArticles([])
+      return
+    }
+    fetch(`/api/articles/for-entity?entity_id=${entityId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => {
+        if (Array.isArray(body?.articles)) setFeaturedArticles(body.articles)
+        else setFeaturedArticles([])
+      })
+      .catch(() => setFeaturedArticles([]))
+  }, [entityId])
 
   useEffect(() => {
     if (!entityId) return
@@ -368,6 +386,44 @@ export default function CompanyDetailDrawer({
                   ))}
                 </ul>
               </section>
+
+              {featuredArticles.length > 0 && (
+                <section>
+                  <h3 className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                    Featured in
+                  </h3>
+                  <ul className="space-y-2">
+                    {featuredArticles.map((a) => {
+                      const isExternal = !!a.external_url
+                      const href = isExternal ? a.external_url! : `/research/${a.slug}`
+                      return (
+                        <li key={a.slug}>
+                          <a
+                            href={href}
+                            {...(isExternal
+                              ? { target: '_blank', rel: 'noopener noreferrer' }
+                              : {})}
+                            className="block rounded-md border border-gray-200 px-3 py-2 hover:border-gray-300 hover:bg-gray-50 transition-colors"
+                          >
+                            <div className="text-sm font-medium text-gray-800 leading-snug">
+                              {a.title}
+                              {isExternal && <span className="ml-1 text-gray-400">↗</span>}
+                            </div>
+                            {a.published_at && (
+                              <div className="mt-0.5 text-[11px] text-gray-400">
+                                {new Date(a.published_at).toLocaleDateString(
+                                  undefined,
+                                  { year: 'numeric', month: 'short', day: 'numeric' }
+                                )}
+                              </div>
+                            )}
+                          </a>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
+              )}
             </div>
           )}
         </div>
