@@ -85,21 +85,27 @@ export default function SavedPage() {
 
   // Returns the set of subsectors shared with every already-selected entity.
   // Empty set => no shared subsector => the candidate can't be compared.
+  //
+  // Uses Array.from + .forEach to iterate Sets because tsconfig targets ES5
+  // without downlevelIteration, so `for…of` over a Set fails to compile.
   const sharedSubsectorsWith = useCallback(
     (candidate: SavedCompany): Set<string> => {
-      const candSubs = new Set((candidate.subsectors ?? []).filter(Boolean))
-      if (candSubs.size === 0) return new Set()
+      const candSubs = new Set<string>((candidate.subsectors ?? []).filter(Boolean))
+      if (candSubs.size === 0) return new Set<string>()
+      const candSubsArr = Array.from(candSubs)
       let acc: Set<string> | null = null
-      for (const id of selected) {
-        if (id === candidate.entity_id) continue
+      Array.from(selected).forEach((id) => {
+        if (id === candidate.entity_id) return
         const other = byId.get(id)
-        if (!other) continue
-        const otherSubs = new Set((other.subsectors ?? []).filter(Boolean))
-        const intersection = new Set(
-          [...candSubs].filter((x) => otherSubs.has(x))
+        if (!other) return
+        const otherSubs = new Set<string>((other.subsectors ?? []).filter(Boolean))
+        const intersection = new Set<string>(
+          candSubsArr.filter((x) => otherSubs.has(x))
         )
-        acc = acc === null ? intersection : new Set([...acc].filter((x) => intersection.has(x)))
-      }
+        acc = acc === null
+          ? intersection
+          : new Set<string>(Array.from(acc).filter((x) => intersection.has(x)))
+      })
       return acc ?? candSubs
     },
     [selected, byId]
