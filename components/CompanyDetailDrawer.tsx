@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRealtimeTables } from '../lib/useRealtimeTables'
+import { timeAgo, formatTimestamp } from '../lib/timeAgo'
+import { toSlug } from '../lib/slug'
 import EntityEditForm, { EntityEditable } from './EntityEditForm'
 import MergeWithPicker from './MergeWithPicker'
 
@@ -32,6 +34,9 @@ interface EntityClassification {
 interface CompanyDetail extends EntityEditable {
   classifications: EntityClassification[]
   sub_entities: Array<{ entity_id: number; entity_name: string }>
+  // Populated by /api/company/[id] from v_entity_detail.root_updated_at.
+  // Optional so stale type callers keep compiling.
+  updated_at?: string | null
 }
 
 const SECTOR_ACCENT: Record<string, string> = {
@@ -176,6 +181,14 @@ export default function CompanyDetailDrawer({
                   {data.hq_location && <span>{data.hq_location}</span>}
                   {data.year_founded && <span>Founded {data.year_founded}</span>}
                   {data.funding_stage && <span>{data.funding_stage}</span>}
+                  {data.updated_at && timeAgo(data.updated_at) && (
+                    <span
+                      className="text-gray-400"
+                      title={formatTimestamp(data.updated_at) ?? undefined}
+                    >
+                      Updated {timeAgo(data.updated_at)}
+                    </span>
+                  )}
                 </div>
                 <div className="mt-2">
                   <Link
@@ -341,6 +354,16 @@ export default function CompanyDetailDrawer({
                           {c.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
                         </a>
                       )}
+                      <div className="mt-2">
+                        <Link
+                          href={`/market-map?sector=${encodeURIComponent(
+                            toSlug(c.sector_name)
+                          )}&subsector=${encodeURIComponent(toSlug(c.subsector_name))}`}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium text-gray-600 hover:text-blue-600"
+                        >
+                          Explore all {c.subsector_name} →
+                        </Link>
+                      </div>
                     </li>
                   ))}
                 </ul>

@@ -6,6 +6,8 @@ import { useRealtimeTables } from '../../lib/useRealtimeTables'
 import { EntityEditable } from '../../components/EntityEditForm'
 import MergeWithPicker from '../../components/MergeWithPicker'
 import CompanyFullEditor, { EditorClassification } from '../../components/CompanyFullEditor'
+import { timeAgo, formatTimestamp } from '../../lib/timeAgo'
+import { toSlug } from '../../lib/slug'
 
 /**
  * /company/[id] — Rich profile page for a single root entity.
@@ -78,6 +80,7 @@ interface CompanyDetail {
   telegram_url: string | null
   farcaster_handle: string | null
   status: string | null
+  updated_at: string | null
   classifications: Classification[]
   sector_details: SectorDetail[]
   sub_entities: Array<{ entity_id: number; entity_name: string }>
@@ -607,7 +610,39 @@ export default function CompanyDetailPage() {
                           {stripUrl(websiteToShow)}
                         </a>
                       )}
+                      {company.updated_at && timeAgo(company.updated_at) && (
+                        <span
+                          className="inline-flex items-center gap-1.5 text-xs text-gray-400"
+                          title={formatTimestamp(company.updated_at) ?? undefined}
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Updated {timeAgo(company.updated_at)}
+                        </span>
+                      )}
                     </dl>
+
+                    {primaryClassification && (
+                      <div className="mt-4">
+                        <Link
+                          href={`/market-map?sector=${encodeURIComponent(
+                            toSlug(primaryClassification.sector_name)
+                          )}&subsector=${encodeURIComponent(
+                            toSlug(primaryClassification.subsector_name)
+                          )}`}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
+                          </svg>
+                          Explore all {primaryClassification.subsector_name} entities
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

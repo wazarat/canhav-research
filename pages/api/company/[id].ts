@@ -47,6 +47,7 @@ export interface CompanyDetail {
   telegram_url: string | null
   farcaster_handle: string | null
   status: string | null
+  updated_at: string | null             // ISO timestamp from v_entity_detail.root_updated_at (CAN-NEW-12)
   classifications: EntityClassification[]
   sector_details: SectorDetail[]
   sub_entities: Array<{ entity_id: number; entity_name: string }>
@@ -215,6 +216,7 @@ export default async function handler(
       telegram_url: first.root_telegram_url ?? null,
       farcaster_handle: first.root_farcaster_handle ?? null,
       status: first.root_status ?? null,
+      updated_at: first.root_updated_at ?? null,
       classifications: mappedClassifications,
       sector_details: sectorDetails,
       sub_entities: (children || []).map((c: any) => ({

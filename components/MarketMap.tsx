@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { companiesData as staticCompanies } from '../lib/companiesData'
 import { useRealtimeTables } from '../lib/useRealtimeTables'
-import JotFormModal from './JotFormModal'
+import { toSlug, fromSlug, parseMultiParam } from '../lib/slug'
 import CompanyDetailDrawer from './CompanyDetailDrawer'
 import MarketMapLandscape from './MarketMapLandscape'
 
@@ -116,7 +117,7 @@ const getSectorTokens = (sector: string): SectorTokens =>
 // ------------------------------------------------------------------
 
 export default function MarketMap({}: MarketMapProps) {
-  const [showSubmitForm, setShowSubmitForm] = useState(false)
+  const router = useRouter()
   // Multi-sector selection. An empty set means "All sectors". Toggle-to-add
   // instead of the old single-value setter.
   const [selectedSectors, setSelectedSectors] = useState<Set<string>>(new Set())
@@ -141,6 +142,13 @@ export default function MarketMap({}: MarketMapProps) {
   // prompts them to /login on click (handled in the card).
   const [starredIds, setStarredIds] = useState<Set<number>>(new Set())
   const [viewerSignedIn, setViewerSignedIn] = useState(false)
+
+  // CAN-NEW-08: compare-from-map selection. We don't show checkboxes until
+  // the researcher has filtered down to a single subsector (matches the
+  // same-subsector rule enforced by /saved and /compare).
+  const [compareIds, setCompareIds] = useState<Set<number>>(new Set())
+  // CAN-NEW-09: transient toast for the copy-link button.
+  const [copyToast, setCopyToast] = useState<string | null>(null)
 
   const fetchCompanies = useCallback(async () => {
     try {
@@ -267,6 +275,99 @@ export default function MarketMap({}: MarketMapProps) {
     return Array.from(set).sort()
   }, [companiesData, selectedSectors])
 
+  // ------------------------------------------------------------------
+  // CAN-NEW-02: URL <-> filter state sync.
+  //
+  // On mount (once the router is ready and the entity list has loaded),
+  // hydrate selectedSectors / selectedSubsectors / searchQuery from the
+  // query string. From that point on, any user change to those filters
+  // gets pushed back to the URL so the page is shareable.
+  //
+  // We gate the hydration behind a ref so it only runs once — the
+  // subsequent writer effect must not re-read the URL it just wrote.
+  // ------------------------------------------------------------------
+  const hydratedFromUrl = useRef(false)
+
+  useEffect(() => {
+    if (hydratedFromUrl.current) return
+    if (!router.isReady) return
+    // Wait for the sector option list to populate (either from
+    // companies/API or from the static fallback) before trying to map
+    // slugs back to labels.
+    if (sectors.length === 0) return
+
+    const rawSector = router.query.sector ?? router.query.sectors
+    const rawSub = router.query.subsector ?? router.query.subsectors
+    const rawQ = router.query.q ?? router.query.query
+
+    const wantedSectors = parseMultiParam(rawSector as string | string[] | undefined)
+      .map((s) => fromSlug(s, sectors))
+      .filter((s): s is string => !!s)
+    const nextSectors = new Set(wantedSectors)
+
+    // Subsector slugs only resolve against subsectors that live inside the
+    // newly-chosen sectors. We pass the full companies dataset so the
+    // lookup still works even if availableSubsectors hasn't caught up yet.
+    const candidateSubs = new Set<string>()
+    companiesData.forEach((c) => {
+      const cSectors = getSectors(c)
+      const cSubs = getSubsectors(c)
+      cSectors.forEach((sec, idx) => {
+        if (nextSectors.size === 0 || nextSectors.has(sec)) {
+          const sub = cSubs[idx] ?? cSubs[0]
+          if (sub) candidateSubs.add(sub)
+        }
+      })
+    })
+    const wantedSubs = parseMultiParam(rawSub as string | string[] | undefined)
+      .map((s) => fromSlug(s, Array.from(candidateSubs)))
+      .filter((s): s is string => !!s)
+    const nextSubs = new Set(wantedSubs)
+
+    const nextQ = Array.isArray(rawQ) ? rawQ[0] ?? '' : rawQ ?? ''
+
+    if (nextSectors.size > 0) setSelectedSectors(nextSectors)
+    if (nextSubs.size > 0) setSelectedSubsectors(nextSubs)
+    if (nextQ) setSearchQuery(nextQ)
+
+    hydratedFromUrl.current = true
+  }, [router.isReady, router.query, sectors, companiesData])
+
+  // URL writer: every time the filter state changes after hydration, push
+  // a shallow replaceState so the page stays shareable without remounting.
+  useEffect(() => {
+    if (!hydratedFromUrl.current) return
+    if (!router.isReady) return
+
+    const nextQuery: Record<string, string> = {}
+    if (selectedSectors.size > 0) {
+      nextQuery.sector = Array.from(selectedSectors).map(toSlug).join(',')
+    }
+    if (selectedSubsectors.size > 0) {
+      nextQuery.subsector = Array.from(selectedSubsectors).map(toSlug).join(',')
+    }
+    if (searchQuery.trim()) {
+      nextQuery.q = searchQuery.trim()
+    }
+
+    // Short-circuit if the URL already matches so we don't stack history
+    // entries on every keystroke.
+    const currentQ = router.query
+    const toSortedStr = (obj: Record<string, string | string[] | undefined>) =>
+      Object.entries(obj)
+        .filter(([k]) => k === 'sector' || k === 'subsector' || k === 'q')
+        .map(([k, v]) => `${k}=${Array.isArray(v) ? v.join(',') : v ?? ''}`)
+        .sort()
+        .join('&')
+    if (toSortedStr(currentQ) === toSortedStr(nextQuery)) return
+
+    router.replace(
+      { pathname: router.pathname, query: nextQuery },
+      undefined,
+      { shallow: true, scroll: false }
+    )
+  }, [selectedSectors, selectedSubsectors, searchQuery, router])
+
   const filteredCompanies = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
     const matches = companiesData.filter((company) => {
@@ -354,6 +455,161 @@ export default function MarketMap({}: MarketMapProps) {
   // fetch we keep rendering the grid while Realtime refetches silently.
   const showSkeleton = loading && dataSource === 'static'
 
+  // ------------------------------------------------------------------
+  // CAN-NEW-08: compare-from-map selection helpers.
+  //
+  // Compare is only meaningful inside a single subsector (matches the
+  // /compare page's "same subsector" rule). So:
+  //  * selection toggles are allowed for any row, but…
+  //  * we auto-prune the selection whenever the visible subsector set
+  //    narrows (e.g. when the user adds another sector filter), and…
+  //  * the compare bar only "goes live" when both picks share a subsector.
+  //
+  // The sticky compare bar renders in the market-map root below.
+  // ------------------------------------------------------------------
+  const visibleIds = useMemo(() => {
+    const s = new Set<number>()
+    filteredCompanies.forEach((c) => {
+      if (c.entity_id != null) s.add(c.entity_id)
+    })
+    return s
+  }, [filteredCompanies])
+
+  // Drop compare picks that the current filter has hidden — it's confusing
+  // to submit a compare containing a row the user can no longer see.
+  useEffect(() => {
+    if (compareIds.size === 0) return
+    let changed = false
+    const next = new Set<number>()
+    compareIds.forEach((id) => {
+      if (visibleIds.has(id)) next.add(id)
+      else changed = true
+    })
+    if (changed) setCompareIds(next)
+  }, [visibleIds, compareIds])
+
+  const toggleCompare = useCallback((entityId: number) => {
+    setCompareIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(entityId)) next.delete(entityId)
+      else {
+        // Cap the UI at 4 selections so users don't queue up impossible
+        // compares. /compare itself only consumes the first 2 today.
+        if (next.size >= 4) return prev
+        next.add(entityId)
+      }
+      return next
+    })
+  }, [])
+
+  // Look up subsectors for each picked entity; compare is valid if they
+  // share at least one subsector. We use this to enable/disable the CTA.
+  const compareSubsectors = useMemo(() => {
+    if (compareIds.size < 2) return null as string[] | null
+    let acc: Set<string> | null = null
+    compareIds.forEach((id) => {
+      const c = companiesData.find((row) => row.entity_id === id)
+      if (!c) return
+      const subs = new Set(getSubsectors(c).filter(Boolean))
+      if (acc === null) acc = subs
+      else {
+        const next = new Set<string>()
+        acc.forEach((s) => {
+          if (subs.has(s)) next.add(s)
+        })
+        acc = next
+      }
+    })
+    return acc ? Array.from(acc) : []
+  }, [compareIds, companiesData])
+
+  const canCompare = compareIds.size >= 2 && (compareSubsectors?.length ?? 0) > 0
+
+  // ------------------------------------------------------------------
+  // CAN-NEW-09: share + export current view.
+  // ------------------------------------------------------------------
+  const handleCopyLink = useCallback(async () => {
+    try {
+      const href =
+        typeof window !== 'undefined' ? window.location.href : '/market-map'
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(href)
+      } else {
+        // Fallback for older browsers / unsecured origins.
+        const ta = document.createElement('textarea')
+        ta.value = href
+        document.body.appendChild(ta)
+        ta.select()
+        document.execCommand('copy')
+        document.body.removeChild(ta)
+      }
+      setCopyToast('Link copied to clipboard')
+    } catch {
+      setCopyToast('Could not copy — select the URL manually')
+    } finally {
+      window.setTimeout(() => setCopyToast(null), 1800)
+    }
+  }, [])
+
+  const handleExportCsv = useCallback(() => {
+    if (filteredCompanies.length === 0) return
+    const headers = [
+      'entity_id',
+      'name',
+      'primary_sector',
+      'primary_subsector',
+      'all_sectors',
+      'all_subsectors',
+      'website',
+      'hq_location',
+      'year_founded',
+      'funding_stage',
+      'maintaining_organization',
+      'practitioners_note',
+    ]
+    const esc = (v: unknown): string => {
+      if (v === null || v === undefined) return ''
+      const s = Array.isArray(v) ? v.join('; ') : String(v)
+      if (/[",\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`
+      return s
+    }
+    const rows = filteredCompanies.map((c) => [
+      c.entity_id ?? '',
+      c.name,
+      c.sector ?? '',
+      c.subsector ?? '',
+      (c.sectors ?? []).join('; '),
+      (c.subsectors ?? []).join('; '),
+      c.website ?? c.canonical_website ?? '',
+      c.hq_location ?? '',
+      c.year_founded ?? '',
+      c.funding_stage ?? '',
+      c.maintaining_organization ?? '',
+      c.practitioners_note ?? '',
+    ])
+    const csv = [headers, ...rows].map((row) => row.map(esc).join(',')).join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    // Stamp the export filename with the filter state so files stay distinct.
+    const slugParts: string[] = []
+    if (selectedSectors.size > 0) {
+      slugParts.push(Array.from(selectedSectors).map(toSlug).join('+'))
+    }
+    if (selectedSubsectors.size > 0) {
+      slugParts.push(Array.from(selectedSubsectors).map(toSlug).join('+'))
+    }
+    const stamp = new Date().toISOString().slice(0, 10)
+    a.download = `canhav-market-map${slugParts.length ? '-' + slugParts.join('-') : ''}-${stamp}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    setCopyToast(`Exported ${filteredCompanies.length} rows`)
+    window.setTimeout(() => setCopyToast(null), 1800)
+  }, [filteredCompanies, selectedSectors, selectedSubsectors])
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ------------------------------------------------------------------
@@ -372,12 +628,12 @@ export default function MarketMap({}: MarketMapProps) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setShowSubmitForm(true)}
+            <Link
+              href="/submit-company"
               className="px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-md text-xs font-medium transition shadow-sm"
             >
               Submit a company
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -468,6 +724,31 @@ export default function MarketMap({}: MarketMapProps) {
                   <span className="text-[10px] text-gray-500">{starredIds.size}</span>
                 )}
               </Link>
+
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                title="Copy shareable link to this filtered view"
+                className="px-2.5 py-1.5 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 hover:border-gray-300 hover:text-gray-900 transition"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3 3a4 4 0 01-5.656-5.656l1.5-1.5M10.172 13.828a4 4 0 010-5.656l3-3a4 4 0 015.656 5.656l-1.5 1.5" />
+                </svg>
+                Share
+              </button>
+
+              <button
+                type="button"
+                onClick={handleExportCsv}
+                disabled={filteredCompanies.length === 0}
+                title={filteredCompanies.length === 0 ? 'Nothing to export' : `Export ${filteredCompanies.length} rows as CSV`}
+                className="px-2.5 py-1.5 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 hover:border-gray-300 hover:text-gray-900 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M4 20h16a2 2 0 002-2V7a2 2 0 00-2-2h-6l-2-2H4a2 2 0 00-2 2v11a2 2 0 002 2z" />
+                </svg>
+                CSV
+              </button>
 
               <select
                 value={sortBy}
@@ -588,6 +869,8 @@ export default function MarketMap({}: MarketMapProps) {
             onSelect={(id) => setSelectedEntityId(id)}
             starredIds={starredIds}
             onToggleStar={toggleStar}
+            compareIds={compareIds}
+            onToggleCompare={toggleCompare}
           />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -599,6 +882,8 @@ export default function MarketMap({}: MarketMapProps) {
                 onSelect={(id) => setSelectedEntityId(id)}
                 starred={company.entity_id != null && starredIds.has(company.entity_id)}
                 onToggleStar={toggleStar}
+                selectedForCompare={company.entity_id != null && compareIds.has(company.entity_id)}
+                onToggleCompare={toggleCompare}
               />
             ))}
           </div>
@@ -635,6 +920,8 @@ export default function MarketMap({}: MarketMapProps) {
                         onSelect={(id) => setSelectedEntityId(id)}
                         starred={company.entity_id != null && starredIds.has(company.entity_id)}
                         onToggleStar={toggleStar}
+                        selectedForCompare={company.entity_id != null && compareIds.has(company.entity_id)}
+                        onToggleCompare={toggleCompare}
                       />
                     ))}
                   </div>
@@ -675,6 +962,31 @@ export default function MarketMap({}: MarketMapProps) {
           </div>
         )}
 
+        {/* CAN-NEW-10: "Missing a company?" call-out. The header already
+            has a Submit button, but researchers scrolling through gaps
+            rarely scroll back up — a second in-flow nudge catches them. */}
+        {!showSkeleton && filteredCompanies.length > 0 && (
+          <div className="mt-8 rounded-xl border border-dashed border-gray-300 bg-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold text-gray-900">
+                Missing a company?
+              </h3>
+              <p className="text-xs text-gray-500 mt-0.5">
+                Tell us what you&apos;re tracking. Submissions go into the research queue.
+              </p>
+            </div>
+            <Link
+              href="/submit-company"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded-md text-xs font-medium transition shadow-sm"
+            >
+              Submit one
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        )}
+
         {/* Stats strip — compact, single-row, not three big cards */}
         <div className="mt-12 pt-6 border-t border-gray-200">
           <div className="flex flex-wrap items-baseline gap-x-8 gap-y-2 text-sm text-gray-500">
@@ -702,14 +1014,72 @@ export default function MarketMap({}: MarketMapProps) {
         onToggleStar={toggleStar}
       />
 
-      {/* Submit Company Modal */}
-      {showSubmitForm && (
-        <JotFormModal
-          isOpen={showSubmitForm}
-          onClose={() => setShowSubmitForm(false)}
-          formId="253433298491060"
-          title="Submit a Company"
-        />
+      {/* CAN-NEW-08: floating compare bar. Hidden at 0 picks, informative
+          at 1, CTA at 2+. The /compare page itself only consumes the first
+          two so we pass the first two ids through regardless of how many
+          the user has ticked. */}
+      {compareIds.size > 0 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[calc(100vw-2rem)] bg-white border border-gray-200 shadow-lg rounded-full pl-4 pr-2 py-2 flex items-center gap-3">
+          <span className="text-xs font-medium text-gray-700 shrink-0">
+            {compareIds.size} selected
+          </span>
+          {compareIds.size < 2 && (
+            <span className="text-[11px] text-gray-500 truncate hidden sm:inline">
+              Pick one more in the same subsector to compare.
+            </span>
+          )}
+          {compareIds.size >= 2 && !canCompare && (
+            <span className="text-[11px] text-amber-700 truncate">
+              Selections must share a subsector.
+            </span>
+          )}
+          {canCompare && compareSubsectors && compareSubsectors.length > 0 && (
+            <span className="text-[11px] text-gray-500 truncate hidden sm:inline" title={compareSubsectors.join(', ')}>
+              Shared: {compareSubsectors.slice(0, 2).join(', ')}
+              {compareSubsectors.length > 2 ? ' +' + (compareSubsectors.length - 2) : ''}
+            </span>
+          )}
+          <div className="ml-auto flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setCompareIds(new Set())}
+              className="px-2.5 py-1 text-[11px] text-gray-500 hover:text-gray-800 rounded-full"
+            >
+              Clear
+            </button>
+            <Link
+              href={
+                canCompare
+                  ? `/compare?ids=${Array.from(compareIds).slice(0, 2).join(',')}`
+                  : '#'
+              }
+              aria-disabled={!canCompare}
+              onClick={(e) => {
+                if (!canCompare) e.preventDefault()
+              }}
+              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition shadow-sm ${
+                canCompare
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              Compare
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Copy-link toast for CAN-NEW-09. */}
+      {copyToast && (
+        <div
+          role="status"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-3.5 py-2 rounded-lg bg-gray-900 text-white text-xs shadow-lg pointer-events-none"
+        >
+          {copyToast}
+        </div>
       )}
     </div>
   )
@@ -762,6 +1132,8 @@ function CompanyCard({
   onSelect,
   starred,
   onToggleStar,
+  selectedForCompare,
+  onToggleCompare,
 }: {
   company: Company
   getSectors: (c: Company) => string[]
@@ -774,6 +1146,8 @@ function CompanyCard({
   onSelect?: (entityId: number) => void
   starred?: boolean
   onToggleStar?: (entityId: number) => void
+  selectedForCompare?: boolean
+  onToggleCompare?: (entityId: number) => void
 }) {
   const sectors = getSectors(company)
   const extraSectorCount = Math.max(0, sectors.length - 1)
@@ -831,6 +1205,16 @@ function CompanyCard({
               e.preventDefault()
               e.stopPropagation()
               onToggleStar(company.entity_id!)
+            }}
+          />
+        )}
+        {company.entity_id != null && onToggleCompare && (
+          <CompareCheck
+            active={!!selectedForCompare}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onToggleCompare(company.entity_id!)
             }}
           />
         )}
@@ -936,6 +1320,43 @@ function StarButton({
   )
 }
 
+// CompareCheck — span-based checkbox to match StarButton's pattern so it
+// can live inside the outer interactive card without nesting buttons.
+function CompareCheck({
+  active,
+  onClick,
+}: {
+  active: boolean
+  onClick: (e: React.MouseEvent) => void
+}) {
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={active ? 'Remove from compare' : 'Add to compare'}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          e.stopPropagation()
+          onClick(e as unknown as React.MouseEvent)
+        }
+      }}
+      className={`shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md border transition-colors ${
+        active
+          ? 'bg-blue-600 border-blue-600 text-white'
+          : 'bg-white border-gray-300 text-transparent hover:border-blue-400 hover:text-blue-500'
+      }`}
+      title={active ? 'Remove from compare' : 'Add to compare'}
+    >
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 20 20">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l3 3 7-7" />
+      </svg>
+    </span>
+  )
+}
+
 // Dense, information-rich default view. Unlike the grid (which is all about
 // "can I see hundreds of logos at a glance"), the list is for shoppers —
 // one row per company with logo, name, primary subsector, HQ, year,
@@ -946,18 +1367,22 @@ function CompanyList({
   onSelect,
   starredIds,
   onToggleStar,
+  compareIds,
+  onToggleCompare,
 }: {
   companies: Company[]
   getSectors: (c: Company) => string[]
   onSelect: (entityId: number) => void
   starredIds: Set<number>
   onToggleStar: (entityId: number) => void
+  compareIds: Set<number>
+  onToggleCompare: (entityId: number) => void
 }) {
-  // 6-column layout: Company | Subsector | Website | Maintained by | Note | Save.
+  // 7-column layout: Company | Subsector | Website | Maintained by | Note | Save | Compare.
   // We pack the heaviest text into the Note column (2fr) and keep the rest
   // tight so alignment stays clean at typical desktop widths.
   const gridCols =
-    'md:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_36px]'
+    'md:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_36px_36px]'
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -969,6 +1394,7 @@ function CompanyList({
         <div>Maintained by</div>
         <div>Practitioner&apos;s note</div>
         <div className="text-right">Save</div>
+        <div className="text-right" title="Compare">Cmp</div>
       </div>
       <ul className="divide-y divide-gray-100">
         {companies.map((c, i) => {
@@ -1036,6 +1462,18 @@ function CompanyList({
                         e.preventDefault()
                         e.stopPropagation()
                         onToggleStar(c.entity_id!)
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="flex justify-end pt-0.5">
+                  {c.entity_id != null && (
+                    <CompareCheck
+                      active={compareIds.has(c.entity_id)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onToggleCompare(c.entity_id!)
                       }}
                     />
                   )}
