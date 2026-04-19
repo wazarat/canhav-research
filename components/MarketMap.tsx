@@ -21,11 +21,16 @@ interface Company {
   website?: string
   logo_url?: string | null
   hq_location?: string | null
+  year_founded?: number | null
+  funding_stage?: string | null
+  canonical_website?: string | null
+  status?: string | null
+  total_funding_usd?: number | null
 }
 
 interface MarketMapProps {}
 
-type ViewMode = 'grid' | 'grouped' | 'landscape'
+type ViewMode = 'list' | 'grid' | 'grouped' | 'landscape'
 type SortOption = 'name' | 'sector'
 
 // ------------------------------------------------------------------
@@ -110,9 +115,17 @@ const getSectorTokens = (sector: string): SectorTokens =>
 
 export default function MarketMap({}: MarketMapProps) {
   const [showSubmitForm, setShowSubmitForm] = useState(false)
-  const [selectedSector, setSelectedSector] = useState<string | null>(null)
+  // Multi-sector selection. An empty set means "All sectors". Toggle-to-add
+  // instead of the old single-value setter.
+  const [selectedSectors, setSelectedSectors] = useState<Set<string>>(new Set())
+  // Subsector filter is a secondary layer — only shown once at least one
+  // sector is chosen. Also a set, cleared automatically when sectors change
+  // so stale subsector filters from another sector don't persist.
+  const [selectedSubsectors, setSelectedSubsectors] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState('')
-  const [viewMode, setViewMode] = useState<ViewMode>('grid')
+  // List is the new default — denser than the existing grid but with more
+  // standardised metadata per row so users can scan without clicking in.
+  const [viewMode, setViewMode] = useState<ViewMode>('list')
   const [sortBy, setSortBy] = useState<SortOption>('name')
   const [companiesData, setCompaniesData] = useState<Company[]>(staticCompanies)
   const [loading, setLoading] = useState(true)
@@ -120,6 +133,12 @@ export default function MarketMap({}: MarketMapProps) {
   const [lastSyncedAt, setLastSyncedAt] = useState<Date | null>(null)
   // Drawer state — used by Grid + Landscape views. Null means closed.
   const [selectedEntityId, setSelectedEntityId] = useState<number | null>(null)
+
+  // Starring — populated from /api/me/stars after the viewer signs in.
+  // Anonymous visitors silently get an empty set and the star button
+  // prompts them to /login on click (handled in the card).
+  const [starredIds, setStarredIds] = useState<Set<number>>(new Set())
+  const [viewerSignedIn, setViewerSignedIn] = useState(false)
 
   const fetchCompanies = useCallback(async () => {
     try {
@@ -142,6 +161,72 @@ export default function MarketMap({}: MarketMapProps) {
     fetchCompanies()
   }, [fetchCompanies])
 
+  // Fetch the viewer's starred list once on mount. A 401 just means they're
+  // anonymous — we leave starredIds empty and rely on the card to prompt
+  // for sign-in when they click the star.
+  const fetchStars = useCallback(async () => {
+    try {
+      const res = await fetch('/api/me/stars', { cache: 'no-store' })
+      if (!res.ok) {
+        setViewerSignedIn(false)
+        return
+      }
+      const body = await res.json()
+      const ids: number[] = (body.stars ?? []).map((s: { entity_id: number }) => s.entity_id)
+      setStarredIds(new Set(ids))
+      setViewerSignedIn(true)
+    } catch {
+      setViewerSignedIn(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchStars()
+  }, [fetchStars])
+
+  const toggleStar = useCallback(
+    async (entityId: number) => {
+      if (!viewerSignedIn) {
+        // Send anonymous visitors through the login flow with a return-to
+        // that points back here so they land right where they were.
+        const next = encodeURIComponent('/market-map')
+        window.location.href = `/login?next=${next}`
+        return
+      }
+      const already = starredIds.has(entityId)
+      // Optimistic update — revert if the network call fails.
+      setStarredIds((prev) => {
+        const next = new Set(prev)
+        if (already) next.delete(entityId)
+        else next.add(entityId)
+        return next
+      })
+      try {
+        if (already) {
+          const res = await fetch(`/api/me/stars/${entityId}`, { method: 'DELETE' })
+          if (!res.ok) throw new Error(`unstar failed ${res.status}`)
+        } else {
+          const res = await fetch('/api/me/stars', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ entity_id: entityId }),
+          })
+          if (!res.ok) throw new Error(`star failed ${res.status}`)
+        }
+      } catch (err) {
+        console.error('[star toggle]', err)
+        // Roll back optimistic change on error.
+        setStarredIds((prev) => {
+          const next = new Set(prev)
+          if (already) next.add(entityId)
+          else next.delete(entityId)
+          return next
+        })
+      }
+    },
+    [starredIds, viewerSignedIn]
+  )
+
   useRealtimeTables(
     ['entities', 'entity_classifications', 'sectors', 'subsectors'],
     fetchCompanies,
@@ -159,17 +244,44 @@ export default function MarketMap({}: MarketMapProps) {
     return Array.from(set).sort()
   }, [companiesData])
 
+  // Subsector chip set is derived from the currently selected sectors so the
+  // list doesn't balloon to every subsector across every sector. When no
+  // sectors are selected there's no subsector filter to show either.
+  const availableSubsectors = useMemo(() => {
+    if (selectedSectors.size === 0) return [] as string[]
+    const set = new Set<string>()
+    companiesData.forEach((c) => {
+      const sectors = getSectors(c)
+      const subsectors = getSubsectors(c)
+      sectors.forEach((sec, idx) => {
+        // Company's sectors and subsectors arrays are aligned per row in the
+        // grid view, so the Nth subsector belongs to the Nth sector.
+        if (selectedSectors.has(sec)) {
+          const sub = subsectors[idx] ?? subsectors[0]
+          if (sub) set.add(sub)
+        }
+      })
+    })
+    return Array.from(set).sort()
+  }, [companiesData, selectedSectors])
+
   const filteredCompanies = useMemo(() => {
     const q = searchQuery.trim().toLowerCase()
     const matches = companiesData.filter((company) => {
+      const sectors = getSectors(company)
+      const subsectors = getSubsectors(company)
       const matchesSector =
-        selectedSector === null || getSectors(company).includes(selectedSector)
+        selectedSectors.size === 0 ||
+        sectors.some((s) => selectedSectors.has(s))
+      const matchesSubsector =
+        selectedSubsectors.size === 0 ||
+        subsectors.some((s) => selectedSubsectors.has(s))
       const matchesSearch =
         q === '' ||
         company.name.toLowerCase().includes(q) ||
-        getSubsectors(company).some((s) => s.toLowerCase().includes(q)) ||
+        subsectors.some((s) => s.toLowerCase().includes(q)) ||
         (company.description?.toLowerCase().includes(q) ?? false)
-      return matchesSector && matchesSearch
+      return matchesSector && matchesSubsector && matchesSearch
     })
     matches.sort((a, b) => {
       if (sortBy === 'name') return a.name.localeCompare(b.name)
@@ -179,7 +291,43 @@ export default function MarketMap({}: MarketMapProps) {
       )
     })
     return matches
-  }, [companiesData, selectedSector, searchQuery, sortBy])
+  }, [companiesData, selectedSectors, selectedSubsectors, searchQuery, sortBy])
+
+  // Keep the subsector filter honest: if the user removes a sector that was
+  // providing a currently-selected subsector, drop it.
+  useEffect(() => {
+    if (selectedSubsectors.size === 0) return
+    const valid = new Set(availableSubsectors)
+    let changed = false
+    const next = new Set<string>()
+    selectedSubsectors.forEach((s) => {
+      if (valid.has(s)) next.add(s)
+      else changed = true
+    })
+    if (changed) setSelectedSubsectors(next)
+  }, [availableSubsectors, selectedSubsectors])
+
+  const toggleSector = useCallback((sector: string) => {
+    setSelectedSectors((prev) => {
+      const next = new Set(prev)
+      if (next.has(sector)) next.delete(sector)
+      else next.add(sector)
+      return next
+    })
+  }, [])
+  const toggleSubsector = useCallback((subsector: string) => {
+    setSelectedSubsectors((prev) => {
+      const next = new Set(prev)
+      if (next.has(subsector)) next.delete(subsector)
+      else next.add(subsector)
+      return next
+    })
+  }, [])
+  const clearAllFilters = useCallback(() => {
+    setSelectedSectors(new Set())
+    setSelectedSubsectors(new Set())
+    setSearchQuery('')
+  }, [])
 
   const groupedCompanies = useMemo(() => {
     const groups: Record<string, Company[]> = {}
@@ -290,7 +438,7 @@ export default function MarketMap({}: MarketMapProps) {
 
             <div className="flex items-center gap-2">
               <div className="flex bg-gray-100 rounded-lg p-0.5">
-                {(['grid', 'grouped', 'landscape'] as ViewMode[]).map((mode) => (
+                {(['list', 'grid', 'grouped', 'landscape'] as ViewMode[]).map((mode) => (
                   <button
                     key={mode}
                     onClick={() => setViewMode(mode)}
@@ -304,6 +452,20 @@ export default function MarketMap({}: MarketMapProps) {
                   </button>
                 ))}
               </div>
+
+              <Link
+                href="/saved"
+                title="View your starred companies"
+                className="px-2.5 py-1.5 inline-flex items-center gap-1.5 bg-white border border-gray-200 rounded-md text-xs font-medium text-gray-700 hover:border-gray-300 hover:text-gray-900 transition"
+              >
+                <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z" />
+                </svg>
+                Saved
+                {starredIds.size > 0 && (
+                  <span className="text-[10px] text-gray-500">{starredIds.size}</span>
+                )}
+              </Link>
 
               <select
                 value={sortBy}
@@ -341,13 +503,17 @@ export default function MarketMap({}: MarketMapProps) {
             </div>
           </div>
 
-          {/* Row 2: sector filter chips */}
-          <div className="flex flex-wrap gap-1.5">
+          {/* Row 2: multi-select sector filter chips. Click to toggle;
+              picking more than one unions the filter (OR semantics). */}
+          <div className="flex flex-wrap items-center gap-1.5">
             <SectorChip
               label="All sectors"
-              active={selectedSector === null}
+              active={selectedSectors.size === 0}
               count={companiesData.length}
-              onClick={() => setSelectedSector(null)}
+              onClick={() => {
+                setSelectedSectors(new Set())
+                setSelectedSubsectors(new Set())
+              }}
             />
             {sectors.map((sector) => {
               const tokens = getSectorTokens(sector)
@@ -359,17 +525,54 @@ export default function MarketMap({}: MarketMapProps) {
                   key={sector}
                   label={sector}
                   count={count}
-                  active={selectedSector === sector}
+                  active={selectedSectors.has(sector)}
                   accent={tokens.accent}
                   bg={tokens.bg}
                   text={tokens.text}
-                  onClick={() =>
-                    setSelectedSector(selectedSector === sector ? null : sector)
-                  }
+                  onClick={() => toggleSector(sector)}
                 />
               )
             })}
+            {selectedSectors.size > 0 && (
+              <button
+                onClick={clearAllFilters}
+                className="ml-auto px-2 py-0.5 text-[11px] text-gray-500 hover:text-gray-800"
+              >
+                Clear filters
+              </button>
+            )}
           </div>
+
+          {/* Row 3: subsector chips — only shown once the user has picked a
+              sector. Scoped to the subsectors that live inside the chosen
+              sectors so the list stays digestible. */}
+          {availableSubsectors.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-gray-100">
+              <span className="text-[10px] uppercase tracking-wide text-gray-400 pr-1">
+                Subsector
+              </span>
+              <SectorChip
+                label="All"
+                active={selectedSubsectors.size === 0}
+                count={availableSubsectors.length}
+                onClick={() => setSelectedSubsectors(new Set())}
+              />
+              {availableSubsectors.map((subsector) => {
+                const count = companiesData.filter((c) =>
+                  getSubsectors(c).includes(subsector)
+                ).length
+                return (
+                  <SectorChip
+                    key={subsector}
+                    label={subsector}
+                    count={count}
+                    active={selectedSubsectors.has(subsector)}
+                    onClick={() => toggleSubsector(subsector)}
+                  />
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -386,7 +589,15 @@ export default function MarketMap({}: MarketMapProps) {
             sectorOrder={sectors}
             sectorTokens={getSectorTokens}
             onSelect={(id) => setSelectedEntityId(id)}
-            selectedSector={selectedSector}
+            selectedSectors={selectedSectors}
+          />
+        ) : viewMode === 'list' ? (
+          <CompanyList
+            companies={filteredCompanies}
+            getSectors={getSectors}
+            onSelect={(id) => setSelectedEntityId(id)}
+            starredIds={starredIds}
+            onToggleStar={toggleStar}
           />
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
@@ -396,6 +607,8 @@ export default function MarketMap({}: MarketMapProps) {
                 company={company}
                 getSectors={getSectors}
                 onSelect={(id) => setSelectedEntityId(id)}
+                starred={company.entity_id != null && starredIds.has(company.entity_id)}
+                onToggleStar={toggleStar}
               />
             ))}
           </div>
@@ -430,6 +643,8 @@ export default function MarketMap({}: MarketMapProps) {
                         company={company}
                         getSectors={getSectors}
                         onSelect={(id) => setSelectedEntityId(id)}
+                        starred={company.entity_id != null && starredIds.has(company.entity_id)}
+                        onToggleStar={toggleStar}
                       />
                     ))}
                   </div>
@@ -462,10 +677,7 @@ export default function MarketMap({}: MarketMapProps) {
               Try a broader search or clear the sector filter.
             </p>
             <button
-              onClick={() => {
-                setSearchQuery('')
-                setSelectedSector(null)
-              }}
+              onClick={clearAllFilters}
               className="mt-4 px-3 py-1.5 bg-gray-900 text-white text-xs font-medium rounded-md hover:bg-gray-800"
             >
               Clear filters
@@ -496,6 +708,8 @@ export default function MarketMap({}: MarketMapProps) {
       <CompanyDetailDrawer
         entityId={selectedEntityId}
         onClose={() => setSelectedEntityId(null)}
+        starred={selectedEntityId != null && starredIds.has(selectedEntityId)}
+        onToggleStar={toggleStar}
       />
 
       {/* Submit Company Modal */}
@@ -559,6 +773,8 @@ function CompanyCard({
   company,
   getSectors,
   onSelect,
+  starred,
+  onToggleStar,
 }: {
   company: Company
   getSectors: (c: Company) => string[]
@@ -569,6 +785,8 @@ function CompanyCard({
    * /company/[id] for deep-linking.
    */
   onSelect?: (entityId: number) => void
+  starred?: boolean
+  onToggleStar?: (entityId: number) => void
 }) {
   const sectors = getSectors(company)
   const extraSectorCount = Math.max(0, sectors.length - 1)
@@ -618,6 +836,16 @@ function CompanyCard({
           >
             +{extraSectorCount}
           </span>
+        )}
+        {company.entity_id != null && onToggleStar && (
+          <StarButton
+            active={!!starred}
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onToggleStar(company.entity_id!)
+            }}
+          />
         )}
       </div>
     </>
@@ -679,6 +907,139 @@ function Logo({
     >
       {initials}
     </span>
+  )
+}
+
+// Star button — rendered as a span with role=button so it can live inside
+// the outer <button>/Link card without producing nested interactive
+// elements (which browsers and React warn about).
+function StarButton({
+  active,
+  onClick,
+}: {
+  active: boolean
+  onClick: (e: React.MouseEvent) => void
+}) {
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={active ? 'Remove from saved' : 'Save to compare later'}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          e.stopPropagation()
+          onClick(e as unknown as React.MouseEvent)
+        }
+      }}
+      className={`shrink-0 inline-flex items-center justify-center w-6 h-6 rounded-md hover:bg-gray-100 ${
+        active ? 'text-amber-500' : 'text-gray-300 hover:text-amber-500'
+      } transition-colors`}
+      title={active ? 'Remove from saved' : 'Save company'}
+    >
+      <svg className="w-3.5 h-3.5" fill={active ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.75} viewBox="0 0 20 20">
+        <path
+          strokeLinejoin="round"
+          d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"
+        />
+      </svg>
+    </span>
+  )
+}
+
+// Dense, information-rich default view. Unlike the grid (which is all about
+// "can I see hundreds of logos at a glance"), the list is for shoppers —
+// one row per company with logo, name, primary subsector, HQ, year,
+// funding stage. Clicking opens the drawer just like the other views.
+function CompanyList({
+  companies,
+  getSectors,
+  onSelect,
+  starredIds,
+  onToggleStar,
+}: {
+  companies: Company[]
+  getSectors: (c: Company) => string[]
+  onSelect: (entityId: number) => void
+  starredIds: Set<number>
+  onToggleStar: (entityId: number) => void
+}) {
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Header row — lines up with the data columns below. Hidden on mobile. */}
+      <div className="hidden md:grid grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1fr)_72px_minmax(0,1fr)_36px] gap-3 px-4 py-2 border-b border-gray-200 text-[10px] uppercase tracking-wide text-gray-400 bg-gray-50">
+        <div>Company</div>
+        <div>Subsector</div>
+        <div>HQ</div>
+        <div>Founded</div>
+        <div>Funding stage</div>
+        <div className="text-right">Save</div>
+      </div>
+      <ul className="divide-y divide-gray-100">
+        {companies.map((c, i) => {
+          const tokens = getSectorTokens(c.sector)
+          const sectors = getSectors(c)
+          const extraSectorCount = Math.max(0, sectors.length - 1)
+          const isStarred = c.entity_id != null && starredIds.has(c.entity_id)
+          return (
+            <li key={`list-${c.entity_id ?? c.name}-${i}`} className="hover:bg-gray-50/60 transition-colors">
+              <button
+                type="button"
+                onClick={() => c.entity_id != null && onSelect(c.entity_id)}
+                className="w-full text-left px-4 py-3 grid grid-cols-1 md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1fr)_72px_minmax(0,1fr)_36px] gap-3 items-center"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    aria-hidden
+                    className="w-1 h-8 rounded-full shrink-0"
+                    style={{ backgroundColor: tokens.accent }}
+                  />
+                  <Logo logo_url={c.logo_url} initials={getInitials(c.name)} accent={tokens.accent} />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
+                      {extraSectorCount > 0 && (
+                        <span
+                          className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${tokens.bg} ${tokens.text}`}
+                          title={`Also in: ${sectors.slice(1).join(', ')}`}
+                        >
+                          +{extraSectorCount}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[11px] text-gray-500 truncate mt-0.5 flex items-center gap-1.5">
+                      <span
+                        className="inline-block w-1.5 h-1.5 rounded-full shrink-0"
+                        style={{ backgroundColor: tokens.accent }}
+                      />
+                      {c.sector}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-[12px] text-gray-700 truncate">{c.subsector || '—'}</div>
+                <div className="text-[12px] text-gray-600 truncate">{c.hq_location || '—'}</div>
+                <div className="text-[12px] text-gray-600">{c.year_founded ?? '—'}</div>
+                <div className="text-[12px] text-gray-600 truncate">{c.funding_stage || '—'}</div>
+                <div className="flex justify-end">
+                  {c.entity_id != null && (
+                    <StarButton
+                      active={isStarred}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        onToggleStar(c.entity_id!)
+                      }}
+                    />
+                  )}
+                </div>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    </div>
   )
 }
 

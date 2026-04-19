@@ -47,9 +47,14 @@ const SECTOR_ACCENT: Record<string, string> = {
 export default function CompanyDetailDrawer({
   entityId,
   onClose,
+  starred = false,
+  onToggleStar,
 }: {
   entityId: number | null
   onClose: () => void
+  /** Optional. When provided, a star button appears in the drawer header. */
+  starred?: boolean
+  onToggleStar?: (entityId: number) => void
 }) {
   const [data, setData] = useState<CompanyDetail | null>(null)
   const [loading, setLoading] = useState(false)
@@ -183,6 +188,24 @@ export default function CompanyDetailDrawer({
               </>
             )}
           </div>
+
+          {/* Viewer control: star / unstar this company. Visible to anyone
+              with a viewer session; anonymous visitors get sent to /login. */}
+          {data && onToggleStar && (
+            <button
+              type="button"
+              onClick={() => onToggleStar(data.entity_id)}
+              title={starred ? 'Remove from saved' : 'Save company'}
+              aria-pressed={starred}
+              className={`p-1.5 rounded-md hover:bg-gray-100 transition-colors ${
+                starred ? 'text-amber-500' : 'text-gray-400 hover:text-amber-500'
+              }`}
+            >
+              <svg className="w-4 h-4" fill={starred ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={1.75} viewBox="0 0 20 20">
+                <path strokeLinejoin="round" d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z" />
+              </svg>
+            </button>
+          )}
 
           {/* Super-admin controls */}
           {data && isSuper && !editing && (

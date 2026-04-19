@@ -36,7 +36,9 @@ interface Props {
     soft: string
   }
   onSelect: (entityId: number) => void
-  selectedSector: string | null
+  // A set-based filter lets the parent pass multiple sector selections;
+  // null / empty means "all sectors".
+  selectedSectors: Set<string>
 }
 
 type Density = 'compact' | 'standard'
@@ -46,9 +48,10 @@ export default function MarketMapLandscape({
   sectorOrder,
   sectorTokens,
   onSelect,
-  selectedSector,
+  selectedSectors,
 }: Props) {
   const [density, setDensity] = useState<Density>('standard')
+  const sectorsActive = selectedSectors.size > 0
 
   // Bucket: sector -> subsector -> companies[].
   const bucketed = useMemo(() => {
@@ -59,7 +62,7 @@ export default function MarketMapLandscape({
         c.subsectors && c.subsectors.length ? c.subsectors : [c.subsector]
       for (const sector of sectors) {
         if (!sector) continue
-        if (selectedSector && sector !== selectedSector) continue
+        if (sectorsActive && !selectedSectors.has(sector)) continue
         if (!result[sector]) result[sector] = {}
         for (const sub of subsectors) {
           if (!sub) continue
@@ -75,7 +78,7 @@ export default function MarketMapLandscape({
       }
     }
     return result
-  }, [companies, selectedSector])
+  }, [companies, selectedSectors, sectorsActive])
 
   const visibleSectors = sectorOrder.filter((s) => bucketed[s])
 

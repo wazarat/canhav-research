@@ -156,6 +156,9 @@ export default function CompanyDetailPage() {
   const [adminRole, setAdminRole] = useState<string | null>(null)
   const [editing, setEditing] = useState(false)
   const [merging, setMerging] = useState(false)
+  const [starred, setStarred] = useState(false)
+  const [starLoaded, setStarLoaded] = useState(false)
+  const [viewerSignedIn, setViewerSignedIn] = useState(false)
 
   // Silent admin-session probe. A 401/403 just means "not an admin" — fine;
   // the extra controls stay hidden. We re-run when the entity changes so the
@@ -169,6 +172,57 @@ export default function CompanyDetailPage() {
   }, [id])
 
   const isSuperAdmin = adminRole === 'super_admin'
+
+  // Pull my stars once to determine whether this company is already saved.
+  // Silent 401 → anonymous viewer, star button prompts for sign-in on click.
+  useEffect(() => {
+    if (!id) return
+    fetch('/api/me/stars', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((body) => {
+        if (!body) {
+          setViewerSignedIn(false)
+          setStarLoaded(true)
+          return
+        }
+        setViewerSignedIn(true)
+        const ids = new Set<number>((body.stars ?? []).map((s: { entity_id: number }) => s.entity_id))
+        setStarred(ids.has(Number(id)))
+        setStarLoaded(true)
+      })
+      .catch(() => {
+        setViewerSignedIn(false)
+        setStarLoaded(true)
+      })
+  }, [id])
+
+  const toggleStar = useCallback(async () => {
+    const entityId = Number(id)
+    if (!Number.isFinite(entityId)) return
+    if (!viewerSignedIn) {
+      const next = encodeURIComponent(`/company/${entityId}`)
+      window.location.href = `/login?next=${next}`
+      return
+    }
+    const already = starred
+    setStarred(!already)
+    try {
+      if (already) {
+        const res = await fetch(`/api/me/stars/${entityId}`, { method: 'DELETE' })
+        if (!res.ok) throw new Error(`unstar ${res.status}`)
+      } else {
+        const res = await fetch('/api/me/stars', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ entity_id: entityId }),
+        })
+        if (!res.ok) throw new Error(`star ${res.status}`)
+      }
+    } catch (err) {
+      console.error('[toggleStar]', err)
+      setStarred(already)
+    }
+  }, [id, starred, viewerSignedIn])
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -395,8 +449,36 @@ export default function CompanyDetailPage() {
             </svg>
             Back to Market Map
           </Link>
-          {company && isSuperAdmin && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            {company && starLoaded && (
+              <button
+                type="button"
+                onClick={toggleStar}
+                title={starred ? 'Remove from saved' : 'Save company'}
+                aria-pressed={starred}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium border transition-colors shadow-sm ${
+                  starred
+                    ? 'border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100'
+                    : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300'
+                }`}
+              >
+                <svg
+                  className="w-3.5 h-3.5"
+                  fill={starred ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  strokeWidth={1.75}
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    strokeLinejoin="round"
+                    d="M10 15.27L16.18 19l-1.64-7.03L20 7.24l-7.19-.61L10 0 7.19 6.63 0 7.24l5.46 4.73L3.82 19z"
+                  />
+                </svg>
+                {starred ? 'Saved' : 'Save'}
+              </button>
+            )}
+            {company && isSuperAdmin && (
+              <>
               <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-400 mr-1">
                 Super-admin
               </span>
@@ -422,8 +504,9 @@ export default function CompanyDetailPage() {
                 </svg>
                 Merge with…
               </button>
-            </div>
-          )}
+              </>
+            )}
+          </div>
         </div>
 
         {loading && (
