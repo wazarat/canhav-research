@@ -33,6 +33,22 @@ interface EntityClassification {
   practitioner_validation_check: string
 }
 
+interface SubsectorBlockColumn {
+  key: string
+  label: string
+  type: string
+}
+
+interface SubsectorBlock {
+  subsector_id: number
+  subsector_name: string
+  sector_name: string
+  is_primary: boolean
+  table_name: string | null
+  display_schema: SubsectorBlockColumn[]
+  data: Record<string, unknown> | null
+}
+
 interface CompanyDetail {
   entity_id: number
   entity_name: string
@@ -86,21 +102,14 @@ type Row = {
 // description, reason_for_inclusion, practitioner's note etc. are rendered
 // from the SHARED classification in their own section below.
 const ROWS: Row[] = [
+  // Primary sector/subsector are already rendered in the page header banner
+  // ("Comparing within <sector> · <subsector>"), so we only show the full
+  // classification lists here — and only when a company actually spans
+  // multiple sectors/subsectors (see empty-row filter below, which will
+  // auto-hide a single-value row when it matches the banner on both sides).
   {
     section: 'overview',
-    label: 'Primary sector',
-    pick: (c) => c.classifications.find((x) => x.is_primary)?.sector_name ?? '—',
-    raw: (c) => c.classifications.find((x) => x.is_primary)?.sector_name ?? null,
-  },
-  {
-    section: 'overview',
-    label: 'Primary subsector',
-    pick: (c) => c.classifications.find((x) => x.is_primary)?.subsector_name ?? '—',
-    raw: (c) => c.classifications.find((x) => x.is_primary)?.subsector_name ?? null,
-  },
-  {
-    section: 'overview',
-    label: 'All sectors',
+    label: 'Sectors',
     pick: (c) => {
       const s = Array.from(new Set(c.classifications.map((x) => x.sector_name))).sort()
       return s.length ? s.join(' · ') : '—'
@@ -109,7 +118,7 @@ const ROWS: Row[] = [
   },
   {
     section: 'overview',
-    label: 'All subsectors',
+    label: 'Subsectors',
     pick: (c) => {
       const s = Array.from(new Set(c.classifications.map((x) => x.subsector_name))).sort()
       return s.length ? s.join(' · ') : '—'
@@ -265,6 +274,45 @@ function isEmptyRaw(raw: string | null): boolean {
   return raw.trim() === ''
 }
 
+// Per-subsector datapoints come through as arbitrary JSON values; treat
+// null/undefined/empty-string/empty-array as empty. We intentionally do
+// NOT treat 0 or false as empty — they're meaningful values for some
+// columns (e.g. "upgradeability: false").
+function isDatapointEmpty(v: unknown): boolean {
+  if (v == null) return true
+  if (typeof v === 'string') return v.trim() === ''
+  if (Array.isArray(v)) return v.length === 0
+  return false
+}
+
+// Render a raw datapoint value; handle urls, bools, arrays, and long text.
+function renderDatapoint(v: unknown, type: string): React.ReactNode {
+  if (isDatapointEmpty(v)) return '—'
+  if (Array.isArray(v)) return v.join(', ')
+  if (typeof v === 'boolean') return v ? 'Yes' : 'No'
+  const s = String(v)
+  if (type === 'url' && /^https?:\/\//i.test(s)) {
+    return (
+      <a
+        href={s}
+        target="_blank"
+        rel="noreferrer noopener"
+        className="text-blue-600 hover:underline break-all"
+      >
+        {s.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+      </a>
+    )
+  }
+  return s
+}
+
+// Stable comparable key for the divergence highlight.
+function datapointKey(v: unknown): string | null {
+  if (isDatapointEmpty(v)) return null
+  if (Array.isArray(v)) return [...v].sort().join('|')
+  return String(v)
+}
+
 export default function ComparePage() {
   const router = useRouter()
   const { ids } = router.query
@@ -279,6 +327,9 @@ export default function ComparePage() {
 
   const [left, setLeft] = useState<CompanyDetail | null>(null)
   const [right, setRight] = useState<CompanyDetail | null>(null)
+  const [leftBlocks, setLeftBlocks] = useState<SubsectorBlock[]>([])
+  const [rightBlocks, setRightBlocks] = useState<SubsectorBlock[]>([])
+  const [blocksSignedIn, setBlocksSignedIn] = useState<boolean>(true)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -292,6 +343,9 @@ export default function ComparePage() {
     }
     setLoading(true)
     setError(null)
+    // Kick off the universal company fetch and the per-subsector datapoints
+    // fetch concurrently. Datapoints are viewer-gated, so a 401 there is
+    // expected for anonymous users and we degrade gracefully.
     Promise.all(idList.map((id) => fetch(`/api/company/${id}`).then((r) => (r.ok ? r.json() : null))))
       .then(([a, b]) => {
         setLeft(a)
@@ -300,6 +354,29 @@ export default function ComparePage() {
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Comparison failed.'))
       .finally(() => setLoading(false))
+
+    Promise.all(
+      idList.map((id) =>
+        fetch(`/api/company/${id}/subsector-data`, { cache: 'no-store' }).then(async (r) => {
+          if (r.status === 401) return { unauth: true as const }
+          if (!r.ok) return { blocks: [] as SubsectorBlock[] }
+          const json = await r.json()
+          return { blocks: (json.blocks ?? []) as SubsectorBlock[] }
+        })
+      )
+    )
+      .then(([a, b]) => {
+        const unauth =
+          (a && 'unauth' in a && a.unauth) ||
+          (b && 'unauth' in b && b.unauth)
+        setBlocksSignedIn(!unauth)
+        setLeftBlocks(a && 'blocks' in a ? a.blocks : [])
+        setRightBlocks(b && 'blocks' in b ? b.blocks : [])
+      })
+      .catch(() => {
+        setLeftBlocks([])
+        setRightBlocks([])
+      })
   }, [router.isReady, idList])
 
   // The shared subsector is the anchor for a meaningful comparison. We
@@ -331,12 +408,29 @@ export default function ComparePage() {
   }, [left, right])
 
   // Pre-compute universal rows by section with the "both empty" filter
-  // applied so we don't render dead rows.
+  // applied so we don't render dead rows. We also hide the Sectors /
+  // Subsectors rows when both sides have a single value that matches the
+  // shared banner — that information is already communicated above.
   const sectionsToRender = useMemo(() => {
     if (!left || !right) return []
+    const hideRedundant = (label: string): boolean => {
+      if (!shared) return false
+      if (label === 'Sectors') {
+        const l = new Set(left.classifications.map((c) => c.sector_name))
+        const r = new Set(right.classifications.map((c) => c.sector_name))
+        return l.size <= 1 && r.size <= 1
+      }
+      if (label === 'Subsectors') {
+        const l = new Set(left.classifications.map((c) => c.subsector_name))
+        const r = new Set(right.classifications.map((c) => c.subsector_name))
+        return l.size <= 1 && r.size <= 1
+      }
+      return false
+    }
     return (Object.keys(SECTION_TITLES) as Section[])
       .map((section) => {
         const rows = ROWS.filter((r) => r.section === section).filter((r) => {
+          if (hideRedundant(r.label)) return false
           const l = r.raw(left)
           const rr = r.raw(right)
           return !(isEmptyRaw(l) && isEmptyRaw(rr))
@@ -344,7 +438,7 @@ export default function ComparePage() {
         return { section, rows }
       })
       .filter((s) => s.rows.length > 0)
-  }, [left, right])
+  }, [left, right, shared])
 
   const sharedRows = useMemo(() => {
     if (!shared) return []
@@ -354,6 +448,28 @@ export default function ComparePage() {
       return !(isEmptyRaw(l) && isEmptyRaw(rr))
     })
   }, [shared])
+
+  // Pull the per-subsector datapoints that belong to the shared subsector.
+  // Build rows from the union of schema keys on both sides so a column that
+  // exists on only one side still shows up, and filter out any where both
+  // sides are empty/blank.
+  const sharedDatapointRows = useMemo(() => {
+    if (!shared) return [] as Array<{ col: SubsectorBlockColumn; l: unknown; r: unknown }>
+    const lb = leftBlocks.find((b) => b.subsector_id === shared.left.subsector_id)
+    const rb = rightBlocks.find((b) => b.subsector_id === shared.right.subsector_id)
+    if (!lb && !rb) return []
+    const cols = new Map<string, SubsectorBlockColumn>()
+    for (const c of lb?.display_schema ?? []) cols.set(c.key, c)
+    for (const c of rb?.display_schema ?? []) if (!cols.has(c.key)) cols.set(c.key, c)
+    const out: Array<{ col: SubsectorBlockColumn; l: unknown; r: unknown }> = []
+    Array.from(cols.values()).forEach((col) => {
+      const l = lb?.data?.[col.key]
+      const r = rb?.data?.[col.key]
+      if (isDatapointEmpty(l) && isDatapointEmpty(r)) return
+      out.push({ col, l, r })
+    })
+    return out
+  }, [shared, leftBlocks, rightBlocks])
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -454,7 +570,7 @@ export default function ComparePage() {
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
               {/* Shared-subsector section goes first so the most
                   apples-to-apples comparison sits at the top. */}
-              {sharedRows.length > 0 && (
+              {(sharedRows.length > 0 || sharedDatapointRows.length > 0) && (
                 <div>
                   <div className="px-5 py-2.5 bg-blue-50/60 border-b border-t border-blue-100 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
                     Subsector · {shared.name}
@@ -467,7 +583,7 @@ export default function ComparePage() {
                         !isEmptyRaw(rawL) && !isEmptyRaw(rawR) && rawL !== rawR
                       return (
                         <div
-                          key={row.label}
+                          key={`cls-${row.label}`}
                           className="grid grid-cols-[160px_1fr_1fr] border-b border-gray-100 last:border-b-0"
                         >
                           <div className="px-5 py-3 text-[11px] uppercase tracking-wide text-gray-500 bg-gray-50/40 border-r border-gray-100">
@@ -480,7 +596,43 @@ export default function ComparePage() {
                         </div>
                       )
                     })}
+
+                    {sharedDatapointRows.length > 0 && (
+                      <div className="px-5 py-2 bg-blue-50/20 border-y border-blue-50 text-[10px] font-semibold uppercase tracking-[0.12em] text-blue-700/70">
+                        Datapoints
+                      </div>
+                    )}
+
+                    {sharedDatapointRows.map(({ col, l, r }) => {
+                      const keyL = datapointKey(l)
+                      const keyR = datapointKey(r)
+                      const isDiff = keyL != null && keyR != null && keyL !== keyR
+                      return (
+                        <div
+                          key={`dp-${col.key}`}
+                          className="grid grid-cols-[160px_1fr_1fr] border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="px-5 py-3 text-[11px] uppercase tracking-wide text-gray-500 bg-gray-50/40 border-r border-gray-100">
+                            {col.label}
+                          </div>
+                          <CompareCell highlight={isDiff}>{renderDatapoint(l, col.type)}</CompareCell>
+                          <CompareCell highlight={isDiff} borderLeft>
+                            {renderDatapoint(r, col.type)}
+                          </CompareCell>
+                        </div>
+                      )
+                    })}
                   </div>
+                </div>
+              )}
+
+              {!blocksSignedIn && shared && (
+                <div className="px-5 py-3 bg-amber-50/60 border-b border-amber-100 text-[12px] text-amber-800">
+                  <Link href={`/login?next=${encodeURIComponent(`/compare?ids=${idList.join(',')}`)}`} className="font-medium underline">
+                    Sign in
+                  </Link>{' '}
+                  to unlock the full {shared.name} datapoints for both companies
+                  (ticker, target peg, collateralization, etc.).
                 </div>
               )}
 
