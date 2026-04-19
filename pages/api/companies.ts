@@ -21,6 +21,9 @@ export interface MarketMapEntity {
   description?: string
   website?: string
   maintaining_organization?: string
+  // Practitioner's note for the PRIMARY classification only. Any per-subsector
+  // note for non-primary classifications still lives on /api/company/[id].
+  practitioners_note?: string
   // All tags for filtering — multi-sector entities have length > 1
   sectors: string[]
   subsectors: string[]
@@ -60,6 +63,7 @@ type GridRow = {
   primary_description: string | null
   primary_classification_website: string | null
   primary_maintaining_organization: string | null
+  primary_practitioners_note: string | null
   sectors: string[] | null
   subsectors: string[] | null
   classification_count: number
@@ -101,6 +105,7 @@ export default async function handler(
           description: row.primary_description || undefined,
           website: row.primary_classification_website || undefined,
           maintaining_organization: row.primary_maintaining_organization || undefined,
+          practitioners_note: row.primary_practitioners_note || undefined,
           sectors: row.sectors ?? (primarySector ? [primarySector] : []),
           subsectors: row.subsectors ?? (primarySubsector ? [primarySubsector] : []),
           canonical_website: row.canonical_website,

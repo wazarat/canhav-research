@@ -24,6 +24,7 @@ interface SavedCompany {
   sector: string | null
   subsector: string | null
   sectors: string[] | null
+  subsectors: string[] | null
   hq_location: string | null
   year_founded: number | null
   funding_stage: string | null
@@ -75,22 +76,70 @@ export default function SavedPage() {
     fetchStars()
   }, [fetchStars])
 
-  const toggleSelect = useCallback((entityId: number) => {
-    setSelected((prev) => {
-      const next = new Set(prev)
-      if (next.has(entityId)) {
-        next.delete(entityId)
-      } else {
+  // Build a quick lookup so the compatibility logic below is O(1) per row.
+  const byId = useMemo(() => {
+    const m = new Map<number, SavedCompany>()
+    for (const s of stars) m.set(s.entity_id, s)
+    return m
+  }, [stars])
+
+  // Returns the set of subsectors shared with every already-selected entity.
+  // Empty set => no shared subsector => the candidate can't be compared.
+  const sharedSubsectorsWith = useCallback(
+    (candidate: SavedCompany): Set<string> => {
+      const candSubs = new Set((candidate.subsectors ?? []).filter(Boolean))
+      if (candSubs.size === 0) return new Set()
+      let acc: Set<string> | null = null
+      for (const id of selected) {
+        if (id === candidate.entity_id) continue
+        const other = byId.get(id)
+        if (!other) continue
+        const otherSubs = new Set((other.subsectors ?? []).filter(Boolean))
+        const intersection = new Set(
+          [...candSubs].filter((x) => otherSubs.has(x))
+        )
+        acc = acc === null ? intersection : new Set([...acc].filter((x) => intersection.has(x)))
+      }
+      return acc ?? candSubs
+    },
+    [selected, byId]
+  )
+
+  const isRowLocked = useCallback(
+    (s: SavedCompany): boolean => {
+      if (selected.has(s.entity_id)) return false
+      if (selected.size === 0) return false
+      return sharedSubsectorsWith(s).size === 0
+    },
+    [selected, sharedSubsectorsWith]
+  )
+
+  const toggleSelect = useCallback(
+    (entityId: number) => {
+      setSelected((prev) => {
+        const next = new Set(prev)
+        if (next.has(entityId)) {
+          next.delete(entityId)
+          return next
+        }
+        // Block picks that would break the same-subsector invariant.
+        const candidate = byId.get(entityId)
+        if (candidate && prev.size > 0) {
+          const locked =
+            sharedSubsectorsWith(candidate).size === 0
+          if (locked) return prev
+        }
         // Cap at 2 selections — when you add a 3rd, drop the oldest.
         if (next.size >= 2) {
           const first = next.values().next().value
           if (typeof first === 'number') next.delete(first)
         }
         next.add(entityId)
-      }
-      return next
-    })
-  }, [])
+        return next
+      })
+    },
+    [byId, sharedSubsectorsWith]
+  )
 
   const unstar = useCallback(async (entityId: number) => {
     setStars((prev) => prev.filter((s) => s.entity_id !== entityId))
@@ -171,8 +220,9 @@ export default function SavedPage() {
               Saved companies
             </h1>
             <p className="mt-1.5 text-sm text-gray-500 max-w-xl">
-              Pick any two to run a side-by-side comparison across all the
-              metadata we have on each.
+              Pick any two companies that share a subsector to run a
+              side-by-side comparison — that way every row in the comparison
+              has data on both sides.
             </p>
           </div>
           <div className="text-xs text-gray-500">
@@ -219,15 +269,30 @@ export default function SavedPage() {
               {stars.map((s) => {
                 const accent = s.sector ? SECTOR_ACCENT[s.sector] ?? '#9ca3af' : '#9ca3af'
                 const isSelected = selected.has(s.entity_id)
+                const locked = isRowLocked(s)
+                const lockReason = locked
+                  ? 'Compare only works within the same subsector as your current pick.'
+                  : undefined
                 return (
-                  <li key={s.star_id} className={`${isSelected ? 'bg-blue-50/60' : 'hover:bg-gray-50/60'} transition-colors`}>
+                  <li
+                    key={s.star_id}
+                    className={`${
+                      isSelected
+                        ? 'bg-blue-50/60'
+                        : locked
+                        ? 'opacity-60'
+                        : 'hover:bg-gray-50/60'
+                    } transition-colors`}
+                    title={lockReason}
+                  >
                     <div className="px-4 py-3 grid grid-cols-1 md:grid-cols-[36px_minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1fr)_72px_minmax(0,1fr)_80px] gap-3 items-center">
-                      <label className="inline-flex items-center cursor-pointer">
+                      <label className={`inline-flex items-center ${locked ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
                         <input
                           type="checkbox"
                           checked={isSelected}
+                          disabled={locked}
                           onChange={() => toggleSelect(s.entity_id)}
-                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-40"
                           aria-label={`Select ${s.name ?? 'company'} for comparison`}
                         />
                       </label>
@@ -272,6 +337,11 @@ export default function SavedPage() {
         <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-white rounded-full shadow-lg border border-gray-200 px-4 py-2 flex items-center gap-3">
           <span className="text-xs text-gray-500">
             {selected.size} of 2 selected
+            {selected.size === 1 && (
+              <span className="ml-1 text-gray-400">
+                · pick a second in the same subsector
+              </span>
+            )}
           </span>
           <div className="h-4 w-px bg-gray-200" />
           <button

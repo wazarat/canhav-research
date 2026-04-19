@@ -26,6 +26,8 @@ interface Company {
   canonical_website?: string | null
   status?: string | null
   total_funding_usd?: number | null
+  maintaining_organization?: string | null
+  practitioners_note?: string | null
 }
 
 interface MarketMapProps {}
@@ -509,7 +511,6 @@ export default function MarketMap({}: MarketMapProps) {
             <SectorChip
               label="All sectors"
               active={selectedSectors.size === 0}
-              count={companiesData.length}
               onClick={() => {
                 setSelectedSectors(new Set())
                 setSelectedSubsectors(new Set())
@@ -517,14 +518,10 @@ export default function MarketMap({}: MarketMapProps) {
             />
             {sectors.map((sector) => {
               const tokens = getSectorTokens(sector)
-              const count = companiesData.filter((c) =>
-                getSectors(c).includes(sector)
-              ).length
               return (
                 <SectorChip
                   key={sector}
                   label={sector}
-                  count={count}
                   active={selectedSectors.has(sector)}
                   accent={tokens.accent}
                   bg={tokens.bg}
@@ -554,23 +551,16 @@ export default function MarketMap({}: MarketMapProps) {
               <SectorChip
                 label="All"
                 active={selectedSubsectors.size === 0}
-                count={availableSubsectors.length}
                 onClick={() => setSelectedSubsectors(new Set())}
               />
-              {availableSubsectors.map((subsector) => {
-                const count = companiesData.filter((c) =>
-                  getSubsectors(c).includes(subsector)
-                ).length
-                return (
-                  <SectorChip
-                    key={subsector}
-                    label={subsector}
-                    count={count}
-                    active={selectedSubsectors.has(subsector)}
-                    onClick={() => toggleSubsector(subsector)}
-                  />
-                )
-              })}
+              {availableSubsectors.map((subsector) => (
+                <SectorChip
+                  key={subsector}
+                  label={subsector}
+                  active={selectedSubsectors.has(subsector)}
+                  onClick={() => toggleSubsector(subsector)}
+                />
+              ))}
             </div>
           )}
         </div>
@@ -731,7 +721,6 @@ export default function MarketMap({}: MarketMapProps) {
 
 function SectorChip({
   label,
-  count,
   active,
   accent,
   bg,
@@ -739,7 +728,6 @@ function SectorChip({
   onClick,
 }: {
   label: string
-  count: number
   active: boolean
   accent?: string
   bg?: string
@@ -764,7 +752,6 @@ function SectorChip({
         />
       )}
       <span>{label}</span>
-      <span className="text-[10px] opacity-70">{count}</span>
     </button>
   )
 }
@@ -966,15 +953,21 @@ function CompanyList({
   starredIds: Set<number>
   onToggleStar: (entityId: number) => void
 }) {
+  // 6-column layout: Company | Subsector | Website | Maintained by | Note | Save.
+  // We pack the heaviest text into the Note column (2fr) and keep the rest
+  // tight so alignment stays clean at typical desktop widths.
+  const gridCols =
+    'md:grid-cols-[minmax(0,1.8fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_36px]'
+
   return (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
       {/* Header row — lines up with the data columns below. Hidden on mobile. */}
-      <div className="hidden md:grid grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1fr)_72px_minmax(0,1fr)_36px] gap-3 px-4 py-2 border-b border-gray-200 text-[10px] uppercase tracking-wide text-gray-400 bg-gray-50">
+      <div className={`hidden md:grid ${gridCols} gap-3 px-4 py-2 border-b border-gray-200 text-[10px] uppercase tracking-wide text-gray-400 bg-gray-50`}>
         <div>Company</div>
         <div>Subsector</div>
-        <div>HQ</div>
-        <div>Founded</div>
-        <div>Funding stage</div>
+        <div>Website</div>
+        <div>Maintained by</div>
+        <div>Practitioner&apos;s note</div>
         <div className="text-right">Save</div>
       </div>
       <ul className="divide-y divide-gray-100">
@@ -983,12 +976,14 @@ function CompanyList({
           const sectors = getSectors(c)
           const extraSectorCount = Math.max(0, sectors.length - 1)
           const isStarred = c.entity_id != null && starredIds.has(c.entity_id)
+          const websiteRaw = c.website || c.canonical_website || null
+          const websiteLabel = formatHostname(websiteRaw)
           return (
             <li key={`list-${c.entity_id ?? c.name}-${i}`} className="hover:bg-gray-50/60 transition-colors">
               <button
                 type="button"
                 onClick={() => c.entity_id != null && onSelect(c.entity_id)}
-                className="w-full text-left px-4 py-3 grid grid-cols-1 md:grid-cols-[minmax(0,2.2fr)_minmax(0,1.4fr)_minmax(0,1fr)_72px_minmax(0,1fr)_36px] gap-3 items-center"
+                className={`w-full text-left px-4 py-3 grid grid-cols-1 ${gridCols} gap-3 items-start`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span
@@ -1018,11 +1013,22 @@ function CompanyList({
                     </div>
                   </div>
                 </div>
-                <div className="text-[12px] text-gray-700 truncate">{c.subsector || '—'}</div>
-                <div className="text-[12px] text-gray-600 truncate">{c.hq_location || '—'}</div>
-                <div className="text-[12px] text-gray-600">{c.year_founded ?? '—'}</div>
-                <div className="text-[12px] text-gray-600 truncate">{c.funding_stage || '—'}</div>
-                <div className="flex justify-end">
+                <div className="text-[12px] text-gray-700 truncate pt-0.5">
+                  {c.subsector || <span className="text-gray-300">—</span>}
+                </div>
+                <div className="text-[12px] text-gray-600 truncate pt-0.5" title={websiteRaw ?? undefined}>
+                  {websiteLabel ?? <span className="text-gray-300">—</span>}
+                </div>
+                <div className="text-[12px] text-gray-700 truncate pt-0.5" title={c.maintaining_organization ?? undefined}>
+                  {c.maintaining_organization || <span className="text-gray-300">—</span>}
+                </div>
+                <div
+                  className="text-[12px] leading-snug text-gray-600 line-clamp-2 pt-0.5"
+                  title={c.practitioners_note ?? undefined}
+                >
+                  {c.practitioners_note || <span className="text-gray-300">—</span>}
+                </div>
+                <div className="flex justify-end pt-0.5">
                   {c.entity_id != null && (
                     <StarButton
                       active={isStarred}
@@ -1041,6 +1047,24 @@ function CompanyList({
       </ul>
     </div>
   )
+}
+
+// Pretty-print a hostname for the list's Website column. Strips `www.` and
+// any trailing path so the column stays visually tidy even when a source
+// pasted in a long URL.
+function formatHostname(url: string | null | undefined): string | null {
+  if (!url) return null
+  const trimmed = url.trim()
+  if (!trimmed) return null
+  try {
+    const u = new URL(/^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`)
+    return u.hostname.replace(/^www\./i, '')
+  } catch {
+    return trimmed
+      .replace(/^https?:\/\//i, '')
+      .replace(/^www\./i, '')
+      .split('/')[0] || trimmed
+  }
 }
 
 function StatCell({ label, value }: { label: string; value: number | string }) {

@@ -71,14 +71,20 @@ const SECTOR_ACCENT: Record<string, string> = {
 
 // Row definitions for the field-by-field comparison table. Keeps the
 // data-fetching and the render wiring decoupled.
+type Section = 'overview' | 'company' | 'funding' | 'ecosystem' | 'links'
+
 type Row = {
   label: string
   pick: (c: CompanyDetail) => React.ReactNode
-  // Raw comparable value for the "different?" highlight.
-  raw?: (c: CompanyDetail) => string | null
-  section: 'overview' | 'company' | 'funding' | 'ecosystem' | 'links'
+  // Raw comparable value — also used to detect "both empty" so we can
+  // hide redundant rows from the table.
+  raw: (c: CompanyDetail) => string | null
+  section: Section
 }
 
+// Rows for universal (company-level) data. Per-subsector fields like
+// description, reason_for_inclusion, practitioner's note etc. are rendered
+// from the SHARED classification in their own section below.
 const ROWS: Row[] = [
   {
     section: 'overview',
@@ -112,15 +118,14 @@ const ROWS: Row[] = [
   },
   {
     section: 'overview',
-    label: 'Description',
-    pick: (c) => c.long_description ?? c.classifications.find((x) => x.is_primary)?.description ?? '—',
-    raw: (c) => c.long_description ?? c.classifications.find((x) => x.is_primary)?.description ?? null,
+    label: 'Long description',
+    pick: (c) => c.long_description ?? '—',
+    raw: (c) => c.long_description ?? null,
   },
   { section: 'company', label: 'HQ', pick: (c) => c.hq_location ?? '—', raw: (c) => c.hq_location ?? null },
   { section: 'company', label: 'Founded', pick: (c) => c.year_founded ?? '—', raw: (c) => (c.year_founded ? String(c.year_founded) : null) },
   { section: 'company', label: 'Status', pick: (c) => c.status ?? '—', raw: (c) => c.status ?? null },
   { section: 'company', label: 'Founders', pick: (c) => formatList(c.founders), raw: (c) => listKey(c.founders) },
-  { section: 'company', label: 'Maintaining org', pick: (c) => c.classifications.find((x) => x.is_primary)?.maintaining_organization || '—', raw: (c) => c.classifications.find((x) => x.is_primary)?.maintaining_organization || null },
 
   { section: 'funding', label: 'Stage', pick: (c) => c.funding_stage ?? '—', raw: (c) => c.funding_stage ?? null },
   {
@@ -195,12 +200,69 @@ const ROWS: Row[] = [
   },
 ]
 
-const SECTION_TITLES: Record<Row['section'], string> = {
+const SECTION_TITLES: Record<Section, string> = {
   overview: 'Overview',
   company: 'Company',
   funding: 'Funding',
   ecosystem: 'Ecosystem',
   links: 'Links',
+}
+
+// Row definitions that read from the SHARED classification on each side.
+// Rendered under the "Shared subsector" section so we never compare a
+// DeFi-subsector note against a stablecoin-subsector note.
+type ClassificationRow = {
+  label: string
+  pick: (cls: EntityClassification) => React.ReactNode
+  raw: (cls: EntityClassification) => string | null
+}
+
+const SHARED_SUBSECTOR_ROWS: ClassificationRow[] = [
+  {
+    label: 'Description',
+    pick: (cls) => cls.description || '—',
+    raw: (cls) => cls.description || null,
+  },
+  {
+    label: 'Reason for inclusion',
+    pick: (cls) => cls.reason_for_inclusion || '—',
+    raw: (cls) => cls.reason_for_inclusion || null,
+  },
+  {
+    label: "Practitioner's note",
+    pick: (cls) => cls.practitioners_note || '—',
+    raw: (cls) => cls.practitioners_note || null,
+  },
+  {
+    label: 'Validation check',
+    pick: (cls) => cls.practitioner_validation_check || '—',
+    raw: (cls) => cls.practitioner_validation_check || null,
+  },
+  {
+    label: 'Maintaining org',
+    pick: (cls) => cls.maintaining_organization || '—',
+    raw: (cls) => cls.maintaining_organization || null,
+  },
+  {
+    label: 'Website',
+    pick: (cls) =>
+      cls.website ? (
+        <a href={cls.website} target="_blank" rel="noreferrer noopener" className="text-blue-600 hover:underline break-all">
+          {cls.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+        </a>
+      ) : (
+        '—'
+      ),
+    raw: (cls) => cls.website || null,
+  },
+]
+
+// A row is "empty" when both sides have no meaningful value. We treat
+// whitespace-only strings as empty so padding in the sheets doesn't leak
+// phantom rows into the comparison.
+function isEmptyRaw(raw: string | null): boolean {
+  if (raw == null) return true
+  return raw.trim() === ''
 }
 
 export default function ComparePage() {
@@ -239,6 +301,59 @@ export default function ComparePage() {
       .catch((err) => setError(err instanceof Error ? err.message : 'Comparison failed.'))
       .finally(() => setLoading(false))
   }, [router.isReady, idList])
+
+  // The shared subsector is the anchor for a meaningful comparison. We
+  // prefer a shared subsector that is primary for at least one side so the
+  // label matches the big "primary subsector" a user saw on /saved.
+  const shared = useMemo(() => {
+    if (!left || !right) return null
+    const leftBySub = new Map<string, EntityClassification>()
+    for (const c of left.classifications) {
+      if (c.subsector_name) leftBySub.set(c.subsector_name, c)
+    }
+    const candidates: Array<{
+      name: string
+      sector_name: string
+      left: EntityClassification
+      right: EntityClassification
+    }> = []
+    for (const r of right.classifications) {
+      if (!r.subsector_name) continue
+      const l = leftBySub.get(r.subsector_name)
+      if (l) candidates.push({ name: r.subsector_name, sector_name: r.sector_name, left: l, right: r })
+    }
+    if (candidates.length === 0) return null
+    candidates.sort((a, b) => {
+      const score = (x: typeof a) => (x.left.is_primary ? 1 : 0) + (x.right.is_primary ? 1 : 0)
+      return score(b) - score(a)
+    })
+    return candidates[0]
+  }, [left, right])
+
+  // Pre-compute universal rows by section with the "both empty" filter
+  // applied so we don't render dead rows.
+  const sectionsToRender = useMemo(() => {
+    if (!left || !right) return []
+    return (Object.keys(SECTION_TITLES) as Section[])
+      .map((section) => {
+        const rows = ROWS.filter((r) => r.section === section).filter((r) => {
+          const l = r.raw(left)
+          const rr = r.raw(right)
+          return !(isEmptyRaw(l) && isEmptyRaw(rr))
+        })
+        return { section, rows }
+      })
+      .filter((s) => s.rows.length > 0)
+  }, [left, right])
+
+  const sharedRows = useMemo(() => {
+    if (!shared) return []
+    return SHARED_SUBSECTOR_ROWS.filter((r) => {
+      const l = r.raw(shared.left)
+      const rr = r.raw(shared.right)
+      return !(isEmptyRaw(l) && isEmptyRaw(rr))
+    })
+  }, [shared])
 
   const navItems = [
     { name: 'Home', href: '/' },
@@ -307,50 +422,105 @@ export default function ComparePage() {
           </div>
         )}
 
-        {!loading && left && right && (
+        {!loading && !error && left && right && !shared && (
+          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+            <strong className="font-semibold">{left.entity_name}</strong> and{' '}
+            <strong className="font-semibold">{right.entity_name}</strong> aren&apos;t
+            classified under a shared subsector, so a row-by-row comparison
+            would be mostly empty. Pick two companies from the same subsector
+            instead.{' '}
+            <Link href="/saved" className="underline font-medium">
+              Back to saved
+            </Link>
+            .
+          </div>
+        )}
+
+        {!loading && left && right && shared && (
           <>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <CompanyHeader company={left} />
               <CompanyHeader company={right} />
             </div>
 
+            <div className="mb-3 text-xs text-gray-500">
+              Comparing within{' '}
+              <span className="font-medium text-gray-700">
+                {shared.sector_name} · {shared.name}
+              </span>
+              . Rows with no data on either side are hidden.
+            </div>
+
             <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-              {(Object.keys(SECTION_TITLES) as Row['section'][]).map((section) => {
-                const rows = ROWS.filter((r) => r.section === section)
-                return (
-                  <div key={section}>
-                    <div className="px-5 py-2.5 bg-gray-50/70 border-b border-t border-gray-100 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                      {SECTION_TITLES[section]}
-                    </div>
-                    <div>
-                      {rows.map((row) => {
-                        const rawL = row.raw ? row.raw(left) : null
-                        const rawR = row.raw ? row.raw(right) : null
-                        const isDiff = rawL !== rawR && (rawL || rawR)
-                        return (
-                          <div
-                            key={row.label}
-                            className="grid grid-cols-[140px_1fr_1fr] border-b border-gray-100 last:border-b-0"
-                          >
-                            <div className="px-5 py-3 text-[11px] uppercase tracking-wide text-gray-500 bg-gray-50/40 border-r border-gray-100">
-                              {row.label}
-                            </div>
-                            <CompareCell highlight={!!isDiff}>{row.pick(left)}</CompareCell>
-                            <CompareCell highlight={!!isDiff} borderLeft>
-                              {row.pick(right)}
-                            </CompareCell>
-                          </div>
-                        )
-                      })}
-                    </div>
+              {/* Shared-subsector section goes first so the most
+                  apples-to-apples comparison sits at the top. */}
+              {sharedRows.length > 0 && (
+                <div>
+                  <div className="px-5 py-2.5 bg-blue-50/60 border-b border-t border-blue-100 text-[11px] font-semibold uppercase tracking-wider text-blue-700">
+                    Subsector · {shared.name}
                   </div>
-                )
-              })}
+                  <div>
+                    {sharedRows.map((row) => {
+                      const rawL = row.raw(shared.left)
+                      const rawR = row.raw(shared.right)
+                      const isDiff =
+                        !isEmptyRaw(rawL) && !isEmptyRaw(rawR) && rawL !== rawR
+                      return (
+                        <div
+                          key={row.label}
+                          className="grid grid-cols-[160px_1fr_1fr] border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="px-5 py-3 text-[11px] uppercase tracking-wide text-gray-500 bg-gray-50/40 border-r border-gray-100">
+                            {row.label}
+                          </div>
+                          <CompareCell highlight={!!isDiff}>{row.pick(shared.left)}</CompareCell>
+                          <CompareCell highlight={!!isDiff} borderLeft>
+                            {row.pick(shared.right)}
+                          </CompareCell>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {sectionsToRender.map(({ section, rows }) => (
+                <div key={section}>
+                  <div className="px-5 py-2.5 bg-gray-50/70 border-b border-t border-gray-100 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    {SECTION_TITLES[section]}
+                  </div>
+                  <div>
+                    {rows.map((row) => {
+                      const rawL = row.raw(left)
+                      const rawR = row.raw(right)
+                      const isDiff =
+                        !isEmptyRaw(rawL) && !isEmptyRaw(rawR) && rawL !== rawR
+                      return (
+                        <div
+                          key={row.label}
+                          className="grid grid-cols-[160px_1fr_1fr] border-b border-gray-100 last:border-b-0"
+                        >
+                          <div className="px-5 py-3 text-[11px] uppercase tracking-wide text-gray-500 bg-gray-50/40 border-r border-gray-100">
+                            {row.label}
+                          </div>
+                          <CompareCell highlight={!!isDiff}>{row.pick(left)}</CompareCell>
+                          <CompareCell highlight={!!isDiff} borderLeft>
+                            {row.pick(right)}
+                          </CompareCell>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-6 text-xs text-gray-500">
-              Rows with coloured pills highlight where the two companies
-              diverge. <Link href="/saved" className="text-blue-600 hover:underline">Pick a different pair</Link>.
+              Highlighted cells mark fields where the two companies diverge.{' '}
+              <Link href="/saved" className="text-blue-600 hover:underline">
+                Pick a different pair
+              </Link>
+              .
             </div>
           </>
         )}
