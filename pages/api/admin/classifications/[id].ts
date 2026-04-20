@@ -80,7 +80,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!before) {
     return res.status(404).json({ error: 'Classification not found' })
   }
-  const beforeRow = before as Record<string, unknown>
+  // Dynamic .select() string prevents Supabase from inferring row shape
+  // (it falls back to GenericStringError), so cast through unknown.
+  const beforeRow = before as unknown as Record<string, unknown>
 
   const { data, error } = await supabase
     .from('entity_classifications')
@@ -106,7 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     targetId: classificationId,
     entityId: (beforeRow['entity_id'] as number | null) ?? null,
     before: Object.fromEntries(
-      ALLOWED_FIELDS.map((f) => [f, beforeRow[f] ?? null])
+      (ALLOWED_FIELDS as readonly string[]).map((f) => [f, beforeRow[f] ?? null])
     ),
     after: update,
     note,

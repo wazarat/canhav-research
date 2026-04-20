@@ -133,7 +133,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     console.error(`[subsector-data PATCH] existence check on ${tableName} failed:`, existErr)
     return res.status(500).json({ error: existErr.message })
   }
-  const existingRow = existing as Record<string, unknown> | null
+  // Dynamic .select() string prevents Supabase from inferring row shape
+  // (GenericStringError fallback), so cast through unknown first.
+  const existingRow = existing as unknown as Record<string, unknown> | null
 
   let row: Record<string, unknown> | null = null
   if (existingRow) {

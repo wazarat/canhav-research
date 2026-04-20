@@ -125,6 +125,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!before) {
     return res.status(404).json({ error: 'Entity not found' })
   }
+  // Dynamic .select() string prevents Supabase from inferring row shape,
+  // so cast through unknown before using the row as a plain dict.
+  const beforeRow = before as unknown as Record<string, unknown>
 
   const { data, error } = await supabase
     .from('entities')
@@ -149,7 +152,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     targetType: 'entity',
     targetId: entityId,
     entityId,
-    before: before as Record<string, unknown>,
+    before: beforeRow,
     after: update,
     note,
     source,
