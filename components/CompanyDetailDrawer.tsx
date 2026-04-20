@@ -148,7 +148,10 @@ export default function CompanyDetailDrawer({
   const primary = data?.classifications.find((c) => c.is_primary) ??
     data?.classifications[0]
   const accent = primary ? SECTOR_ACCENT[primary.sector_name] ?? '#9ca3af' : '#9ca3af'
-  const isSuper = role === 'super_admin'
+  // Any signed-in editor (admin OR super_admin) can inline-edit. Role is
+  // still tracked so super-admin-only affordances (e.g. "View audit log")
+  // can gate on it separately.
+  const isSuper = role === 'admin' || role === 'super_admin'
 
   return (
     <>

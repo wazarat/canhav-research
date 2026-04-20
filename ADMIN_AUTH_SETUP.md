@@ -130,15 +130,52 @@ longer read anywhere.
 
 ## 6. Who can do what
 
-| Action                                     | `admin` | `super_admin` |
-| ------------------------------------------ | ------- | ------------- |
-| Browse `/admin/entities` merge candidates  | ✅      | ✅            |
-| Apply merges, unmerge, never-merge flags   | ✅      | ✅            |
-| View the editor list at `/admin/members`   | ✅      | ✅            |
-| Add / remove editors, change roles         | ❌      | ✅            |
+| Action                                                           | `admin` | `super_admin` |
+| ---------------------------------------------------------------- | ------- | ------------- |
+| Browse `/admin/entities` merge candidates                        | ✅      | ✅            |
+| Apply merges, unmerge, never-merge flags                         | ✅      | ✅            |
+| Inline-edit entity master data on `/company/[id]` + drawer       | ✅      | ✅            |
+| Inline-edit per-subsector classification prose                   | ✅      | ✅            |
+| Inline-edit dynamic subsector-data rows                          | ✅      | ✅            |
+| View the editor list at `/admin/members`                         | ✅      | ✅            |
+| Add / remove editors, change roles                               | ❌      | ✅            |
+| Bulk subsector ingest (`/admin/subsector-ingest`)                | ❌      | ✅            |
+| See the cross-editor audit log at `/admin/activity`              | ❌      | ✅            |
 
 The last super-admin can't remove themself (guard in the API) so you
 always have a way back in.
+
+### Audit trail
+
+Every inline edit lands in `public.admin_edits` with the actor's user
+id, email, role, the target row, and a JSONB diff of the before/after
+values. Merges continue to land in `public.entity_merges` (now with
+`merged_by_user_id` FK to `auth.users`). Super-admins can review both
+streams at [`/admin/activity`](https://www.canhav.com/admin/activity)
+filtered by editor or kind. RLS ensures regular admins only ever see
+their own edits, even if they try to query the tables directly.
+
+---
+
+## 6a. Inviting a second editor (admin tier)
+
+You don't run any SQL for this — it's all UI. As a super-admin:
+
+1. Visit [`/admin/members`](https://www.canhav.com/admin/members).
+2. Enter the new editor's email address.
+3. Leave the role on **admin** (the default). Only promote to
+   `super_admin` if you want them to manage other editors and view
+   the activity log.
+4. Click **Add editor**. Supabase emails them an invite link.
+5. They click the link, land on `/api/auth/callback`, and are signed
+   in. On first sign-in they can set a password in their Supabase
+   account settings — from that point on they can sign in with Google,
+   email link, or the password they chose.
+6. Once they're in, they can merge + edit anywhere you can. You see
+   everything they do in `/admin/activity`.
+
+No account-creation form to build, no passwords to share — Supabase
+owns that ceremony.
 
 ---
 

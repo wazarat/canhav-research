@@ -199,7 +199,9 @@ export default function CompanyDetailPage() {
       .catch(() => setFeaturedArticles([]))
   }, [id])
 
-  const isSuperAdmin = adminRole === 'super_admin'
+  // Both admin and super_admin can edit / merge. Variable name kept for
+  // minimal churn across this 1k+ line file; treat it as "is any admin".
+  const isSuperAdmin = adminRole === 'admin' || adminRole === 'super_admin'
 
   // Pull my stars once to determine whether this company is already saved.
   // Silent 401 → anonymous viewer, star button prompts for sign-in on click.

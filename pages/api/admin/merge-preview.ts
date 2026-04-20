@@ -82,7 +82,7 @@ function isEmpty(kind: Kind, v: unknown): boolean {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const session = await requireAdmin(req, res, { requireSuper: true })
+  const session = await requireAdmin(req, res)
   if (!session) return
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST')

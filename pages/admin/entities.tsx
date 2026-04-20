@@ -235,6 +235,14 @@ export default function AdminEntities() {
             >
               Editors
             </Link>
+            {editorRole === 'super_admin' && (
+              <Link
+                href="/admin/activity"
+                className="px-3 py-1 text-xs font-medium text-gray-500 hover:text-gray-800 rounded-md"
+              >
+                Activity
+              </Link>
+            )}
           </nav>
           <div className="ml-auto flex items-center gap-3 text-xs text-gray-500">
             {editorName && (

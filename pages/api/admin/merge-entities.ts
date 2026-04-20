@@ -280,6 +280,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           parent_entity_id: parentId,
           child_entity_id: child.entity_id,
           merged_by: mergedBy,
+          merged_by_user_id: session.user.id,
           reason,
           snapshot,
         })

@@ -1,18 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAdmin } from '../../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../../lib/supabaseNew'
+import { logAdminEdit } from '../../../../lib/adminAudit'
 
 /**
  * PATCH /api/admin/classifications/[id]
  *
- * Super-admin inline-edit endpoint for public.entity_classifications. These
- * are the per-subsector descriptive fields (description, reason for
- * inclusion, practitioner's note, validation check, maintaining org, website)
- * that show on /company/[id] broken out per subsector.
+ * Admin inline-edit endpoint for public.entity_classifications. These are
+ * the per-subsector descriptive fields (description, reason for inclusion,
+ * practitioner's note, validation check, maintaining org, website) that
+ * show on /company/[id] broken out per subsector.
+ *
+ * Both admin and super_admin can edit. Every mutation is recorded in
+ * public.admin_edits so super-admins can audit the changes.
  *
  * Structural columns (entity_id, subsector_id, is_primary) are not touched
- * here — is_primary has its own flipping route and entity/subsector identity
- * is fixed for the lifetime of a classification row.
+ * here — is_primary has its own flipping route and entity/subsector
+ * identity is fixed for the lifetime of a classification row.
  */
 
 const ALLOWED_FIELDS = [
@@ -39,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const session = await requireAdmin(req, res, { requireSuper: true })
+  const session = await requireAdmin(req, res)
   if (!session) return
 
   const { id } = req.query
@@ -63,6 +67,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const supabase = getSupabaseAdmin()
+
+  const { data: before, error: beforeErr } = await supabase
+    .from('entity_classifications')
+    .select([...ALLOWED_FIELDS, 'entity_id'].join(','))
+    .eq('entity_classification_id', classificationId)
+    .maybeSingle()
+  if (beforeErr) {
+    console.error('[PATCH /api/admin/classifications] pre-read:', beforeErr)
+    return res.status(500).json({ error: beforeErr.message })
+  }
+  if (!before) {
+    return res.status(404).json({ error: 'Classification not found' })
+  }
+  const beforeRow = before as Record<string, unknown>
+
   const { data, error } = await supabase
     .from('entity_classifications')
     .update(update)
@@ -78,9 +97,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json({ error: 'Classification not found' })
   }
 
-  console.log(
-    `[admin edit] ${session.user.email} updated classification ${classificationId}: ${Object.keys(update).join(', ')}`
-  )
+  const note = typeof body['_note'] === 'string' ? (body['_note'] as string) : null
+  const source = typeof body['_source'] === 'string' ? (body['_source'] as string) : null
+
+  await logAdminEdit({
+    session,
+    targetType: 'classification',
+    targetId: classificationId,
+    entityId: (beforeRow['entity_id'] as number | null) ?? null,
+    before: Object.fromEntries(
+      ALLOWED_FIELDS.map((f) => [f, beforeRow[f] ?? null])
+    ),
+    after: update,
+    note,
+    source,
+    req,
+  })
 
   return res.status(200).json({ classification: data })
 }

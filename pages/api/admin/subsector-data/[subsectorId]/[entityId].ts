@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAdmin } from '../../../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../../../lib/supabaseNew'
+import { logAdminEdit } from '../../../../../lib/adminAudit'
 
 /**
  * PATCH /api/admin/subsector-data/[subsectorId]/[entityId]
  *
- * Super-admin inline-edit for a single row of public.subsector_data_<slug>.
+ * Admin inline-edit for a single row of public.subsector_data_<slug>.
  * We look up the backing table + schema via public.subsector_tables, then
  * allow-list keys against display_schema so a typo in the body can't sneak
  * an arbitrary column update through.
@@ -55,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const session = await requireAdmin(req, res, { requireSuper: true })
+  const session = await requireAdmin(req, res)
   if (!session) return
 
   const sRaw = req.query.subsectorId
@@ -120,18 +121,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //    UPDATE vs INSERT without relying on a unique constraint naming
   //    convention in the dynamically-generated tables.
   const tableName = reg.table_name as string
+  const allowedKeys = Array.from(colByKey.keys())
+  const selectCols = ['entity_id', ...allowedKeys].join(',')
+
   const { data: existing, error: existErr } = await supabase
     .from(tableName)
-    .select('entity_id')
+    .select(selectCols)
     .eq('entity_id', entityId)
     .maybeSingle()
   if (existErr) {
     console.error(`[subsector-data PATCH] existence check on ${tableName} failed:`, existErr)
     return res.status(500).json({ error: existErr.message })
   }
+  const existingRow = existing as Record<string, unknown> | null
 
   let row: Record<string, unknown> | null = null
-  if (existing) {
+  if (existingRow) {
     const { data, error } = await supabase
       .from(tableName)
       .update(update)
@@ -157,11 +162,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     row = (data ?? null) as Record<string, unknown> | null
   }
 
-  console.log(
-    `[admin edit] ${session.user.email} updated ${tableName} entity_id=${entityId}: ${Object.keys(update).join(', ')}${
-      skipped.length ? ` (ignored: ${skipped.join(', ')})` : ''
-    }`
-  )
+  const note = typeof body['_note'] === 'string' ? (body['_note'] as string) : null
+  const source = typeof body['_source'] === 'string' ? (body['_source'] as string) : null
+
+  const beforeSnapshot: Record<string, unknown> = existingRow
+    ? Object.fromEntries(allowedKeys.map((k) => [k, existingRow[k] ?? null]))
+    : Object.fromEntries(allowedKeys.map((k) => [k, null]))
+
+  await logAdminEdit({
+    session,
+    targetType: 'subsector_data',
+    targetId: entityId, // row primary key == entity_id for these dynamic tables
+    entityId,
+    before: beforeSnapshot,
+    after: update,
+    note: note ?? `table=${tableName} subsector=${subsectorId}`,
+    source,
+    req,
+  })
 
   return res.status(200).json({ table_name: tableName, data: row })
 }

@@ -1,16 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAdmin } from '../../../../lib/adminAuth'
 import { getSupabaseAdmin } from '../../../../lib/supabaseNew'
+import { logAdminEdit } from '../../../../lib/adminAudit'
 
 /**
  * PATCH /api/admin/entities/[id]
  *
- * Super-admin inline-edit endpoint for public.entities. Accepts a whitelist
- * of columns so the wire schema is explicit and we never PATCH anything
- * structural (entity_name / parent_entity_id / entity_uuid).
+ * Admin inline-edit endpoint for public.entities. Accepts a whitelist of
+ * columns so the wire schema is explicit and we never PATCH anything
+ * structural (parent_entity_id / entity_uuid — parent_entity_id is
+ * flipped exclusively by merge-entities).
  *
  * Writes go through the service-role client so RLS doesn't matter; the
- * gate is purely `requireAdmin({ requireSuper: true })`.
+ * gate is `requireAdmin()` (both admin and super_admin can edit). Every
+ * mutation is logged to public.admin_edits so super-admins can review
+ * what each editor changed.
  *
  * Array fields accept either a string[] or a comma-separated string; the
  * former wins. Null / '' clear the value.
@@ -82,7 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const session = await requireAdmin(req, res, { requireSuper: true })
+  const session = await requireAdmin(req, res)
   if (!session) return
 
   const { id } = req.query
@@ -108,6 +112,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const supabase = getSupabaseAdmin()
+
+  const { data: before, error: beforeErr } = await supabase
+    .from('entities')
+    .select(ALLOWED_FIELDS.join(','))
+    .eq('entity_id', entityId)
+    .maybeSingle()
+  if (beforeErr) {
+    console.error('[PATCH /api/admin/entities] pre-read:', beforeErr)
+    return res.status(500).json({ error: beforeErr.message })
+  }
+  if (!before) {
+    return res.status(404).json({ error: 'Entity not found' })
+  }
+
   const { data, error } = await supabase
     .from('entities')
     .update({ ...update, updated_at: new Date().toISOString() })
@@ -123,12 +141,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json({ error: 'Entity not found' })
   }
 
-  // Best-effort audit breadcrumb. We already have entity_merges / admin
-  // changes elsewhere; a simple console log keeps this route lean and
-  // lets Supabase logs be the system of record.
-  console.log(
-    `[admin edit] ${session.user.email} updated entity ${entityId}: ${Object.keys(update).join(', ')}`
-  )
+  const note = typeof body['_note'] === 'string' ? (body['_note'] as string) : null
+  const source = typeof body['_source'] === 'string' ? (body['_source'] as string) : null
+
+  await logAdminEdit({
+    session,
+    targetType: 'entity',
+    targetId: entityId,
+    entityId,
+    before: before as Record<string, unknown>,
+    after: update,
+    note,
+    source,
+    req,
+  })
 
   return res.status(200).json({ entity: data })
 }

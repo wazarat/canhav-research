@@ -56,6 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .update({
         reverted_at: new Date().toISOString(),
         reverted_by: session.user.email,
+        reverted_by_user_id: session.user.id,
       })
       .eq('merge_id', id)
     if (stampErr) throw stampErr
