@@ -1194,8 +1194,22 @@ function CompanyCard({
   selectedForCompare?: boolean
   onToggleCompare?: (entityId: number) => void
 }) {
-  const sectors = getSectors(company)
-  const extraSectorCount = Math.max(0, sectors.length - 1)
+  // Badge shows *subsector* depth beyond the one already labeled on the
+  // card (i.e. every additional classification the entity has). Using
+  // sectors instead collapsed same-sector classifications (e.g. LayerZero
+  // → Cross-Chain Compute + DePIN both live under Advanced Compute &
+  // Integration, so the old "+sectors−1" math misreported +1 for a
+  // company with 3 classifications).
+  const subsectorList = Array.from(
+    new Set(
+      (company.subsectors && company.subsectors.length > 0
+        ? company.subsectors
+        : [company.subsector]
+      ).filter(Boolean) as string[]
+    )
+  )
+  const otherSubsectors = subsectorList.filter((s) => s !== company.subsector)
+  const extraSubsectorCount = otherSubsectors.length
   const tokens = getSectorTokens(company.sector)
   const href = company.entity_id ? `/company/${company.entity_id}` : '#'
   const initials = getInitials(company.name)
@@ -1235,12 +1249,12 @@ function CompanyCard({
           )}
         </div>
 
-        {extraSectorCount > 0 && (
+        {extraSubsectorCount > 0 && (
           <span
             className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${tokens.bg} ${tokens.text}`}
-            title={`Also in: ${sectors.slice(1).join(', ')}`}
+            title={`Also classified in: ${otherSubsectors.join(', ')}`}
           >
-            +{extraSectorCount}
+            +{extraSubsectorCount}
           </span>
         )}
         {company.entity_id != null && onToggleStar && (
@@ -1444,8 +1458,18 @@ function CompanyList({
       <ul className="divide-y divide-gray-100">
         {companies.map((c, i) => {
           const tokens = getSectorTokens(c.sector)
-          const sectors = getSectors(c)
-          const extraSectorCount = Math.max(0, sectors.length - 1)
+          // Count additional *subsectors* beyond the one already shown on
+          // the row. Mirror of the grid-card logic above.
+          const rowSubsectorList = Array.from(
+            new Set(
+              (c.subsectors && c.subsectors.length > 0
+                ? c.subsectors
+                : [c.subsector]
+              ).filter(Boolean) as string[]
+            )
+          )
+          const rowOtherSubsectors = rowSubsectorList.filter((s) => s !== c.subsector)
+          const extraSubsectorCount = rowOtherSubsectors.length
           const isStarred = c.entity_id != null && starredIds.has(c.entity_id)
           const websiteRaw = c.website || c.canonical_website || null
           const websiteLabel = formatHostname(websiteRaw)
@@ -1466,12 +1490,12 @@ function CompanyList({
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-gray-900 truncate">{c.name}</span>
-                      {extraSectorCount > 0 && (
+                      {extraSubsectorCount > 0 && (
                         <span
                           className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${tokens.bg} ${tokens.text}`}
-                          title={`Also in: ${sectors.slice(1).join(', ')}`}
+                          title={`Also classified in: ${rowOtherSubsectors.join(', ')}`}
                         >
-                          +{extraSectorCount}
+                          +{extraSubsectorCount}
                         </span>
                       )}
                     </div>
