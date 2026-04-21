@@ -72,12 +72,22 @@ interface ClassificationGroup {
   conflict_count: number
 }
 
+interface SideOnlyClassificationValues {
+  description: string | null
+  reason_for_inclusion: string | null
+  practitioners_note: string | null
+  practitioner_validation_check: string | null
+  website: string | null
+  maintaining_organization: string | null
+}
+
 interface SideOnlyClassification {
   subsector_id: number
   subsector_name: string
   sector_name: string
   classification_id: number
   is_primary: boolean
+  values?: SideOnlyClassificationValues
 }
 
 interface PreviewResponse {
@@ -343,7 +353,7 @@ export default function MergeWithPicker({
             <p className="text-xs text-gray-500 mt-0.5">
               {step === 'pick'
                 ? 'Collapses one entity under the other. Reversible.'
-                : 'Pick which value wins on the parent. Unpicked fields stay as the parent\u2019s.'}
+                : 'Pick which value wins on the parent where fields overlap. Non-overlapping classifications and unpicked fields keep their existing values.'}
             </p>
           </div>
           <button
@@ -550,37 +560,22 @@ export default function MergeWithPicker({
                 </div>
               )}
 
-              {(childOnlyClassifications.length > 0 ||
-                parentOnlyClassifications.length > 0) && (
-                <div className="rounded-lg border border-gray-100 p-3 text-[11px] text-gray-500 space-y-1.5">
-                  {parentOnlyClassifications.length > 0 && (
-                    <div>
-                      <span className="font-semibold text-gray-700">
-                        Parent-only subsectors ({parentOnlyClassifications.length}):
-                      </span>{' '}
-                      {parentOnlyClassifications
-                        .map((c) => c.subsector_name)
-                        .join(', ')}
-                      <div className="text-gray-400 italic mt-0.5">
-                        Kept on the parent untouched.
-                      </div>
-                    </div>
-                  )}
-                  {childOnlyClassifications.length > 0 && (
-                    <div>
-                      <span className="font-semibold text-gray-700">
-                        Child-only subsectors ({childOnlyClassifications.length}):
-                      </span>{' '}
-                      {childOnlyClassifications
-                        .map((c) => c.subsector_name)
-                        .join(', ')}
-                      <div className="text-gray-400 italic mt-0.5">
-                        Preserved on the child; roll up onto the parent
-                        profile automatically.
-                      </div>
-                    </div>
-                  )}
-                </div>
+              {childOnlyClassifications.length > 0 && (
+                <SideOnlyClassificationList
+                  title={`Child classifications carried over (${childOnlyClassifications.length})`}
+                  blurb="No conflicts — the child has these classifications in subsectors the parent doesn't. They'll stay on the child after the merge and roll up onto the parent profile automatically."
+                  items={childOnlyClassifications}
+                  tone="blue"
+                />
+              )}
+
+              {parentOnlyClassifications.length > 0 && (
+                <SideOnlyClassificationList
+                  title={`Parent-only classifications (${parentOnlyClassifications.length})`}
+                  blurb="These stay on the parent untouched. Listed here so you can double-check you're pointing at the right merge target."
+                  items={parentOnlyClassifications}
+                  tone="gray"
+                />
               )}
 
               {unchangedFields.length > 0 && (
@@ -767,6 +762,102 @@ function FieldRow({
             kind="array"
             fullWidth
           />
+        </div>
+      )}
+    </div>
+  )
+}
+
+function SideOnlyClassificationList({
+  title,
+  blurb,
+  items,
+  tone,
+}: {
+  title: string
+  blurb: string
+  items: SideOnlyClassification[]
+  tone: 'blue' | 'gray'
+}) {
+  const [open, setOpen] = useState(false)
+  const toneClasses =
+    tone === 'blue'
+      ? 'bg-blue-50 border-blue-200 text-blue-800'
+      : 'bg-gray-50 border-gray-200 text-gray-700'
+  return (
+    <div>
+      <h3
+        className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md inline-block mb-2 border ${toneClasses}`}
+      >
+        {title}
+      </h3>
+      <p className="text-[11px] text-gray-500 mb-2">{blurb}</p>
+      <div className="space-y-2">
+        {items.slice(0, open ? items.length : 3).map((item) => (
+          <SideOnlyClassificationCard key={item.classification_id} item={item} />
+        ))}
+        {items.length > 3 && (
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="text-[11px] text-blue-600 hover:underline"
+          >
+            {open ? 'Show less' : `Show ${items.length - 3} more`}
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SideOnlyClassificationCard({ item }: { item: SideOnlyClassification }) {
+  const values = item.values
+  const rows: Array<{ label: string; value: string | null }> = values
+    ? [
+        { label: 'Description',           value: values.description },
+        { label: 'Reason for inclusion',  value: values.reason_for_inclusion },
+        { label: "Practitioner's note",   value: values.practitioners_note },
+        { label: 'Validation check',      value: values.practitioner_validation_check },
+        { label: 'Website',               value: values.website },
+        { label: 'Maintained by',         value: values.maintaining_organization },
+      ]
+    : []
+  const hasAny = rows.some((r) => !!(r.value && r.value.trim()))
+  return (
+    <div className="border border-gray-200 rounded-md bg-white">
+      <div className="px-3 py-2 border-b border-gray-100 flex items-baseline justify-between gap-2">
+        <div className="min-w-0">
+          <div className="text-[10px] uppercase tracking-wider text-gray-400">
+            {item.sector_name || 'Sector'}
+          </div>
+          <div className="text-[13px] font-semibold text-gray-900 truncate">
+            {item.subsector_name}
+          </div>
+        </div>
+        {item.is_primary && (
+          <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 shrink-0">
+            Primary
+          </span>
+        )}
+      </div>
+      {hasAny ? (
+        <dl className="px-3 py-2 space-y-1.5 text-[12px]">
+          {rows
+            .filter((r) => !!(r.value && r.value.trim()))
+            .map((r) => (
+              <div key={r.label}>
+                <dt className="text-[10px] uppercase tracking-wider text-gray-400">
+                  {r.label}
+                </dt>
+                <dd className="text-gray-800 whitespace-pre-wrap break-words">
+                  {r.value}
+                </dd>
+              </div>
+            ))}
+        </dl>
+      ) : (
+        <div className="px-3 py-2 text-[11px] text-gray-400 italic">
+          No descriptive fields set on this classification.
         </div>
       )}
     </div>

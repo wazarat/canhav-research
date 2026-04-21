@@ -308,6 +308,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     a.subsector_name.localeCompare(b.subsector_name)
   )
 
+  // For classifications that only exist on one side we surface the full
+  // field payload so the admin can review — there's nothing to resolve
+  // (no overlap) but the data still needs to be visible before committing
+  // the merge. Only classification-level text fields are included; the
+  // subsector/sector metadata above provides context.
+  function classificationValues(row: Record<string, any>): Record<string, unknown> {
+    return {
+      description: row.description ?? null,
+      reason_for_inclusion: row.reason_for_inclusion ?? null,
+      practitioners_note: row.practitioners_note ?? null,
+      practitioner_validation_check: row.practitioner_validation_check ?? null,
+      website: row.website ?? null,
+      maintaining_organization: row.maintaining_organization ?? null,
+    }
+  }
+
   const parentOnlyClassifications = Array.from(parentBySubsector.entries())
     .filter(([sid]) => !childBySubsector.has(sid))
     .map(([sid, row]) => {
@@ -318,6 +334,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         sector_name: meta?.sector_name ?? '',
         classification_id: Number(row.entity_classification_id),
         is_primary: !!row.is_primary,
+        values: classificationValues(row),
       }
     })
     .sort((a, b) => a.subsector_name.localeCompare(b.subsector_name))
@@ -332,6 +349,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         sector_name: meta?.sector_name ?? '',
         classification_id: Number(row.entity_classification_id),
         is_primary: !!row.is_primary,
+        values: classificationValues(row),
       }
     })
     .sort((a, b) => a.subsector_name.localeCompare(b.subsector_name))

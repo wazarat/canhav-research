@@ -30,6 +30,11 @@ interface Company {
   total_funding_usd?: number | null
   maintaining_organization?: string | null
   practitioners_note?: string | null
+  // Total classification count across the root AND its collapsed children
+  // (from v_market_map_grid). Drives the "+N" badge so it matches the
+  // number of cards the drawer renders. Two classifications that share a
+  // subsector are counted separately here (unlike `subsectors.length`).
+  classification_count?: number
 }
 
 interface MarketMapProps {}
@@ -1194,12 +1199,12 @@ function CompanyCard({
   selectedForCompare?: boolean
   onToggleCompare?: (entityId: number) => void
 }) {
-  // Badge shows *subsector* depth beyond the one already labeled on the
-  // card (i.e. every additional classification the entity has). Using
-  // sectors instead collapsed same-sector classifications (e.g. LayerZero
-  // → Cross-Chain Compute + DePIN both live under Advanced Compute &
-  // Integration, so the old "+sectors−1" math misreported +1 for a
-  // company with 3 classifications).
+  // Badge mirrors the number of classifications the drawer will render.
+  // We prefer v_market_map_grid.classification_count (from Supabase) so
+  // same-subsector duplicates (e.g. Anchorage Digital has two classifications
+  // under "Institutional Custody & Security") are counted separately — one
+  // card per classification. When that count is missing we fall back to
+  // distinct subsectors so the badge still shows something sensible.
   const subsectorList = Array.from(
     new Set(
       (company.subsectors && company.subsectors.length > 0
@@ -1209,7 +1214,10 @@ function CompanyCard({
     )
   )
   const otherSubsectors = subsectorList.filter((s) => s !== company.subsector)
-  const extraSubsectorCount = otherSubsectors.length
+  const extraSubsectorCount =
+    company.classification_count != null && company.classification_count > 0
+      ? Math.max(0, company.classification_count - 1)
+      : otherSubsectors.length
   const tokens = getSectorTokens(company.sector)
   const href = company.entity_id ? `/company/${company.entity_id}` : '#'
   const initials = getInitials(company.name)
@@ -1458,8 +1466,10 @@ function CompanyList({
       <ul className="divide-y divide-gray-100">
         {companies.map((c, i) => {
           const tokens = getSectorTokens(c.sector)
-          // Count additional *subsectors* beyond the one already shown on
-          // the row. Mirror of the grid-card logic above.
+          // Count additional classifications beyond the one shown on the
+          // row. Prefer classification_count (from v_market_map_grid) so
+          // same-subsector duplicates still count as separate cards;
+          // fall back to distinct-subsector math if it's unavailable.
           const rowSubsectorList = Array.from(
             new Set(
               (c.subsectors && c.subsectors.length > 0
@@ -1469,7 +1479,10 @@ function CompanyList({
             )
           )
           const rowOtherSubsectors = rowSubsectorList.filter((s) => s !== c.subsector)
-          const extraSubsectorCount = rowOtherSubsectors.length
+          const extraSubsectorCount =
+            c.classification_count != null && c.classification_count > 0
+              ? Math.max(0, c.classification_count - 1)
+              : rowOtherSubsectors.length
           const isStarred = c.entity_id != null && starredIds.has(c.entity_id)
           const websiteRaw = c.website || c.canonical_website || null
           const websiteLabel = formatHostname(websiteRaw)
