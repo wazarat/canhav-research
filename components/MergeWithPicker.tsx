@@ -44,10 +44,12 @@ interface Candidate {
 
 type Resolution = 'parent' | 'child' | 'union'
 
+type FieldKind = 'scalar' | 'text' | 'array' | 'bool'
+
 interface PreviewField {
   key: string
   label: string
-  kind: 'scalar' | 'text' | 'array'
+  kind: FieldKind
   parent_value: unknown
   child_value: unknown
   parent_empty: boolean
@@ -56,6 +58,26 @@ interface PreviewField {
   conflict: boolean
   union_value: string[] | null
   default_resolution: Resolution
+}
+
+interface ClassificationGroup {
+  subsector_id: number
+  subsector_name: string
+  sector_name: string
+  parent_classification_id: number
+  child_classification_id: number
+  parent_is_primary: boolean
+  child_is_primary: boolean
+  fields: PreviewField[]
+  conflict_count: number
+}
+
+interface SideOnlyClassification {
+  subsector_id: number
+  subsector_name: string
+  sector_name: string
+  classification_id: number
+  is_primary: boolean
 }
 
 interface PreviewResponse {
@@ -67,7 +89,15 @@ interface PreviewResponse {
     currently_under_different_parent: number | null
   }
   fields: PreviewField[]
+  classification_groups?: ClassificationGroup[]
+  parent_only_classifications?: SideOnlyClassification[]
+  child_only_classifications?: SideOnlyClassification[]
 }
+
+// Nested per-classification resolutions keyed by subsector_id.
+// Picker only surfaces 'parent' / 'child' for classification fields.
+type ClassFieldResolution = 'parent' | 'child'
+type ClassificationResolutions = Record<string, Record<string, ClassFieldResolution>>
 
 type Step = 'pick' | 'reconcile'
 
@@ -91,6 +121,7 @@ export default function MergeWithPicker({
   const [preview, setPreview] = useState<PreviewResponse | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
   const [resolutions, setResolutions] = useState<Record<string, Resolution>>({})
+  const [classResolutions, setClassResolutions] = useState<ClassificationResolutions>({})
   const [showUnchanged, setShowUnchanged] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -176,6 +207,18 @@ export default function MergeWithPicker({
       setResolutions(
         Object.fromEntries(p.fields.map((f) => [f.key, f.default_resolution]))
       )
+      // Seed per-classification defaults too. 'union' is never a valid
+      // classification field resolution; coerce down to 'parent' in that
+      // (impossible) case so typing stays narrow.
+      const seededClass: ClassificationResolutions = {}
+      for (const group of p.classification_groups ?? []) {
+        const fieldMap: Record<string, ClassFieldResolution> = {}
+        for (const f of group.fields) {
+          fieldMap[f.key] = f.default_resolution === 'child' ? 'child' : 'parent'
+        }
+        seededClass[String(group.subsector_id)] = fieldMap
+      }
+      setClassResolutions(seededClass)
       setStep('reconcile')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Preview failed')
@@ -198,6 +241,7 @@ export default function MergeWithPicker({
           child_entity_ids: [childId],
           reason: reason.trim() || undefined,
           field_resolutions: { [String(childId)]: resolutions },
+          classification_resolutions: { [String(childId)]: classResolutions },
         }),
       })
       const body = await res.json().catch(() => ({}))
@@ -219,14 +263,35 @@ export default function MergeWithPicker({
       (f) => !f.conflict && !f.equal && (f.parent_empty || f.child_empty)
     ) ?? []
   const unchangedFields = preview?.fields.filter((f) => f.equal) ?? []
+  const classificationGroups = preview?.classification_groups ?? []
+  const childOnlyClassifications = preview?.child_only_classifications ?? []
+  const parentOnlyClassifications = preview?.parent_only_classifications ?? []
 
-  const changedCount = Object.entries(resolutions).filter(([key, choice]) => {
+  const entityWrites = Object.entries(resolutions).filter(([key, choice]) => {
     const f = preview?.fields.find((x) => x.key === key)
     if (!f) return false
     if (choice === 'parent') return false
     if (choice === 'child' && f.child_empty) return false
     return true
   }).length
+
+  const classificationWrites = classificationGroups.reduce((n, group) => {
+    const byField = classResolutions[String(group.subsector_id)] ?? {}
+    for (const f of group.fields) {
+      const choice = byField[f.key] ?? f.default_resolution
+      if (choice === 'parent') continue
+      if (choice === 'child' && f.child_empty) continue
+      n += 1
+    }
+    return n
+  }, 0)
+
+  // Deleting an overlapping child classification is always a "write" from
+  // the admin's point of view, even when all field values match — the
+  // duplicate row is going away so the detail page doesn't double-render.
+  const classificationDeletes = classificationGroups.length
+
+  const changedCount = entityWrites + classificationWrites
 
   return (
     <div
@@ -447,10 +512,74 @@ export default function MergeWithPicker({
                 </FieldGroup>
               )}
 
-              {conflictFields.length === 0 && fillGapFields.length === 0 && (
-                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
-                  No conflicts or gaps. The parent row will stay untouched —
-                  only the child will be collapsed.
+              {conflictFields.length === 0 &&
+                fillGapFields.length === 0 &&
+                classificationGroups.length === 0 && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+                    No conflicts or gaps. The parent row will stay untouched —
+                    only the child will be collapsed.
+                  </div>
+                )}
+
+              {classificationGroups.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-baseline justify-between">
+                    <h3 className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded-md inline-block border bg-indigo-50 border-indigo-200 text-indigo-800">
+                      Shared subsectors ({classificationGroups.length})
+                    </h3>
+                    <span className="text-[11px] text-gray-500">
+                      Duplicate child classifications will be removed.
+                    </span>
+                  </div>
+                  {classificationGroups.map((group) => (
+                    <ClassificationGroupCard
+                      key={group.subsector_id}
+                      group={group}
+                      resolutions={classResolutions[String(group.subsector_id)] ?? {}}
+                      onChange={(field, choice) =>
+                        setClassResolutions((r) => ({
+                          ...r,
+                          [String(group.subsector_id)]: {
+                            ...(r[String(group.subsector_id)] ?? {}),
+                            [field]: choice,
+                          },
+                        }))
+                      }
+                    />
+                  ))}
+                </div>
+              )}
+
+              {(childOnlyClassifications.length > 0 ||
+                parentOnlyClassifications.length > 0) && (
+                <div className="rounded-lg border border-gray-100 p-3 text-[11px] text-gray-500 space-y-1.5">
+                  {parentOnlyClassifications.length > 0 && (
+                    <div>
+                      <span className="font-semibold text-gray-700">
+                        Parent-only subsectors ({parentOnlyClassifications.length}):
+                      </span>{' '}
+                      {parentOnlyClassifications
+                        .map((c) => c.subsector_name)
+                        .join(', ')}
+                      <div className="text-gray-400 italic mt-0.5">
+                        Kept on the parent untouched.
+                      </div>
+                    </div>
+                  )}
+                  {childOnlyClassifications.length > 0 && (
+                    <div>
+                      <span className="font-semibold text-gray-700">
+                        Child-only subsectors ({childOnlyClassifications.length}):
+                      </span>{' '}
+                      {childOnlyClassifications
+                        .map((c) => c.subsector_name)
+                        .join(', ')}
+                      <div className="text-gray-400 italic mt-0.5">
+                        Preserved on the child; roll up onto the parent
+                        profile automatically.
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -536,7 +665,21 @@ export default function MergeWithPicker({
                 disabled={submitting || success}
                 className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-md disabled:bg-blue-300"
               >
-                {submitting ? 'Merging…' : `Apply merge${changedCount ? ` (${changedCount} write${changedCount === 1 ? '' : 's'})` : ''}`}
+                {submitting
+                  ? 'Merging…'
+                  : `Apply merge${
+                      changedCount || classificationDeletes
+                        ? ` (${changedCount} write${
+                            changedCount === 1 ? '' : 's'
+                          }${
+                            classificationDeletes
+                              ? ` · ${classificationDeletes} dup${
+                                  classificationDeletes === 1 ? '' : 's'
+                                } removed`
+                              : ''
+                          })`
+                        : ''
+                    }`}
               </button>
             )}
           </div>
@@ -630,6 +773,113 @@ function FieldRow({
   )
 }
 
+function ClassificationGroupCard({
+  group,
+  resolutions,
+  onChange,
+}: {
+  group: ClassificationGroup
+  resolutions: Record<string, ClassFieldResolution>
+  onChange: (field: string, choice: ClassFieldResolution) => void
+}) {
+  const [open, setOpen] = useState(group.conflict_count > 0)
+  return (
+    <div className="border border-gray-200 rounded-lg bg-white">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-start justify-between gap-3 px-3 py-2.5 text-left hover:bg-gray-50"
+      >
+        <div className="min-w-0">
+          <div className="text-[10px] uppercase tracking-wider text-gray-400">
+            {group.sector_name || 'Sector'}
+          </div>
+          <div className="text-[13px] font-semibold text-gray-900 truncate">
+            {group.subsector_name}
+          </div>
+          <div className="text-[11px] text-gray-500 mt-0.5">
+            {group.conflict_count > 0
+              ? `${group.conflict_count} conflicting field${
+                  group.conflict_count === 1 ? '' : 's'
+                }`
+              : 'No conflicting fields — duplicate row still cleared on merge.'}
+          </div>
+        </div>
+        <span className="text-gray-400 text-lg leading-none mt-1">
+          {open ? '–' : '+'}
+        </span>
+      </button>
+      {open && (
+        <div className="px-3 pb-3 pt-1 space-y-2 border-t border-gray-100">
+          {group.fields.map((f) => {
+            const choice = resolutions[f.key] ?? f.default_resolution
+            const narrowed: ClassFieldResolution = choice === 'child' ? 'child' : 'parent'
+            return (
+              <ClassificationFieldRow
+                key={f.key}
+                field={f}
+                choice={narrowed}
+                radioName={`cls-${group.subsector_id}-${f.key}`}
+                onChange={(c) => onChange(f.key, c)}
+              />
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ClassificationFieldRow({
+  field,
+  choice,
+  radioName,
+  onChange,
+}: {
+  field: PreviewField
+  choice: ClassFieldResolution
+  radioName: string
+  onChange: (c: ClassFieldResolution) => void
+}) {
+  const tone = field.conflict
+    ? 'border-amber-200 bg-amber-50/30'
+    : field.equal
+    ? 'border-gray-100 bg-gray-50/40'
+    : 'border-blue-200 bg-blue-50/30'
+  return (
+    <div className={`border rounded-md p-2.5 ${tone}`}>
+      <div className="flex items-baseline justify-between mb-1.5">
+        <span className="text-[12px] font-semibold text-gray-800">
+          {field.label}
+        </span>
+        <span className="text-[10px] uppercase tracking-wider text-gray-400">
+          {field.conflict ? 'Conflict' : field.equal ? 'Match' : field.kind}
+        </span>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[12px]">
+        <Option
+          name={radioName}
+          checked={choice === 'parent'}
+          onSelect={() => onChange('parent')}
+          label="Keep parent"
+          value={field.parent_value}
+          kind={field.kind}
+          muted={field.parent_empty}
+        />
+        <Option
+          name={radioName}
+          checked={choice === 'child'}
+          onSelect={() => onChange('child')}
+          label="Use child's"
+          value={field.child_value}
+          kind={field.kind}
+          muted={field.child_empty}
+        />
+      </div>
+    </div>
+  )
+}
+
 function Option({
   name,
   checked,
@@ -645,7 +895,7 @@ function Option({
   onSelect: () => void
   label: string
   value: unknown
-  kind: 'scalar' | 'text' | 'array'
+  kind: FieldKind
   muted?: boolean
   fullWidth?: boolean
 }) {
@@ -680,7 +930,11 @@ function Option({
   )
 }
 
-function renderValue(value: unknown, kind: 'scalar' | 'text' | 'array', muted?: boolean) {
+function renderValue(value: unknown, kind: FieldKind, muted?: boolean) {
+  if (kind === 'bool') {
+    // Never treat booleans as "empty" — false is a meaningful answer.
+    return value ? 'Yes (primary)' : 'No'
+  }
   if (value === null || value === undefined || value === '') {
     return muted ? '(empty)' : <span className="text-gray-400 italic">(empty)</span>
   }

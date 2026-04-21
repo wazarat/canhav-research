@@ -45,7 +45,46 @@ type Body = {
    * unmerge can restore the exact previous state.
    */
   field_resolutions?: Record<string, Record<string, 'parent' | 'child' | 'union'>>
+  /**
+   * Optional per-subsector reconciliation for shared classifications.
+   * Shape: { [child_entity_id]: { [subsector_id]: { [field]: 'parent'|'child' } } }
+   *
+   * Classification-level fields (description, reason_for_inclusion, etc.)
+   * that live on public.entity_classifications rather than public.entities.
+   * When parent and child both have a row for the same subsector:
+   *   1. Chosen field winners are written onto the parent's classification.
+   *   2. The child's duplicate classification for that subsector is
+   *      deleted (snapshotted onto entity_merges.snapshot.deleted_child_classifications
+   *      so unmerge can restore it).
+   * 'union' is not supported here — every reconcilable classification
+   * field is scalar/text/bool.
+   */
+  classification_resolutions?: Record<
+    string,
+    Record<string, Record<string, 'parent' | 'child'>>
+  >
 }
+
+const CLASSIFICATION_FIELDS = [
+  'description',
+  'reason_for_inclusion',
+  'practitioners_note',
+  'practitioner_validation_check',
+  'website',
+  'maintaining_organization',
+  'is_primary',
+] as const
+
+type ClassificationField = (typeof CLASSIFICATION_FIELDS)[number]
+const CLASSIFICATION_FIELDS_SET = new Set<string>(CLASSIFICATION_FIELDS)
+const CLASSIFICATION_BOOL_FIELDS = new Set<ClassificationField>(['is_primary'])
+
+const CLASSIFICATION_SELECT = [
+  'entity_classification_id',
+  'entity_id',
+  'subsector_id',
+  ...CLASSIFICATION_FIELDS,
+].join(',')
 
 const RECONCILABLE_FIELDS = [
   'entity_name',
@@ -191,6 +230,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       string,
       Record<string, 'parent' | 'child' | 'union'>
     >
+    const classificationResolutions = (body.classification_resolutions ?? {}) as Record<
+      string,
+      Record<string, Record<string, 'parent' | 'child'>>
+    >
+
+    // Pull every classification row for parent + all children up front so we
+    // can reconcile per-subsector overlap in the same transaction.
+    const allEntityIds = [parentId, ...childRows.map((c) => c.entity_id)]
+    const { data: clRowsRaw, error: clErr } = await supabase
+      .from('entity_classifications')
+      .select(CLASSIFICATION_SELECT)
+      .in('entity_id', allEntityIds)
+    if (clErr) throw clErr
+    const clRows = (clRowsRaw ?? []) as unknown as Array<Record<string, any>>
+    // Parent classifications indexed by subsector_id for fast lookup.
+    const parentClassBySubsector = new Map<number, Record<string, any>>()
+    clRows
+      .filter((r) => r.entity_id === parentId)
+      .forEach((r) => parentClassBySubsector.set(Number(r.subsector_id), r))
 
     // Perform the merges one child at a time so each gets its own audit row
     // with an accurate snapshot. Still cheap: typical batch is 2-5.
@@ -198,6 +256,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       merge_id: number
       child_entity_id: number
       applied_fields: string[]
+      classifications_reconciled: number
+      classifications_deleted: number
     }> = []
 
     for (const child of childRows) {
@@ -268,6 +328,98 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (reconcileErr) throw reconcileErr
       }
 
+      // -------------------------------------------------------------
+      // Classification reconciliation (per-subsector overlap)
+      // -------------------------------------------------------------
+      const childClassifications = clRows.filter(
+        (r) => r.entity_id === child.entity_id
+      )
+      const childClsResolutions =
+        classificationResolutions[String(child.entity_id)] ?? {}
+
+      const classificationUpdates: Array<{
+        parent_classification_id: number
+        subsector_id: number
+        before: Record<string, unknown>
+        after: Record<string, unknown>
+        resolutions: Record<string, 'parent' | 'child'>
+      }> = []
+      const deletedChildClassifications: Array<Record<string, unknown>> = []
+
+      for (const childCls of childClassifications) {
+        const subsectorId = Number(childCls.subsector_id)
+        const parentCls = parentClassBySubsector.get(subsectorId)
+        if (!parentCls) continue // child-only subsector → keep on child, no dedupe work
+
+        const subsectorRes = childClsResolutions[String(subsectorId)] ?? {}
+        const classBefore: Record<string, unknown> = {}
+        const classUpdate: Record<string, unknown> = {}
+        const appliedResolutions: Record<string, 'parent' | 'child'> = {}
+
+        for (const field of CLASSIFICATION_FIELDS) {
+          const choice = subsectorRes[field]
+          if (!choice || !CLASSIFICATION_FIELDS_SET.has(field)) continue
+          if (choice === 'parent') continue // no-op (explicit or default)
+          if (choice !== 'child') continue
+
+          const isBool = CLASSIFICATION_BOOL_FIELDS.has(field)
+          const current = parentCls[field]
+          const nextValue = isBool
+            ? Boolean(childCls[field])
+            : childCls[field] ?? null
+
+          const same = isBool
+            ? Boolean(current) === Boolean(nextValue)
+            : (current ?? null) === (nextValue ?? null)
+          if (same) continue
+
+          classBefore[field] = current ?? null
+          classUpdate[field] = nextValue
+          appliedResolutions[field] = 'child'
+          // Keep in-memory parent classification state consistent in case a
+          // later iteration references it (rare but cheap).
+          parentCls[field] = nextValue
+        }
+
+        if (Object.keys(classUpdate).length > 0) {
+          const { error: clsUpdErr } = await supabase
+            .from('entity_classifications')
+            .update(classUpdate)
+            .eq('entity_classification_id', Number(parentCls.entity_classification_id))
+          if (clsUpdErr) throw clsUpdErr
+          classificationUpdates.push({
+            parent_classification_id: Number(parentCls.entity_classification_id),
+            subsector_id: subsectorId,
+            before: classBefore,
+            after: Object.fromEntries(
+              Object.keys(classUpdate).map((k) => [k, classUpdate[k]])
+            ),
+            resolutions: appliedResolutions,
+          })
+        }
+
+        // Snapshot the full child classification row so unmerge can
+        // recreate it verbatim, then delete the duplicate so the
+        // company detail page doesn't render both rows for the same
+        // subsector post-merge.
+        deletedChildClassifications.push({ ...childCls })
+        const { error: clsDelErr } = await supabase
+          .from('entity_classifications')
+          .delete()
+          .eq(
+            'entity_classification_id',
+            Number(childCls.entity_classification_id)
+          )
+        if (clsDelErr) throw clsDelErr
+      }
+
+      if (classificationUpdates.length > 0) {
+        snapshot.classification_updates = classificationUpdates
+      }
+      if (deletedChildClassifications.length > 0) {
+        snapshot.deleted_child_classifications = deletedChildClassifications
+      }
+
       const { error: updErr } = await supabase
         .from('entities')
         .update({ parent_entity_id: parentId })
@@ -292,6 +444,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         merge_id: auditRow.merge_id,
         child_entity_id: child.entity_id,
         applied_fields: Object.keys(parentUpdate),
+        classifications_reconciled: classificationUpdates.length,
+        classifications_deleted: deletedChildClassifications.length,
       })
     }
 
